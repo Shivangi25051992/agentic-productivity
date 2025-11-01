@@ -58,6 +58,8 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
           final caloriesGoal = dashboard.stats.caloriesGoal;
           final caloriesRemaining = dashboard.stats.caloriesRemaining;
           final progress = dashboard.stats.caloriesProgress;
+          final calorieDeficit = dashboard.stats.calorieDeficit;
+          final isInDeficit = dashboard.stats.isInDeficit;
 
           return SafeArea(
             child: RefreshIndicator(
@@ -132,6 +134,8 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                           goal: caloriesGoal,
                           remaining: caloriesRemaining,
                           progress: progress,
+                          deficit: calorieDeficit,
+                          isInDeficit: isInDeficit,
                         ),
                         
                         const SizedBox(height: 16),
@@ -269,12 +273,16 @@ class _CalorieCard extends StatelessWidget {
   final int goal;
   final int remaining;
   final double progress;
+  final int deficit;
+  final bool isInDeficit;
 
   const _CalorieCard({
     required this.consumed,
     required this.goal,
     required this.remaining,
     required this.progress,
+    required this.deficit,
+    required this.isInDeficit,
   });
 
   @override
@@ -363,6 +371,48 @@ class _CalorieCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey.shade700,
+              ),
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Calorie Deficit/Surplus Badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: isInDeficit ? Colors.green.shade50 : Colors.red.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isInDeficit ? Colors.green.shade200 : Colors.red.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isInDeficit ? Icons.trending_down : Icons.trending_up,
+                    color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    isInDeficit 
+                        ? 'Deficit: ${deficit.abs()} kcal' 
+                        : 'Surplus: ${deficit.abs()} kcal',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    isInDeficit ? Icons.check_circle_outline : Icons.warning_amber_rounded,
+                    color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
+                    size: 18,
+                  ),
+                ],
               ),
             ),
             
