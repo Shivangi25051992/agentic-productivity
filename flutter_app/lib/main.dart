@@ -39,6 +39,7 @@ import 'screens/onboarding/review_complete_screen.dart';
 import 'screens/onboarding/setup_loading_screen.dart';
 import 'screens/onboarding/success_screen.dart';
 import 'screens/onboarding/success_screen_enhanced.dart';
+import 'screens/meals/timeline_view_screen.dart';
 import 'utils/theme.dart';
 import 'firebase_options.dart';
 import 'widgets/common/auth_guard.dart';
@@ -105,6 +106,7 @@ class _App extends StatelessWidget {
         '/tasks': (_) => const AuthGuard(child: TaskListScreen()),
         '/fitness': (_) => const AuthGuard(child: FitnessDashboardScreen()),
         '/settings': (_) => const AuthGuard(child: SettingsScreen()),
+        '/meals/timeline': (_) => const AuthGuard(child: TimelineViewScreen()),
         
         // Onboarding routes (require authentication)
         '/onboarding/welcome': (_) => const AuthGuard(child: WelcomeScreenEnhanced()),

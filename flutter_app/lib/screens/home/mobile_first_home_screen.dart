@@ -544,13 +544,25 @@ class _TodaysMealsCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextButton.icon(
-                onPressed: () => Navigator.of(context).pushNamed('/chat'),
-                icon: const Icon(Icons.add_circle_outline, size: 18),
-                label: const Text('Log Food'),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                ),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => Navigator.of(context).pushNamed('/meals/timeline'),
+                    icon: const Icon(Icons.timeline, size: 18),
+                    label: const Text('Timeline'),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => Navigator.of(context).pushNamed('/chat'),
+                    icon: const Icon(Icons.add_circle_outline, size: 18),
+                    label: const Text('Log Food'),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
