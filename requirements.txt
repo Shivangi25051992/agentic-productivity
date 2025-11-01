@@ -1,6 +1,8 @@
 fastapi>=0.110
 uvicorn[standard]>=0.29
 pydantic>=2.7
+pydantic[email]>=2.7
+email-validator>=2.0
 python-dotenv>=1.0
 google-cloud-firestore>=2.16
 firebase-admin>=6.5
@@ -8,5 +10,7 @@ openai>=1.40
 bcrypt>=4.1
 PyJWT>=2.9
 cryptography>=42.0
+rapidfuzz>=3.0
+requests>=2.31
 
 
