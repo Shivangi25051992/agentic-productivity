@@ -1,0 +1,70 @@
+INFO:     Will watch for changes in these directories: ['/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [82995] using WatchFiles
+INFO:     Started server process [83010]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:54619 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+WARNING:  WatchFiles detected changes in 'tests/test_e2e_critical_flows.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [83010]
+WARNING:  WatchFiles detected changes in 'tests/test_e2e_critical_flows.py'. Reloading...
+INFO:     Started server process [83049]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [83051]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests/generate_test_report.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [83051]
+WARNING:  WatchFiles detected changes in 'tests/generate_test_report.py'. Reloading...
+INFO:     Started server process [83097]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Started server process [83099]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:54977 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55065 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55312 - "OPTIONS /profile/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55314 - "OPTIONS /profile/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55316 - "GET /profile/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55316 - "OPTIONS /fitness/logs?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/.venv/lib/python3.11/site-packages/google/cloud/firestore_v1/base_collection.py:304: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  return query.where(field_path, op_string, value)
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/app/services/database.py:217: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  query = query.where("timestamp", ">=", start_ts)
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/app/services/database.py:219: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  query = query.where("timestamp", "<=", end_ts)
+INFO:     127.0.0.1:55316 - "GET /fitness/logs?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55316 - "OPTIONS /tasks?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55348 - "GET /tasks?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:55348 - "OPTIONS /tasks/?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55312 - "GET /profile/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55348 - "OPTIONS /chat HTTP/1.1" 200 OK
+✅ CACHE HIT: Egg, Large, Boiled (confidence: 1.0)
+INFO:     127.0.0.1:55348 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55312 - "GET /profile/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55316 - "GET /tasks/?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/.venv/lib/python3.11/site-packages/google/cloud/firestore_v1/base_collection.py:304: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  return query.where(field_path, op_string, value)
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/app/services/database.py:217: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  query = query.where("timestamp", ">=", start_ts)
+/Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/app/services/database.py:219: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+  query = query.where("timestamp", "<=", end_ts)
+INFO:     127.0.0.1:55316 - "GET /fitness/logs?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55316 - "GET /tasks?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:55316 - "GET /tasks/?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55353 - "GET /fitness/logs?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55353 - "GET /tasks?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:55353 - "GET /tasks/?start=2025-10-31T18:30:00.000Z&end=2025-11-01T18:30:00.000Z HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55516 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55524 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55580 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55920 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56299 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found

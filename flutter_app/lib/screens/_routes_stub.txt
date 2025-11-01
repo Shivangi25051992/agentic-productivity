@@ -1,0 +1,13 @@
+Routes to wire in main.dart:
+/login -> LoginScreen
+/signup -> SignupScreen
+/home -> HomeScreen
+/chat -> ChatScreen
+/tasks -> TaskListScreen
+/fitness -> FitnessDashboardScreen
+/settings -> SettingsScreen
+
+
+
+
+

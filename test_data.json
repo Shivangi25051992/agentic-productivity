@@ -1,0 +1,357 @@
+{
+  "generated_at": "2025-10-31T22:11:50.889714",
+  "week_data": [
+    {
+      "date": "2025-10-24",
+      "day": "Friday",
+      "meals": [
+        {
+          "time": "2025-10-24T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "2 boiled eggs and 2 toast",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-24T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "2 rotis, dal, rice, and sabzi",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-24T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "5 almonds and 1 apple",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-24T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "2 rotis with dal and sabzi",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-24T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "30 min running",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-25",
+      "day": "Saturday",
+      "meals": [
+        {
+          "time": "2025-10-25T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "1 bowl poha with peanuts",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-25T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "1 bowl rice, rajma, and salad",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-25T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "1 banana",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-25T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "grilled chicken with salad",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-25T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "45 min gym workout",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-26",
+      "day": "Sunday",
+      "meals": [
+        {
+          "time": "2025-10-26T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "2 parathas with curd",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-26T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "chicken curry with 3 rotis",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-26T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "10 pistachios",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-26T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "200g paneer tikka with vegetables",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-26T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "1 hour yoga",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-27",
+      "day": "Monday",
+      "meals": [
+        {
+          "time": "2025-10-27T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "1 bowl upma",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-27T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "fish curry with rice",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-27T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "1 cup chai with 2 biscuits",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-27T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "fish with steamed vegetables",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-27T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "20 min HIIT",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-28",
+      "day": "Tuesday",
+      "meals": [
+        {
+          "time": "2025-10-28T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "2 idlis with sambar",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-28T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "paneer tikka with rotis",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-28T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "1 bowl sprouts",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-28T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "egg curry with 2 rotis",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-28T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "1 hour cycling",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-29",
+      "day": "Wednesday",
+      "meals": [
+        {
+          "time": "2025-10-29T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "1 bowl oats with milk and banana",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-29T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "chole bhature",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-29T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "1 fruit salad",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-29T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "vegetable pulao with raita",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-29T18:00:50.889719",
+          "meal_type": "workout",
+          "input": "30 min swimming",
+          "expected_category": "workout"
+        }
+      ]
+    },
+    {
+      "date": "2025-10-30",
+      "day": "Thursday",
+      "meals": [
+        {
+          "time": "2025-10-30T08:00:50.889719",
+          "meal_type": "breakfast",
+          "input": "2 dosas with chutney",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-30T13:00:50.889719",
+          "meal_type": "lunch",
+          "input": "biryani with raita",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-30T16:00:50.889719",
+          "meal_type": "snack",
+          "input": "2 boiled eggs",
+          "expected_category": "meal"
+        },
+        {
+          "time": "2025-10-30T20:00:50.889719",
+          "meal_type": "dinner",
+          "input": "dal khichdi with curd",
+          "expected_category": "meal"
+        }
+      ]
+    }
+  ],
+  "complex_cases": [
+    {
+      "test_id": "complex_1",
+      "input": "i ate 2 eggs in the morning, 1 bowl of rice and 1 bowl of curd during day time, 5 pistachios during afternoon, 200gm of spinach, 1 bowl of rice in the evening",
+      "expected_meal_count": 4,
+      "expected_meal_types": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "description": "Multi-food input with time markers"
+    },
+    {
+      "test_id": "complex_2",
+      "input": "breakfast: 2 parathas with curd, lunch: chicken curry with rice, snack: banana, dinner: dal and rotis",
+      "expected_meal_count": 4,
+      "expected_meal_types": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "description": "Multi-food input with time markers"
+    },
+    {
+      "test_id": "complex_3",
+      "input": "morning had oats, lunch was biryani, evening snack was almonds, dinner was light salad",
+      "expected_meal_count": 4,
+      "expected_meal_types": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "description": "Multi-food input with time markers"
+    },
+    {
+      "test_id": "complex_4",
+      "input": "2 eggs and toast for breakfast, rice dal sabzi for lunch, evening chai with biscuits, dinner was grilled chicken",
+      "expected_meal_count": 4,
+      "expected_meal_types": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "description": "Multi-food input with time markers"
+    },
+    {
+      "test_id": "complex_5",
+      "input": "ate poha in morning, had chole bhature for lunch, evening had fruit, dinner was light khichdi",
+      "expected_meal_count": 4,
+      "expected_meal_types": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "description": "Multi-food input with time markers"
+    }
+  ],
+  "edge_cases": [
+    {
+      "test_id": "edge_1",
+      "input": "eggs",
+      "expected_clarification": true,
+      "description": "Ambiguous input - should ask for quantity"
+    },
+    {
+      "test_id": "edge_2",
+      "input": "I ate something",
+      "expected_clarification": true,
+      "description": "Very vague input"
+    },
+    {
+      "test_id": "edge_3",
+      "input": "200g chicken breast, grilled",
+      "expected_meal_count": 1,
+      "expected_calories_range": [
+        300,
+        350
+      ],
+      "description": "Specific portion with preparation"
+    },
+    {
+      "test_id": "edge_4",
+      "input": "1 bowl rice",
+      "expected_meal_count": 1,
+      "expected_calories_range": [
+        250,
+        280
+      ],
+      "description": "Common Indian portion"
+    },
+    {
+      "test_id": "edge_5",
+      "input": "2 rotis with dal",
+      "expected_meal_count": 1,
+      "expected_food_items": [
+        "roti",
+        "dal"
+      ],
+      "description": "Common Indian meal combo"
+    }
+  ]
+}

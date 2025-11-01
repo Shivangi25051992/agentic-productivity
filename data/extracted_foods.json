@@ -1,0 +1,4066 @@
+{
+  "vegetable": {
+    "name": "Vegetable",
+    "entries": [
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      },
+      {
+        "name": "Vegetable",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 235.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 11.8,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 3.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 11.8,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "carbs_g": 3.0
+    },
+    "avg_weight_g": 235.0
+  },
+  "asparagus, fresh": {
+    "name": "Asparagus, Fresh",
+    "entries": [
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      },
+      {
+        "name": "Asparagus, Fresh",
+        "quantity": "1",
+        "unit": "bunch",
+        "weight_g": 200.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 40.0,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 7.8
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 40.0,
+      "protein_g": 4.4,
+      "fat_g": 0.2,
+      "carbs_g": 7.8
+    },
+    "avg_weight_g": 200.0
+  },
+  "tofu": {
+    "name": "Tofu",
+    "entries": [
+      {
+        "name": "Tofu",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 324.0,
+          "protein_g": 22.6,
+          "fat_g": 24.2,
+          "carbs_g": 10.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 324.0,
+      "protein_g": 22.6,
+      "fat_g": 24.2,
+      "carbs_g": 10.6
+    },
+    "avg_weight_g": 120.0
+  },
+  "white rice": {
+    "name": "White Rice",
+    "entries": [
+      {
+        "name": "White Rice",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 100.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 360.0,
+          "protein_g": 6.6,
+          "fat_g": 0.6,
+          "carbs_g": 79.3
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.8,
+          "protein_g": 4.2,
+          "fat_g": 0.4,
+          "carbs_g": 50.0
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.8,
+          "protein_g": 4.2,
+          "fat_g": 0.4,
+          "carbs_g": 50.0
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 226.8,
+          "protein_g": 4.2,
+          "fat_g": 0.4,
+          "carbs_g": 50.0
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 65.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 234.0,
+          "protein_g": 4.3,
+          "fat_g": 0.4,
+          "carbs_g": 51.6
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 100.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 360.0,
+          "protein_g": 6.6,
+          "fat_g": 0.6,
+          "carbs_g": 79.3
+        }
+      },
+      {
+        "name": "White Rice",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 65.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 234.0,
+          "protein_g": 4.3,
+          "fat_g": 0.4,
+          "carbs_g": 51.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 266.9,
+      "protein_g": 4.9,
+      "fat_g": 0.5,
+      "carbs_g": 58.8
+    },
+    "avg_weight_g": 74.1
+  },
+  "water": {
+    "name": "Water",
+    "entries": [
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Water",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 236.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 0.0,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 236.0
+  },
+  "organic cacao powder": {
+    "name": "Organic Cacao Powder",
+    "entries": [
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Organic Cacao Powder",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 5.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 0.0,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 5.0
+  },
+  "chia seeds": {
+    "name": "Chia seeds",
+    "entries": [
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      },
+      {
+        "name": "Chia seeds",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 20.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 97.2,
+          "protein_g": 3.3,
+          "fat_g": 6.1,
+          "carbs_g": 8.4
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 97.2,
+      "protein_g": 3.3,
+      "fat_g": 6.1,
+      "carbs_g": 8.4
+    },
+    "avg_weight_g": 20.0
+  },
+  "husk": {
+    "name": "Husk",
+    "entries": [
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Husk",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 13.0,
+        "meal_type": "before_bed",
+        "macros": {
+          "calories": 0.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 0.0,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 13.0
+  },
+  "pineapple, fresh": {
+    "name": "Pineapple, Fresh",
+    "entries": [
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      },
+      {
+        "name": "Pineapple, Fresh",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 165.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 82.5,
+          "protein_g": 0.9,
+          "fat_g": 0.2,
+          "carbs_g": 21.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 82.5,
+      "protein_g": 0.9,
+      "fat_g": 0.2,
+      "carbs_g": 21.6
+    },
+    "avg_weight_g": 165.0
+  },
+  "black beans, canned": {
+    "name": "Black Beans, Canned",
+    "entries": [
+      {
+        "name": "Black Beans, Canned",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 100.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 91.0,
+          "protein_g": 6.0,
+          "fat_g": 0.3,
+          "carbs_g": 16.6
+        }
+      },
+      {
+        "name": "Black Beans, Canned",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 100.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 91.0,
+          "protein_g": 6.0,
+          "fat_g": 0.3,
+          "carbs_g": 16.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 91.0,
+      "protein_g": 6.0,
+      "fat_g": 0.3,
+      "carbs_g": 16.6
+    },
+    "avg_weight_g": 100.0
+  },
+  "rye bread": {
+    "name": "Rye Bread",
+    "entries": [
+      {
+        "name": "Rye Bread",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 7.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 18.1,
+          "protein_g": 0.6,
+          "fat_g": 0.2,
+          "carbs_g": 3.4
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 18.1,
+      "protein_g": 0.6,
+      "fat_g": 0.2,
+      "carbs_g": 3.4
+    },
+    "avg_weight_g": 7.0
+  },
+  "peanuts, raw": {
+    "name": "Peanuts, Raw",
+    "entries": [
+      {
+        "name": "Peanuts, Raw",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 28.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 160.7,
+          "protein_g": 7.3,
+          "fat_g": 14.0,
+          "carbs_g": 4.6
+        }
+      },
+      {
+        "name": "Peanuts, Raw",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 28.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 160.7,
+          "protein_g": 7.3,
+          "fat_g": 14.0,
+          "carbs_g": 4.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 160.7,
+      "protein_g": 7.3,
+      "fat_g": 14.0,
+      "carbs_g": 4.6
+    },
+    "avg_weight_g": 28.0
+  },
+  "sweet potato": {
+    "name": "Sweet Potato",
+    "entries": [
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 200.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 172.0,
+          "protein_g": 3.1,
+          "fat_g": 0.1,
+          "carbs_g": 40.2
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 200.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 172.0,
+          "protein_g": 3.1,
+          "fat_g": 0.1,
+          "carbs_g": 40.2
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 200.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 172.0,
+          "protein_g": 3.1,
+          "fat_g": 0.1,
+          "carbs_g": 40.2
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 250.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 215.0,
+          "protein_g": 3.9,
+          "fat_g": 0.1,
+          "carbs_g": 50.3
+        }
+      },
+      {
+        "name": "Sweet Potato",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 200.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 172.0,
+          "protein_g": 3.1,
+          "fat_g": 0.1,
+          "carbs_g": 40.2
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 204.2,
+      "protein_g": 3.7,
+      "fat_g": 0.1,
+      "carbs_g": 47.8
+    },
+    "avg_weight_g": 237.5
+  },
+  "4 bean mix": {
+    "name": "4 Bean Mix",
+    "entries": [
+      {
+        "name": "4 Bean Mix",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 130.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 49.4,
+          "protein_g": 0.9,
+          "fat_g": 0.1,
+          "carbs_g": 11.5
+        }
+      },
+      {
+        "name": "4 Bean Mix",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 130.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 49.4,
+          "protein_g": 0.9,
+          "fat_g": 0.1,
+          "carbs_g": 11.5
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 49.4,
+      "protein_g": 0.9,
+      "fat_g": 0.1,
+      "carbs_g": 11.5
+    },
+    "avg_weight_g": 130.0
+  },
+  "olive oil": {
+    "name": "Olive Oil",
+    "entries": [
+      {
+        "name": "Olive Oil",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 4.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 35.4,
+          "protein_g": 0.0,
+          "fat_g": 4.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Olive Oil",
+        "quantity": "1",
+        "unit": "tsp",
+        "weight_g": 5.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 44.2,
+          "protein_g": 0.0,
+          "fat_g": 5.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Olive Oil",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 4.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 35.4,
+          "protein_g": 0.0,
+          "fat_g": 4.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Olive Oil",
+        "quantity": "1",
+        "unit": "teaspoon",
+        "weight_g": 4.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 35.4,
+          "protein_g": 0.0,
+          "fat_g": 4.0,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 37.6,
+      "protein_g": 0.0,
+      "fat_g": 4.2,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 4.2
+  },
+  "broad beans , canned": {
+    "name": "Broad Beans , Canned",
+    "entries": [
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 80.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 56.8,
+          "protein_g": 4.4,
+          "fat_g": 0.2,
+          "carbs_g": 9.9
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      },
+      {
+        "name": "Broad Beans , Canned",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 170.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 120.7,
+          "protein_g": 9.3,
+          "fat_g": 0.4,
+          "carbs_g": 21.1
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 111.6,
+      "protein_g": 8.6,
+      "fat_g": 0.4,
+      "carbs_g": 19.5
+    },
+    "avg_weight_g": 157.1
+  },
+  "snapper/ basa/ barramundi": {
+    "name": "Snapper/ Basa/ Barramundi",
+    "entries": [
+      {
+        "name": "Snapper/ Basa/ Barramundi",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 218.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 218.0,
+          "protein_g": 44.7,
+          "fat_g": 2.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper/ Basa/ Barramundi",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 218.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 218.0,
+          "protein_g": 44.7,
+          "fat_g": 2.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper/ Basa/ Barramundi",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 218.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 218.0,
+          "protein_g": 44.7,
+          "fat_g": 2.9,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 218.0,
+      "protein_g": 44.7,
+      "fat_g": 2.9,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 218.0
+  },
+  "prawns": {
+    "name": "Prawns",
+    "entries": [
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 175.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 148.8,
+          "protein_g": 35.2,
+          "fat_g": 0.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 175.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 148.8,
+          "protein_g": 35.2,
+          "fat_g": 0.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Prawns",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 102.0,
+          "protein_g": 24.1,
+          "fat_g": 0.6,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 111.4,
+      "protein_g": 26.3,
+      "fat_g": 0.7,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 131.0
+  },
+  "pumpkin": {
+    "name": "Pumpkin",
+    "entries": [
+      {
+        "name": "Pumpkin",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 300.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 78.0,
+          "protein_g": 3.0,
+          "fat_g": 0.3,
+          "carbs_g": 19.5
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 78.0,
+      "protein_g": 3.0,
+      "fat_g": 0.3,
+      "carbs_g": 19.5
+    },
+    "avg_weight_g": 300.0
+  },
+  "snapper / basa / barramundi": {
+    "name": "Snapper / Basa / Barramundi",
+    "entries": [
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Snapper / Basa / Barramundi",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 150.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 150.0,
+          "protein_g": 30.8,
+          "fat_g": 2.0,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 150.0,
+      "protein_g": 30.8,
+      "fat_g": 2.0,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 150.0
+  },
+  "brown rice, raw": {
+    "name": "Brown Rice, Raw",
+    "entries": [
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      },
+      {
+        "name": "Brown Rice, Raw",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 63.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 226.3,
+          "protein_g": 4.7,
+          "fat_g": 1.7,
+          "carbs_g": 47.6
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 226.3,
+      "protein_g": 4.7,
+      "fat_g": 1.7,
+      "carbs_g": 47.6
+    },
+    "avg_weight_g": 63.0
+  },
+  "edamame": {
+    "name": "Edamame",
+    "entries": [
+      {
+        "name": "Edamame",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 118.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 128.6,
+          "protein_g": 13.2,
+          "fat_g": 5.6,
+          "carbs_g": 9.0
+        }
+      },
+      {
+        "name": "Edamame",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 118.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 128.6,
+          "protein_g": 13.2,
+          "fat_g": 5.6,
+          "carbs_g": 9.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 128.6,
+      "protein_g": 13.2,
+      "fat_g": 5.6,
+      "carbs_g": 9.0
+    },
+    "avg_weight_g": 118.0
+  },
+  "chicken breast": {
+    "name": "Chicken Breast",
+    "entries": [
+      {
+        "name": "Chicken Breast",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 120.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 144.0,
+          "protein_g": 27.0,
+          "fat_g": 3.1,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "Chicken Breast",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 200.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 240.0,
+          "protein_g": 45.0,
+          "fat_g": 5.2,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 192.0,
+      "protein_g": 36.0,
+      "fat_g": 4.2,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 160.0
+  },
+  "egg white": {
+    "name": "Egg White",
+    "entries": [
+      {
+        "name": "Egg White",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 253.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 131.6,
+          "protein_g": 27.6,
+          "fat_g": 0.4,
+          "carbs_g": 1.8
+        }
+      },
+      {
+        "name": "Egg White",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 253.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 131.6,
+          "protein_g": 27.6,
+          "fat_g": 0.4,
+          "carbs_g": 1.8
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 131.6,
+      "protein_g": 27.6,
+      "fat_g": 0.4,
+      "carbs_g": 1.8
+    },
+    "avg_weight_g": 253.0
+  },
+  "banana": {
+    "name": "Banana",
+    "entries": [
+      {
+        "name": "Banana",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 225.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 200.3,
+          "protein_g": 2.5,
+          "fat_g": 0.7,
+          "carbs_g": 51.4
+        }
+      },
+      {
+        "name": "Banana",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 225.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 200.3,
+          "protein_g": 2.5,
+          "fat_g": 0.7,
+          "carbs_g": 51.4
+        }
+      },
+      {
+        "name": "Banana",
+        "quantity": "1",
+        "unit": "cup",
+        "weight_g": 225.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 200.3,
+          "protein_g": 2.5,
+          "fat_g": 0.7,
+          "carbs_g": 51.4
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 200.3,
+      "protein_g": 2.5,
+      "fat_g": 0.7,
+      "carbs_g": 51.4
+    },
+    "avg_weight_g": 225.0
+  },
+  "maple syrup": {
+    "name": "Maple Syrup",
+    "entries": [
+      {
+        "name": "Maple Syrup",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 80.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 216.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 53.9
+        }
+      },
+      {
+        "name": "Maple Syrup",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 80.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 216.0,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 53.9
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 216.0,
+      "protein_g": 0.0,
+      "fat_g": 0.0,
+      "carbs_g": 53.9
+    },
+    "avg_weight_g": 80.0
+  },
+  "mct oil": {
+    "name": "MCT oil",
+    "entries": [
+      {
+        "name": "MCT oil",
+        "quantity": "1",
+        "unit": "tbsp",
+        "weight_g": 13.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 116.0,
+          "protein_g": 0.0,
+          "fat_g": 12.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "MCT oil",
+        "quantity": "1",
+        "unit": "tbsp",
+        "weight_g": 13.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 116.0,
+          "protein_g": 0.0,
+          "fat_g": 12.9,
+          "carbs_g": 0.0
+        }
+      },
+      {
+        "name": "MCT oil",
+        "quantity": "1",
+        "unit": "tbsp",
+        "weight_g": 13.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 116.0,
+          "protein_g": 0.0,
+          "fat_g": 12.9,
+          "carbs_g": 0.0
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 116.0,
+      "protein_g": 0.0,
+      "fat_g": 12.9,
+      "carbs_g": 0.0
+    },
+    "avg_weight_g": 13.0
+  },
+  "lamb mince": {
+    "name": "Lamb Mince",
+    "entries": [
+      {
+        "name": "Lamb Mince",
+        "quantity": "1",
+        "unit": "serving",
+        "weight_g": 115.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 236.9,
+          "protein_g": 21.4,
+          "fat_g": 16.7,
+          "carbs_g": 0.1
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 236.9,
+      "protein_g": 21.4,
+      "fat_g": 16.7,
+      "carbs_g": 0.1
+    },
+    "avg_weight_g": 115.0
+  },
+  "red potato": {
+    "name": "Red Potato",
+    "entries": [
+      {
+        "name": "Red Potato",
+        "quantity": null,
+        "unit": null,
+        "weight_g": 369.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 258.3,
+          "protein_g": 7.0,
+          "fat_g": 0.5,
+          "carbs_g": 58.7
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 258.3,
+      "protein_g": 7.0,
+      "fat_g": 0.5,
+      "carbs_g": 58.7
+    },
+    "avg_weight_g": 369.0
+  },
+  "avocado": {
+    "name": "Avocado",
+    "entries": [
+      {
+        "name": "Avocado",
+        "quantity": "1",
+        "unit": "half",
+        "weight_g": 40.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 64.0,
+          "protein_g": 0.8,
+          "fat_g": 5.9,
+          "carbs_g": 3.4
+        }
+      },
+      {
+        "name": "Avocado",
+        "quantity": "1",
+        "unit": "half",
+        "weight_g": 40.0,
+        "meal_type": null,
+        "macros": {
+          "calories": 64.0,
+          "protein_g": 0.8,
+          "fat_g": 5.9,
+          "carbs_g": 3.4
+        }
+      },
+      {
+        "name": "Avocado",
+        "quantity": "1",
+        "unit": "half",
+        "weight_g": 40.0,
+        "meal_type": "evening_tea",
+        "macros": {
+          "calories": 64.0,
+          "protein_g": 0.8,
+          "fat_g": 5.9,
+          "carbs_g": 3.4
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 64.0,
+      "protein_g": 0.8,
+      "fat_g": 5.9,
+      "carbs_g": 3.4
+    },
+    "avg_weight_g": 40.0
+  },
+  "black beans cooked": {
+    "name": "Black Beans Cooked",
+    "entries": [
+      {
+        "name": "Black Beans Cooked",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 130.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 443.3,
+          "protein_g": 28.1,
+          "fat_g": 1.8,
+          "carbs_g": 81.1
+        }
+      },
+      {
+        "name": "Black Beans Cooked",
+        "quantity": "1",
+        "unit": "portion",
+        "weight_g": 130.0,
+        "meal_type": "dinner",
+        "macros": {
+          "calories": 443.3,
+          "protein_g": 28.1,
+          "fat_g": 1.8,
+          "carbs_g": 81.1
+        }
+      }
+    ],
+    "avg_macros": {
+      "calories": 443.3,
+      "protein_g": 28.1,
+      "fat_g": 1.8,
+      "carbs_g": 81.1
+    },
+    "avg_weight_g": 130.0
+  }
+}
