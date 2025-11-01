@@ -36,6 +36,7 @@ class MealClassificationRequest(BaseModel):
     """Request to classify/confirm a meal"""
     food_items: List[str] = Field(..., description="List of food items")
     timestamp: Optional[datetime] = Field(None, description="When consumed")
+    time_of_day: Optional[str] = Field(None, description="Time as HH:MM string (e.g., '08:00')")
     user_hint: Optional[str] = Field(None, description="User's hint (e.g., 'for breakfast')")
 
 
@@ -206,7 +207,18 @@ async def classify_meal(
     parser = MultiFoodParser()
     
     # Determine timestamp
-    timestamp = request.timestamp or datetime.now()
+    if request.timestamp:
+        timestamp = request.timestamp
+    elif request.time_of_day:
+        # Parse time_of_day string (HH:MM format)
+        try:
+            hour_str, minute_str = request.time_of_day.split(":")
+            timestamp = datetime.now().replace(hour=int(hour_str), minute=int(minute_str))
+        except (ValueError, AttributeError):
+            timestamp = datetime.now()
+    else:
+        timestamp = datetime.now()
+    
     hour = timestamp.hour
     
     # Time-based classification
