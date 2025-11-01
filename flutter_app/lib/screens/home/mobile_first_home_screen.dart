@@ -6,6 +6,7 @@ import '../../providers/dashboard_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../meals/meal_detail_screen.dart';
+import '../../widgets/meals/expandable_meal_card.dart';
 
 /// Mobile-First Dashboard - Clean, Card-Based Layout
 /// Optimized for thumb-zone and one-handed use
@@ -520,119 +521,63 @@ class _MacroRow extends StatelessWidget {
   }
 }
 
-// Today's Meals Card
+// Today's Meals Card - Now uses expandable cards
 class _TodaysMealsCard extends StatelessWidget {
   final List<Map<String, dynamic>> meals;
 
   const _TodaysMealsCard({required this.meals});
 
-  String _getMealIcon(String type) {
-    switch (type) {
-      case 'breakfast': return '🌅';
-      case 'lunch': return '🌞';
-      case 'snack': return '🍎';
-      case 'dinner': return '🌙';
-      default: return '🍽️';
-    }
-  }
-
-  String _getMealLabel(String type) {
-    return type[0].toUpperCase() + type.substring(1);
-  }
-
-  void _showMealDetail(BuildContext context, Map<String, dynamic> meal) {
-    if (!meal['logged'] || meal['activities'] == null || (meal['activities'] as List).isEmpty) {
-      // If no meals logged, go to chat to log
-      Navigator.of(context).pushNamed('/chat');
-      return;
-    }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => MealDetailScreen(
-          mealType: meal['type'],
-          activities: meal['activities'] as List<dynamic>,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '📊 Today\'s Meals',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ...meals.map((meal) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: InkWell(
-                onTap: () => _showMealDetail(context, meal),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  child: Row(
-                    children: [
-                      Text(
-                        _getMealIcon(meal['type']),
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getMealLabel(meal['type']),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            if (meal['logged'])
-                              Text(
-                                '${meal['calories']} cal • ${meal['count']} item${meal['count'] > 1 ? 's' : ''}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      if (!meal['logged'])
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pushNamed('/chat'),
-                          child: const Text('Log'),
-                        )
-                      else
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.check_circle, color: Colors.green.shade400, size: 20),
-                            const SizedBox(width: 4),
-                            Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
-                          ],
-                        ),
-                    ],
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                '📊 Today\'s Meals',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            )),
-          ],
+              TextButton.icon(
+                onPressed: () => Navigator.of(context).pushNamed('/chat'),
+                icon: const Icon(Icons.add_circle_outline, size: 18),
+                label: const Text('Log Food'),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+        ...meals.map((meal) => ExpandableMealCard(
+          mealType: meal['type'],
+          activities: (meal['activities'] as List<dynamic>?) ?? [],
+          onEdit: () {
+            // TODO: Navigate to edit screen
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Edit feature coming soon!')),
+            );
+          },
+          onDelete: () {
+            // TODO: Implement delete
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Delete feature coming soon!')),
+            );
+          },
+          onMove: (newMealType) {
+            // TODO: Implement move
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Move to $newMealType coming soon!')),
+            );
+          },
+        )),
+      ],
     );
   }
 }
