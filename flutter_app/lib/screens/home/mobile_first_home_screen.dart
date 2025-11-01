@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../providers/profile_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../meals/meal_detail_screen.dart';
 
 /// Mobile-First Dashboard - Clean, Card-Based Layout
 /// Optimized for thumb-zone and one-handed use
@@ -215,6 +216,7 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
         'count': typeMeals.length,
         'calories': totalCal,
         'logged': typeMeals.isNotEmpty,
+        'activities': typeMeals, // Include activities for detail view
       });
     }
     
@@ -538,6 +540,23 @@ class _TodaysMealsCard extends StatelessWidget {
     return type[0].toUpperCase() + type.substring(1);
   }
 
+  void _showMealDetail(BuildContext context, Map<String, dynamic> meal) {
+    if (!meal['logged'] || meal['activities'] == null || (meal['activities'] as List).isEmpty) {
+      // If no meals logged, go to chat to log
+      Navigator.of(context).pushNamed('/chat');
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MealDetailScreen(
+          mealType: meal['type'],
+          activities: meal['activities'] as List<dynamic>,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -558,43 +577,57 @@ class _TodaysMealsCard extends StatelessWidget {
             const SizedBox(height: 16),
             ...meals.map((meal) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: [
-                  Text(
-                    _getMealIcon(meal['type']),
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _getMealLabel(meal['type']),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (meal['logged'])
-                          Text(
-                            '${meal['calories']} cal',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade600,
+              child: InkWell(
+                onTap: () => _showMealDetail(context, meal),
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  child: Row(
+                    children: [
+                      Text(
+                        _getMealIcon(meal['type']),
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _getMealLabel(meal['type']),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                      ],
-                    ),
+                            if (meal['logged'])
+                              Text(
+                                '${meal['calories']} cal • ${meal['count']} item${meal['count'] > 1 ? 's' : ''}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (!meal['logged'])
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pushNamed('/chat'),
+                          child: const Text('Log'),
+                        )
+                      else
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.check_circle, color: Colors.green.shade400, size: 20),
+                            const SizedBox(width: 4),
+                            Icon(Icons.chevron_right, color: Colors.grey.shade400, size: 20),
+                          ],
+                        ),
+                    ],
                   ),
-                  if (!meal['logged'])
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pushNamed('/chat'),
-                      child: const Text('Log'),
-                    )
-                  else
-                    Icon(Icons.check_circle, color: Colors.green.shade400, size: 20),
-                ],
+                ),
               ),
             )),
           ],
