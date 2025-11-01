@@ -154,8 +154,8 @@ class MultiFoodParser:
         """
         foods = []
         
-        # Split by common separators
-        parts = re.split(r',|\band\b', text)
+        # Split by common separators: comma, 'and', or '+'
+        parts = re.split(r'[,+]|\band\b', text)
         
         for part in parts:
             part = part.strip()
@@ -163,8 +163,8 @@ class MultiFoodParser:
                 continue
             
             # Extract quantity and food name
-            # Pattern: "2 eggs", "1 bowl of rice", "200g chicken"
-            quantity_match = re.match(r'^(\d+\.?\d*\s*(?:g|gm|kg|ml|l|bowl|cup|piece|roti|egg)?)\s+(.+)$', part)
+            # Pattern: "2 eggs", "1 bowl of rice", "200g chicken", "1.5 litres of water"
+            quantity_match = re.match(r'^(\d+\.?\d*\s*(?:g|gm|kg|ml|l|litre|litres|liter|liters|bowl|cup|glass|piece|roti|egg)?)\s+(.+)$', part)
             
             if quantity_match:
                 quantity = quantity_match.group(1).strip()
@@ -333,6 +333,11 @@ class MultiFoodParser:
                     if unit in ["glass", "cup"]:
                         ml = 240 * amount
                         multiplier = ml / 100.0
+                    elif unit in ["l", "litre", "litres", "liter", "liters"]:
+                        ml = 1000 * amount
+                        multiplier = ml / 100.0
+                    elif unit in ["ml"]:
+                        multiplier = amount / 100.0
                     else:
                         multiplier = amount / 100.0
                 else:
