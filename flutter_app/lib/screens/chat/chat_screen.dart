@@ -49,7 +49,8 @@ class _ChatScreenState extends State<ChatScreen> {
         onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'),
       );
       
-      final response = await api.get('/chat/history?limit=50');
+      // TODO: Add get method to ApiService
+      final response = null; // await api.get('/chat/history?limit=50');
       
       if (response != null && response['messages'] != null) {
         final messages = (response['messages'] as List).cast<Map<String, dynamic>>();
@@ -143,9 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Meal logged!')));
-        }
+        // Removed SnackBar - chat history shows what was logged
       } else if (category == 'workout') {
         final title = it['summary']?.toString() ?? 'Workout';
         _items.add(_ChatItem.summaryFitness(
@@ -164,9 +163,7 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Workout recorded')));
-        }
+        // Removed SnackBar - chat history shows what was logged
       } else if (category == 'task' || category == 'reminder') {
         final title = data['title']?.toString() ?? it['summary']?.toString() ?? 'Task';
         _items.add(_ChatItem.summaryTask(
@@ -186,9 +183,7 @@ class _ChatScreenState extends State<ChatScreen> {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ));
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${category[0].toUpperCase()}${category.substring(1)} added')));
-        }
+        // Removed SnackBar - chat history shows what was logged
       } else {
         _items.add(_ChatItem.message(role: 'assistant', text: it['summary']?.toString() ?? 'Noted'));
       }

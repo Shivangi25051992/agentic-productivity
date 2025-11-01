@@ -355,11 +355,14 @@ async def chat_endpoint(
                 items = []
                 for entry in meal_entries:
                     macros = parser.calculate_macros(entry)
+                    # Create description with quantity if available
+                    description = f"{entry.quantity} {entry.food}" if entry.quantity else entry.food
                     items.append(ChatItem(
                         category="meal",
                         summary=f"{entry.food} ({entry.meal_type})",
                         data={
                             "meal": entry.food,
+                            "description": description,  # Add description for UI display
                             "meal_type": entry.meal_type,
                             "quantity": entry.quantity,
                             "calories": macros.get("calories", 0),
@@ -395,11 +398,14 @@ async def chat_endpoint(
                         clarification_question=clarification_msg
                     )
                 
+                # Create description with quantity if available
+                description = f"{entry.quantity} {entry.food}" if entry.quantity else entry.food
                 items = [ChatItem(
                     category="meal",
                     summary=f"{entry.food} ({entry.meal_type})",
                     data={
                         "meal": entry.food,
+                        "description": description,  # Add description for UI display
                         "meal_type": entry.meal_type,
                         "quantity": entry.quantity or macros.get("assumed_quantity"),
                         "calories": macros.get("calories", 0),
