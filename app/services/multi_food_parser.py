@@ -6,7 +6,9 @@ Example: "2 eggs morning, rice lunch, pistachios afternoon" → 3 separate meals
 import re
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime, time
-from app.services.firestore_food_service import get_food_info, search_foods
+from app.data.indian_foods import INDIAN_FOODS
+from app.data.supplements_and_misc import SUPPLEMENTS_AND_MISC
+from app.services.nutrition_db import find_food, get_nutrition_info
 
 class MealEntry:
     """Represents a single meal entry"""
@@ -224,25 +226,68 @@ class MultiFoodParser:
     
     def calculate_macros(self, meal: MealEntry) -> Dict:
         """Calculate macros for a meal entry"""
-        food_info = get_food_info(meal.food)
+        # Clean food name
+        food_name = meal.food.lower().strip()
+        
+        # Search order: Supplements -> Indian Foods -> Nutrition DB
+        food_info = None
+        
+        # 1. Try supplements and misc database first (for vitamins, water, etc.)
+        for key, data in SUPPLEMENTS_AND_MISC.items():
+            if key.replace("_", " ") in food_name or food_name in key.replace("_", " "):
+                food_info = data
+                break
+            # Check aliases
+            if "aliases" in data:
+                for alias in data["aliases"]:
+                    if alias in food_name or food_name in alias:
+                        food_info = data
+                        break
+                if food_info:
+                    break
+        
+        # 2. Try Indian foods database
+        if not food_info:
+            for key, data in INDIAN_FOODS.items():
+                if key in food_name or food_name in key:
+                    food_info = data
+                    break
+                # Check aliases
+                if "aliases" in data:
+                    for alias in data["aliases"]:
+                        if alias in food_name or food_name in alias:
+                            food_info = data
+                            break
+                    if food_info:
+                        break
+        
+        # 3. Try nutrition_db
+        if not food_info:
+            nutrition_data = find_food(food_name)
+            if nutrition_data:
+                # Convert NutritionData to dict format
+                food_info = {
+                    "name": nutrition_data.name,
+                    "per_100g": {
+                        "calories": nutrition_data.calories,
+                        "protein": nutrition_data.protein_g,
+                        "carbs": nutrition_data.carbs_g,
+                        "fat": nutrition_data.fat_g,
+                        "fiber": nutrition_data.fiber_g
+                    }
+                }
         
         if not food_info:
-            # Try fuzzy search
-            results = search_foods(meal.food)
-            if results:
-                food_info = results[0][1]
-        
-        if not food_info:
-            # Fallback: estimate
+            # Fallback: Use LLM or return clarification
             return {
-                "calories": 200,
-                "protein": 10,
-                "carbs": 25,
-                "fat": 5,
-                "fiber": 2,
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0,
                 "estimated": True,
                 "needs_clarification": True,
-                "clarification_question": f"I couldn't find '{meal.food}' in my database. Could you provide more details or specify the quantity?"
+                "clarification_question": f"I couldn't find '{meal.food}' in my database. Could you provide more details?"
             }
         
         # Calculate based on quantity
@@ -333,14 +378,29 @@ class MultiFoodParser:
                 "fiber": round(macros.get("fiber", 0) * multiplier, 1),
                 "estimated": False
             }
-        else:
+        elif "per_100ml" in food_info:
+            # Default to 1 glass (250ml)
+            macros = food_info["per_100ml"]
+            multiplier = 2.5  # 250ml
             return {
-                "calories": 200,
-                "protein": 10,
-                "carbs": 25,
-                "fat": 5,
-                "fiber": 2,
-                "estimated": True
+                "calories": round(macros["calories"] * multiplier, 1),
+                "protein": round(macros["protein"] * multiplier, 1),
+                "carbs": round(macros["carbs"] * multiplier, 1),
+                "fat": round(macros["fat"] * multiplier, 1),
+                "fiber": round(macros.get("fiber", 0) * multiplier, 1),
+                "estimated": False
+            }
+        else:
+            # Should not reach here, but if it does, return clarification
+            return {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0,
+                "estimated": True,
+                "needs_clarification": True,
+                "clarification_question": f"I need more information about '{meal.food}'. Could you specify the quantity or preparation method?"
             }
 
 # Singleton instance

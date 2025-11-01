@@ -68,3 +68,31 @@ INFO:     127.0.0.1:55524 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
 INFO:     127.0.0.1:55580 - "GET /health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:55920 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
 INFO:     127.0.0.1:56299 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56800 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57219 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57679 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58116 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58217 - "GET /admin HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:58217 - "GET /admin/ HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58217 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58523 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58989 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59423 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59825 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60231 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60703 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61164 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61659 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62025 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62466 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62880 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63276 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63669 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64086 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64533 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64937 - "GET /LatestDatav1.csv HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [83099]
+INFO:     Stopping reloader process [82995]
