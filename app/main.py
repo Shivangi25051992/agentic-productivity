@@ -272,6 +272,16 @@ async def chat_endpoint(
     started = time.time()
     text = (req.user_input or "").strip()
     
+    # Validate input - reject meaningless single characters or very short inputs
+    if len(text) < 2:
+        return ChatResponse(
+            items=[],
+            original=text,
+            message="Please provide more details. For example: '2 eggs for breakfast' or 'ran 5k'",
+            needs_clarification=True,
+            clarification_question="What would you like to log? (meals, workouts, tasks, etc.)"
+        )
+    
     # Get chat history service
     chat_history = get_chat_history_service()
     user_id = current_user.user_id  # Fixed: User model uses 'user_id' not 'uid'
@@ -478,12 +488,30 @@ async def chat_endpoint(
                     items_list = it.data.get("items")
                     meal_content = ", ".join(items_list) if isinstance(items_list, list) else str(items_list) if items_list else text
                 
+                # Ensure ai_parsed_data has all required fields for meal detail view
+                ai_data = it.data.copy()
+                if "description" not in ai_data:
+                    ai_data["description"] = meal_content
+                if "meal_type" not in ai_data:
+                    # Infer meal type from current time
+                    current_hour = datetime.now().hour
+                    if 5 <= current_hour < 11:
+                        ai_data["meal_type"] = "breakfast"
+                    elif 11 <= current_hour < 15:
+                        ai_data["meal_type"] = "lunch"
+                    elif 15 <= current_hour < 18:
+                        ai_data["meal_type"] = "snack"
+                    elif 18 <= current_hour < 23:
+                        ai_data["meal_type"] = "dinner"
+                    else:
+                        ai_data["meal_type"] = "snack"
+                
                 log = FitnessLog(
                     user_id=current_user.user_id,
                     log_type=FitnessLogType.meal,
                     content=meal_content,
                     calories=it.data.get("calories"),
-                    ai_parsed_data=it.data,
+                    ai_parsed_data=ai_data,
                 )
                 dbsvc.create_fitness_log(log)
             elif it.category == "workout":
