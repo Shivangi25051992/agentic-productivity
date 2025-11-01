@@ -7,6 +7,8 @@ import '../../providers/profile_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../meals/meal_detail_screen.dart';
 import '../../widgets/meals/expandable_meal_card.dart';
+import '../../widgets/insights/ai_insights_card.dart';
+import '../../services/api_service.dart';
 
 /// Mobile-First Dashboard - Clean, Card-Based Layout
 /// Optimized for thumb-zone and one-handed use
@@ -18,6 +20,10 @@ class MobileFirstHomeScreen extends StatefulWidget {
 }
 
 class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
+  List<Map<String, dynamic>> _insights = [];
+  String? _insightsSummary;
+  bool _isLoadingInsights = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,12 +46,37 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
     }
 
     await dashboard.fetchDailyStats(auth);
+    await _loadInsights();
+  }
+
+  Future<void> _loadInsights() async {
+    setState(() => _isLoadingInsights = true);
+    try {
+      final auth = context.read<AuthProvider>();
+      final api = ApiService(auth, onUnauthorized: () {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      
+      final response = await api.dio.get('/insights');
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data as Map<String, dynamic>;
+        setState(() {
+          _insights = (data['insights'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          _insightsSummary = data['summary'] as String?;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading insights: $e');
+    } finally {
+      setState(() => _isLoadingInsights = false);
+    }
   }
 
   Future<void> _refreshData() async {
     final auth = context.read<AuthProvider>();
     final dashboard = context.read<DashboardProvider>();
     await dashboard.fetchDailyStats(auth);
+    await _loadInsights();
   }
 
   @override
@@ -139,6 +170,16 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                         ),
                         
                         const SizedBox(height: 16),
+                        
+                        // AI Insights Card (THE DIFFERENTIATOR!)
+                        if (_insights.isNotEmpty || _insightsSummary != null)
+                          AIInsightsCard(
+                            insights: _insights,
+                            summary: _insightsSummary,
+                          ),
+                        
+                        if (_insights.isNotEmpty || _insightsSummary != null)
+                          const SizedBox(height: 16),
                         
                         // Macros Card
                         _MacrosCard(

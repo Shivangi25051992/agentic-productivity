@@ -72,6 +72,105 @@ app.include_router(feedback_router)
 from app.routers.meals import router as meals_router
 app.include_router(meals_router)
 
+# AI Insights endpoint
+@app.get("/insights")
+async def get_ai_insights(current_user: User = Depends(get_current_user)):
+    """Get AI-powered insights for the user"""
+    from app.services.ai_insights_service import get_insights_service
+    from app.services.database import get_database_service
+    
+    dbsvc = get_database_service()
+    insights_service = get_insights_service()
+    
+    # Get user's profile for goals
+    profile = dbsvc.get_user_profile(current_user.user_id)
+    if not profile:
+        return {"insights": [], "summary": "Complete your profile to get personalized insights!"}
+    
+    # Get today's stats
+    from datetime import datetime, timezone
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    logs = dbsvc.list_fitness_logs_by_user(
+        user_id=current_user.user_id,
+        start_ts=today_start,
+        log_type=None,
+        limit=100
+    )
+    
+    # Calculate totals
+    calories_consumed = 0
+    calories_burned = 0
+    protein_g = 0.0
+    carbs_g = 0.0
+    fat_g = 0.0
+    
+    for log in logs:
+        if log.log_type.value == "meal":
+            calories_consumed += log.calories or 0
+            if log.ai_parsed_data:
+                protein_g += log.ai_parsed_data.get("protein_g", 0)
+                carbs_g += log.ai_parsed_data.get("carbs_g", 0)
+                fat_g += log.ai_parsed_data.get("fat_g", 0)
+        elif log.log_type.value == "workout":
+            calories_burned += log.calories or 0
+    
+    # Get goals from profile
+    goals = profile.daily_goals
+    calories_goal = goals.calories
+    protein_goal = goals.protein_g
+    carbs_goal = goals.carbs_g
+    fat_goal = goals.fat_g
+    
+    # Calculate streak (simplified - just check if logged today)
+    streak_days = 1 if len(logs) > 0 else 0
+    
+    # Get user's fitness goal
+    user_goal = "lose_weight"  # Default
+    if hasattr(profile, 'fitness_goal'):
+        goal_map = {
+            "lose_weight": "lose_weight",
+            "gain_muscle": "gain_weight",
+            "maintain": "maintain"
+        }
+        user_goal = goal_map.get(profile.fitness_goal, "lose_weight")
+    
+    # Generate insights
+    insights = insights_service.generate_insights(
+        calories_consumed=calories_consumed,
+        calories_goal=calories_goal,
+        calories_burned=calories_burned,
+        protein_g=protein_g,
+        protein_goal=protein_goal,
+        carbs_g=carbs_g,
+        carbs_goal=carbs_goal,
+        fat_g=fat_g,
+        fat_goal=fat_goal,
+        streak_days=streak_days,
+        user_goal=user_goal
+    )
+    
+    # Generate summary
+    summary = insights_service.generate_daily_summary(
+        calories_consumed=calories_consumed,
+        calories_goal=calories_goal,
+        protein_g=protein_g,
+        protein_goal=protein_goal,
+        user_goal=user_goal
+    )
+    
+    return {
+        "insights": [insight.to_dict() for insight in insights],
+        "summary": summary,
+        "stats": {
+            "calories_consumed": calories_consumed,
+            "calories_goal": calories_goal,
+            "calories_burned": calories_burned,
+            "protein_g": protein_g,
+            "protein_goal": protein_goal,
+            "streak_days": streak_days
+        }
+    }
+
 # Health check endpoint
 @app.get("/health")
 def health_check():
