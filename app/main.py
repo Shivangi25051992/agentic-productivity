@@ -68,6 +68,10 @@ app.include_router(admin_config_router)
 app.include_router(profile_router)
 app.include_router(feedback_router)
 
+# Meal management router
+from app.routers.meals import router as meals_router
+app.include_router(meals_router)
+
 # Health check endpoint
 @app.get("/health")
 def health_check():
