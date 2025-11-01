@@ -24,11 +24,69 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scroll = ScrollController();
   final List<_ChatItem> _items = <_ChatItem>[];
   bool _isTyping = false;
+  bool _isLoadingHistory = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChatHistory();
+  }
 
   @override
   void dispose() {
     _scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadChatHistory() async {
+    setState(() {
+      _isLoadingHistory = true;
+    });
+
+    try {
+      final api = ApiService(
+        context.read<AuthProvider>(),
+        onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'),
+      );
+      
+      final response = await api.get('/chat/history?limit=50');
+      
+      if (response != null && response['messages'] != null) {
+        final messages = (response['messages'] as List).cast<Map<String, dynamic>>();
+        
+        setState(() {
+          _items.clear();
+          for (final msg in messages) {
+            final role = msg['role'] as String?;
+            final content = msg['content'] as String? ?? '';
+            final timestamp = DateTime.parse(msg['timestamp'] as String? ?? DateTime.now().toIso8601String());
+            
+            if (role == 'user') {
+              _items.add(_ChatItem.userMessage(content, timestamp));
+            } else if (role == 'assistant') {
+              _items.add(_ChatItem.aiMessage(content, timestamp));
+            }
+          }
+        });
+        
+        // Scroll to bottom after loading history
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scroll.hasClients) {
+            _scroll.animateTo(
+              _scroll.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
+      }
+    } catch (e) {
+      print('Error loading chat history: $e');
+    } finally {
+      setState(() {
+        _isLoadingHistory = false;
+      });
+    }
   }
 
   Future<void> _handleSend(String text) async {
@@ -250,20 +308,31 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView.builder(
-                controller: _scroll,
-                padding: const EdgeInsets.all(12),
-                itemCount: _items.length + (_isTyping ? 1 : 0),
-                itemBuilder: (context, i) {
-                  if (_isTyping && i == _items.length) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: _TypingIndicator(),
-                    );
-                  }
-                  final item = _items[i];
+            child: _isLoadingHistory
+                ? const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Loading chat history...'),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _refresh,
+                    child: ListView.builder(
+                      controller: _scroll,
+                      padding: const EdgeInsets.all(12),
+                      itemCount: _items.length + (_isTyping ? 1 : 0),
+                      itemBuilder: (context, i) {
+                        if (_isTyping && i == _items.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: _TypingIndicator(),
+                          );
+                        }
+                        final item = _items[i];
                   return item.when(
                     message: (role, text, createdAt) => MessageBubble(
                       text: text,
