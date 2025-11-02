@@ -286,7 +286,7 @@ def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[C
     user_timezone = "UTC"
     if user_id:
         try:
-            from app.services.timezone_service import get_user_local_time, get_user_timezone
+            from services.timezone_service import get_user_local_time, get_user_timezone
             user_local_time = get_user_local_time(user_id)
             user_timezone = get_user_timezone(user_id)
         except Exception as e:
