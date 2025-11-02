@@ -41,7 +41,7 @@ class TimezoneHelper {
     debugPrint('🌍 Mapping offset $offsetKey to timezone');
     
     // Common timezone mappings based on UTC offset
-    const offsetMap = {
+    final offsetMap = {
       // Asia
       '+5:30': 'Asia/Kolkata',      // IST (India)
       '+5:45': 'Asia/Kathmandu',     // NPT (Nepal)
@@ -68,17 +68,12 @@ class TimezoneHelper {
       
       // Americas
       '-3:00': 'America/Sao_Paulo',  // BRT (Brazil)
-      '-4:00': 'America/New_York',   // EDT (US Eastern - summer)
-      '-5:00': 'America/New_York',   // EST (US Eastern - winter)
-      '-6:00': 'America/Chicago',    // CST (US Central)
-      '-7:00': 'America/Denver',     // MST (US Mountain)
-      '-8:00': 'America/Los_Angeles', // PST (US Pacific)
-      '-9:00': 'America/Anchorage',  // AKST (Alaska)
+      '-4:00': 'America/New_York',   // EDT (US Eastern)
+      '-5:00': 'America/Chicago',    // CST (US Central)
+      '-6:00': 'America/Denver',     // MST (US Mountain)
+      '-7:00': 'America/Los_Angeles', // PST (US Pacific)
+      '-8:00': 'America/Anchorage',  // AKST (Alaska)
       '-10:00': 'Pacific/Honolulu',  // HST (Hawaii)
-      
-      // Africa
-      '+1:00': 'Africa/Lagos',       // WAT (West Africa)
-      '+2:00': 'Africa/Cairo',       // EET (Egypt)
     };
     
     final result = offsetMap[offsetKey] ?? 'UTC';
