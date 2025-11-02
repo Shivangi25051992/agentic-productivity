@@ -16,6 +16,7 @@ import 'providers/profile_provider.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/dashboard_provider.dart';
 import 'services/notification_service.dart';
+import 'screens/landing/landing_page.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -123,7 +124,7 @@ class _App extends StatelessWidget {
         '/onboarding/success': (_) => const AuthGuard(child: SuccessScreenEnhanced()),
         '/onboarding/success-old': (_) => const AuthGuard(child: SuccessScreen()),
       },
-      home: auth.isAuthenticated ? const _HomeOrOnboarding() : const LoginScreen(),
+      home: auth.isAuthenticated ? const _HomeOrOnboarding() : const LoginScreen(), // Temporarily bypass landing page
       builder: (context, child) {
         // Error handling wrapper
         ErrorWidget.builder = (FlutterErrorDetails details) {

@@ -8,6 +8,7 @@ import '../../providers/auth_provider.dart';
 import '../meals/meal_detail_screen.dart';
 import '../../widgets/meals/expandable_meal_card.dart';
 import '../../widgets/insights/ai_insights_card.dart';
+import '../../widgets/feedback_button.dart';
 import '../../services/api_service.dart';
 
 /// Mobile-First Dashboard - Clean, Card-Based Layout
@@ -49,6 +50,42 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
     await _loadInsights();
   }
 
+  void _showFeedbackDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '📧 Send Feedback',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Text('Email: shivganga25shingatwar@gmail.com'),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _loadInsights() async {
     setState(() => _isLoadingInsights = true);
     try {
@@ -57,14 +94,11 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
         Navigator.of(context).pushReplacementNamed('/login');
       });
       
-      final response = await api.dio.get('/insights');
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data as Map<String, dynamic>;
-        setState(() {
-          _insights = (data['insights'] as List?)?.cast<Map<String, dynamic>>() ?? [];
-          _insightsSummary = data['summary'] as String?;
-        });
-      }
+      final data = await api.get('/insights'); // Use generic get method
+      setState(() {
+        _insights = (data['insights'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+        _insightsSummary = data['summary'] as String?;
+      });
     } catch (e) {
       debugPrint('Error loading insights: $e');
     } finally {
@@ -82,7 +116,7 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA), // Light background
+      backgroundColor: const Color(0xFAFAFA), // Light background
       body: Consumer3<DashboardProvider, ProfileProvider, AuthProvider>(
         builder: (context, dashboard, profile, auth, child) {
           final caloriesConsumed = dashboard.stats.caloriesConsumed;
@@ -165,8 +199,6 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                           goal: caloriesGoal,
                           remaining: caloriesRemaining,
                           progress: progress,
-                          deficit: calorieDeficit,
-                          isInDeficit: isInDeficit,
                         ),
                         
                         const SizedBox(height: 16),
@@ -219,18 +251,26 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
       // Floating Action Buttons - Thumb Zone Friendly
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          // Feedback Button (Orange, top)
+          FloatingActionButton(
+            onPressed: () => _showFeedbackDialog(context),
+            backgroundColor: Colors.orange,
+            heroTag: 'feedback',
+            child: const Icon(Icons.feedback, color: Colors.white),
+          ),
+          const SizedBox(height: 12),
+          // Log Food Button
           FloatingActionButton.extended(
-            onPressed: () => Navigator.of(context).pushNamed('/chat'),
+            onPressed: () async {
+              await Navigator.of(context).pushNamed('/chat');
+              // Refresh data when returning from chat
+              await _refreshData();
+            },
             icon: const Icon(Icons.chat_bubble),
             label: const Text('Log Food'),
             heroTag: 'chat',
-          ),
-          const SizedBox(height: 12),
-          FloatingActionButton(
-            onPressed: () => Navigator.of(context).pushNamed('/plan'),
-            child: const Icon(Icons.add),
-            heroTag: 'add',
           ),
         ],
       ),
@@ -314,16 +354,12 @@ class _CalorieCard extends StatelessWidget {
   final int goal;
   final int remaining;
   final double progress;
-  final int deficit;
-  final bool isInDeficit;
 
   const _CalorieCard({
     required this.consumed,
     required this.goal,
     required this.remaining,
     required this.progress,
-    required this.deficit,
-    required this.isInDeficit,
   });
 
   @override
@@ -412,48 +448,6 @@ class _CalorieCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey.shade700,
-              ),
-            ),
-            
-            const SizedBox(height: 12),
-            
-            // Calorie Deficit/Surplus Badge
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: isInDeficit ? Colors.green.shade50 : Colors.red.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isInDeficit ? Colors.green.shade200 : Colors.red.shade200,
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    isInDeficit ? Icons.trending_down : Icons.trending_up,
-                    color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    isInDeficit 
-                        ? 'Deficit: ${deficit.abs()} kcal' 
-                        : 'Surplus: ${deficit.abs()} kcal',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    isInDeficit ? Icons.check_circle_outline : Icons.warning_amber_rounded,
-                    color: isInDeficit ? Colors.green.shade700 : Colors.red.shade700,
-                    size: 18,
-                  ),
-                ],
               ),
             ),
             
