@@ -82,9 +82,10 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   }
 
   Future<void> _submitFeedback() async {
-    if (_commentController.text.trim().isEmpty && _screenshot == null) {
+    // Comment is required, screenshot is optional
+    if (_commentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add a comment or screenshot')),
+        const SnackBar(content: Text('Please add a comment (required)')),
       );
       return;
     }
@@ -224,9 +225,9 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               ),
               const SizedBox(height: 24),
 
-              // Comment
+              // Comment (Required)
               const Text(
-                'Comment',
+                'Comment *',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -235,14 +236,18 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               const SizedBox(height: 8),
               TextField(
                 controller: _commentController,
-                maxLines: 4,
+                maxLines: null,  // Unlimited lines - collect as much info as possible
+                minLines: 4,
+                keyboardType: TextInputType.multiline,
+                maxLength: null,  // No character limit for test version
                 decoration: InputDecoration(
-                  hintText: 'Describe the issue or suggestion...',
+                  hintText: 'Describe the issue or suggestion in detail... (required)\n\nPlease be as specific as possible - include steps to reproduce, expected vs actual behavior, etc.',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
                   fillColor: Colors.grey[100],
+                  counterText: '',  // Hide character counter
                 ),
               ),
               const SizedBox(height: 24),
