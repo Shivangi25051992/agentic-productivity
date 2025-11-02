@@ -243,6 +243,190 @@
       if(savedInfo && cfg.updated_at){ savedInfo.textContent = `Last saved: ${cfg.updated_at}`; }
     }catch(e){ /* ignore prefill errors */ }
   }
+
+  /* Feedback View */
+  async function loadFeedbackView(){
+    const content = $('#content');
+    if(!content) return;
+    
+    content.innerHTML = `
+      <section aria-labelledby="feedback-header">
+        <header class="card-header" id="feedback-header">
+          <div>
+            <h2 style="margin:0">User Feedback</h2>
+            <p class="login-subtitle" style="margin:4px 0 0">Review and manage user feedback submissions</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-primary" id="refreshFeedback" style="width:auto;padding:0 14px;height:40px">Refresh</button>
+          </div>
+        </header>
+
+        <div class="cards" style="margin-bottom:20px">
+          <article class="card">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
+              <div style="text-align:center">
+                <div style="font-size:32px;font-weight:bold;color:var(--primary)" id="totalFeedback">-</div>
+                <div style="font-size:14px;color:var(--text-secondary)">Total</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:32px;font-weight:bold;color:#ef4444" id="bugCount">-</div>
+                <div style="font-size:14px;color:var(--text-secondary)">🐛 Bugs</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:32px;font-weight:bold;color:#f59e0b" id="suggestionCount">-</div>
+                <div style="font-size:14px;color:var(--text-secondary)">💡 Suggestions</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:32px;font-weight:bold;color:#3b82f6" id="questionCount">-</div>
+                <div style="font-size:14px;color:var(--text-secondary)">❓ Questions</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:32px;font-weight:bold;color:#10b981" id="praiseCount">-</div>
+                <div style="font-size:14px;color:var(--text-secondary)">👍 Praise</div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button class="btn-primary" data-filter="all" style="width:auto;padding:0 14px;height:36px;background:var(--primary)">All</button>
+          <button class="btn-primary" data-filter="bug" style="width:auto;padding:0 14px;height:36px;background:#ef4444">🐛 Bugs</button>
+          <button class="btn-primary" data-filter="suggestion" style="width:auto;padding:0 14px;height:36px;background:#f59e0b">💡 Suggestions</button>
+          <button class="btn-primary" data-filter="question" style="width:auto;padding:0 14px;height:36px;background:#3b82f6">❓ Questions</button>
+          <button class="btn-primary" data-filter="praise" style="width:auto;padding:0 14px;height:36px;background:#10b981">👍 Praise</button>
+        </div>
+
+        <div id="feedbackList" class="card">
+          <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+            Loading feedback...
+          </div>
+        </div>
+      </section>
+    `;
+
+    // Load stats and feedback
+    await loadFeedbackStats();
+    await loadFeedbackList();
+
+    // Attach handlers
+    $('#refreshFeedback')?.addEventListener('click', async ()=>{
+      await loadFeedbackStats();
+      await loadFeedbackList();
+    });
+
+    $$('[data-filter]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const filter = btn.getAttribute('data-filter');
+        await loadFeedbackList(filter === 'all' ? null : filter);
+      });
+    });
+  }
+
+  async function loadFeedbackStats(){
+    try{
+      const stats = await api('/admin/feedback/stats');
+      setVal('#totalFeedback', stats.total);
+      setVal('#bugCount', stats.bugs);
+      setVal('#suggestionCount', stats.suggestions);
+      setVal('#questionCount', stats.questions);
+      setVal('#praiseCount', stats.praise);
+    }catch(e){
+      showToast('Failed to load stats','error');
+    }
+  }
+
+  async function loadFeedbackList(filterType = null){
+    try{
+      const url = filterType ? `/admin/feedback/list?filter_type=${filterType}` : '/admin/feedback/list';
+      const res = await api(url);
+      const feedbackList = $('#feedbackList');
+      
+      if(!res.feedback || res.feedback.length === 0){
+        feedbackList.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary)">No feedback found</div>';
+        return;
+      }
+
+      feedbackList.innerHTML = res.feedback.map(fb=>{
+        const typeColors = {
+          bug: '#ef4444',
+          suggestion: '#f59e0b',
+          question: '#3b82f6',
+          praise: '#10b981'
+        };
+        const typeEmojis = {
+          bug: '🐛',
+          suggestion: '💡',
+          question: '❓',
+          praise: '👍'
+        };
+        const color = typeColors[fb.type] || '#666';
+        const emoji = typeEmojis[fb.type] || '📝';
+        const statusBadge = fb.status === 'resolved' 
+          ? '<span style="background:#d1fae5;color:#10b981;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:bold">RESOLVED</span>'
+          : '<span style="background:#fef3c7;color:#f59e0b;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:bold">NEW</span>';
+        
+        return `
+          <div style="padding:20px;border-bottom:1px solid var(--border);border-left:4px solid ${color}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <div>
+                <span style="background:${color}20;color:${color};padding:5px 12px;border-radius:20px;font-size:12px;font-weight:bold">${emoji} ${fb.type.toUpperCase()}</span>
+                ${statusBadge}
+              </div>
+              <div style="font-size:12px;color:var(--text-secondary)">${new Date(fb.timestamp).toLocaleString()}</div>
+            </div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
+              <strong>User:</strong> ${fb.user_email} | <strong>Screen:</strong> ${fb.screen}
+            </div>
+            <div style="color:var(--text);line-height:1.6">${fb.comment}</div>
+            ${fb.has_screenshot ? `<div style="margin-top:10px;color:var(--primary);font-size:12px">📷 Screenshot attached (${(fb.screenshot_size/1024).toFixed(1)} KB)</div>` : ''}
+            <div style="display:flex;gap:8px;margin-top:15px">
+              ${fb.status !== 'resolved' ? `<button class="btn-primary" onclick="window.resolveFeedback('${fb.id}')" style="width:auto;padding:0 14px;height:32px;background:#10b981">✓ Mark Resolved</button>` : ''}
+              <button class="btn-primary" onclick="alert('Feedback ID: ${fb.id}')" style="width:auto;padding:0 14px;height:32px">View Details</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }catch(e){
+      showToast('Failed to load feedback','error');
+    }
+  }
+
+  window.resolveFeedback = async (feedbackId)=>{
+    try{
+      await api(`/admin/feedback/${feedbackId}/resolve`, { method:'POST' });
+      showToast('Feedback marked as resolved','success');
+      await loadFeedbackStats();
+      await loadFeedbackList();
+    }catch(e){
+      showToast('Failed to resolve feedback','error');
+    }
+  };
+
+  /* View Router */
+  function attachViewRouter(){
+    $$('[data-view]').forEach(link=>{
+      link.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const view = link.getAttribute('data-view');
+        
+        // Update active state
+        $$('[data-view]').forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+        
+        // Load view
+        if(view === 'feedback'){
+          loadFeedbackView();
+        }
+        // Add other views here as needed
+      });
+    });
+  }
+
+  // Initialize on dashboard page
+  if(document.getElementById('content')){
+    attachDashboardHandlers();
+    attachViewRouter();
+  }
 })();
 
 

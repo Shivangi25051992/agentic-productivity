@@ -90,6 +90,8 @@ app.include_router(auth_router)
 app.include_router(fitness_router)
 app.include_router(admin_auth_router)
 app.include_router(admin_config_router)
+from app.routers.admin_feedback import router as admin_feedback_router
+app.include_router(admin_feedback_router)
 app.include_router(profile_router)
 app.include_router(feedback_router)
 
