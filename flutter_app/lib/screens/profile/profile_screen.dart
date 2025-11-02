@@ -464,10 +464,7 @@ class ProfileScreen extends StatelessWidget {
           height: 50,
           child: OutlinedButton.icon(
             onPressed: () {
-              // TODO: Implement edit profile
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit profile coming soon!')),
-              );
+              Navigator.of(context).pushNamed('/profile/edit');
             },
             icon: const Icon(Icons.edit),
             label: const Text('Edit Profile'),
