@@ -47,9 +47,10 @@ class FeedbackDialog extends StatefulWidget {
 class _FeedbackDialogState extends State<FeedbackDialog> {
   final _commentController = TextEditingController();
   final _picker = ImagePicker();
-  XFile? _screenshot;
+  List<XFile> _screenshots = [];  // Changed to list for multiple images
   bool _isSubmitting = false;
   String _feedbackType = 'bug';
+  static const int _maxImages = 5;  // Maximum 5 images
 
   @override
   void dispose() {
@@ -57,7 +58,17 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     super.dispose();
   }
 
-  Future<void> _takeScreenshot() async {
+  Future<void> _addImage() async {
+    // Check if we've reached the limit
+    if (_screenshots.length >= _maxImages) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Maximum $_maxImages images allowed')),
+        );
+      }
+      return;
+    }
+
     try {
       // Use image picker to select from gallery or take photo
       final XFile? image = await _picker.pickImage(
@@ -69,16 +80,22 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       
       if (image != null) {
         setState(() {
-          _screenshot = image;
+          _screenshots.add(image);
         });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to capture screenshot: $e')),
+          SnackBar(content: Text('Failed to add image: $e')),
         );
       }
     }
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _screenshots.removeAt(index);
+    });
   }
 
   Future<void> _submitFeedback() async {
@@ -106,13 +123,18 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         'comment': _commentController.text.trim(),
         'screen': ModalRoute.of(context)?.settings.name ?? 'unknown',
         'timestamp': DateTime.now().toIso8601String(),
-        'has_screenshot': _screenshot != null,
+        'has_screenshot': _screenshots.isNotEmpty,
+        'screenshot_count': _screenshots.length,
       };
 
-      // If screenshot exists, convert to base64
-      if (_screenshot != null) {
-        final bytes = await _screenshot!.readAsBytes();
-        feedbackData['screenshot_size'] = bytes.length;
+      // If screenshots exist, calculate total size
+      if (_screenshots.isNotEmpty) {
+        int totalSize = 0;
+        for (var screenshot in _screenshots) {
+          final bytes = await screenshot.readAsBytes();
+          totalSize += bytes.length;
+        }
+        feedbackData['screenshot_size'] = totalSize;
         // Note: For production, upload to Cloud Storage instead of base64
       }
 
@@ -271,57 +293,88 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               ),
               const SizedBox(height: 24),
 
-              // Screenshot
-              const Text(
-                'Screenshot (Optional)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+              // Screenshots (Multiple)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Screenshots (Optional)',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${_screenshots.length}/$_maxImages',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               
-              if (_screenshot != null)
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.file(
-                        File(_screenshot!.path),
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.black54,
+              // Display existing screenshots
+              if (_screenshots.isNotEmpty)
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _screenshots.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                File(_screenshots[index].path),
+                                height: 120,
+                                width: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: IconButton(
+                                icon: const Icon(Icons.close, size: 18),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Colors.black87,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(4),
+                                  minimumSize: const Size(28, 28),
+                                ),
+                                onPressed: () => _removeImage(index),
+                              ),
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _screenshot = null;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                )
-              else
-                OutlinedButton.icon(
-                  onPressed: _takeScreenshot,
-                  icon: const Icon(Icons.camera_alt),
-                  label: const Text('Add Screenshot'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      );
+                    },
                   ),
                 ),
+              
+              if (_screenshots.isNotEmpty) const SizedBox(height: 8),
+              
+              // Add image button
+              OutlinedButton.icon(
+                onPressed: _screenshots.length < _maxImages ? _addImage : null,
+                icon: const Icon(Icons.add_photo_alternate),
+                label: Text(
+                  _screenshots.isEmpty 
+                    ? 'Add Screenshots (up to $_maxImages)' 
+                    : 'Add More (${_maxImages - _screenshots.length} remaining)'
+                ),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
               
               const SizedBox(height: 24),
 
