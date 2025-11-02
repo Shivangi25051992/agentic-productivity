@@ -339,15 +339,27 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                             Positioned(
                               top: 4,
                               right: 4,
-                              child: IconButton(
-                                icon: const Icon(Icons.close, size: 18),
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.black87,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(4),
-                                  minimumSize: const Size(28, 28),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade600,  // Red background for better visibility
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                onPressed: () => _removeImage(index),
+                                child: IconButton(
+                                  icon: const Icon(Icons.close, size: 18),
+                                  style: IconButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.all(4),
+                                    minimumSize: const Size(28, 28),
+                                  ),
+                                  onPressed: () => _removeImage(index),
+                                ),
                               ),
                             ),
                           ],
