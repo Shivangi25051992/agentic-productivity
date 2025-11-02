@@ -1,0 +1,62 @@
+{
+  "timestamp": "20251102_214204",
+  "total_feedback": 25,
+  "bugs": 18,
+  "suggestions": 7,
+  "questions": 0,
+  "praise": 0,
+  "themes": {
+    "sleep": 2,
+    "image_upload": 2,
+    "ui_theme": 3,
+    "water": 1,
+    "calorie_accuracy": 5,
+    "workout": 1,
+    "notifications": 2,
+    "timezone": 1,
+    "intermittent_fasting": 1,
+    "meal_planning": 2
+  },
+  "top_themes": [
+    [
+      "calorie_accuracy",
+      5
+    ],
+    [
+      "ui_theme",
+      3
+    ],
+    [
+      "sleep",
+      2
+    ],
+    [
+      "image_upload",
+      2
+    ],
+    [
+      "notifications",
+      2
+    ],
+    [
+      "meal_planning",
+      2
+    ],
+    [
+      "water",
+      1
+    ],
+    [
+      "workout",
+      1
+    ],
+    [
+      "timezone",
+      1
+    ],
+    [
+      "intermittent_fasting",
+      1
+    ]
+  ]
+}
