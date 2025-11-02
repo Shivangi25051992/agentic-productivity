@@ -329,11 +329,12 @@ def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[C
     # Add user timezone context to prompt
     timezone_context = ""
     if user_local_time:
-        timezone_context = f"\n\n**USER CONTEXT:**\n- Current time in user's timezone ({user_timezone}): {user_local_time.strftime('%Y-%m-%d %H:%M:%S')}\n- Current hour: {user_local_time.hour}\n- Use this time for meal type classification if user doesn't specify!\n"
+        time_str = user_local_time.strftime('%Y-%m-%d %H:%M:%S')
+        timezone_context = "\n\n**USER CONTEXT:**\n- Current time in user's timezone (" + user_timezone + "): " + time_str + "\n- Current hour: " + str(user_local_time.hour) + "\n- Use this time for meal type classification if user doesn't specify!\n"
     
-    default_prompt = f'''
+    default_prompt = '''
 You are an expert fitness/nutrition/activity assistant and entity extractor.
-{timezone_context}
+''' + timezone_context + '''
 ⚠️ **CRITICAL: FEATURE BOUNDARIES** ⚠️
 You ONLY support these features:
 1. Logging meals/snacks and calculating macros
