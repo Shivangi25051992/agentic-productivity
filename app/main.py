@@ -842,6 +842,48 @@ async def chat_endpoint(
                 )
                 dbsvc.create_fitness_log(log)
             
+            elif it.category == "water":
+                # Create water log in subcollection
+                from google.cloud import firestore
+                project = os.getenv("GOOGLE_CLOUD_PROJECT")
+                db = firestore.Client(project=project) if project else firestore.Client()
+                
+                water_log = {
+                    "user_id": current_user.user_id,
+                    "quantity_ml": it.data.get("quantity_ml", 250),  # Default 1 glass
+                    "water_unit": it.data.get("water_unit", "glasses"),
+                    "quantity": it.data.get("quantity", "1"),
+                    "timestamp": firestore.SERVER_TIMESTAMP,
+                    "logged_via": "chat",
+                    "summary": it.summary or text
+                }
+                
+                # Save to users/{userId}/water_logs subcollection
+                db.collection("users").document(current_user.user_id)\
+                  .collection("water_logs").add(water_log)
+            
+            elif it.category == "supplement":
+                # Create supplement log in subcollection
+                from google.cloud import firestore
+                project = os.getenv("GOOGLE_CLOUD_PROJECT")
+                db = firestore.Client(project=project) if project else firestore.Client()
+                
+                supplement_log = {
+                    "user_id": current_user.user_id,
+                    "supplement_name": it.data.get("supplement_name", it.data.get("item", "Unknown")),
+                    "supplement_type": it.data.get("supplement_type", "other"),
+                    "dosage": it.data.get("dosage", "1 tablet"),
+                    "quantity": it.data.get("quantity", "1"),
+                    "timestamp": firestore.SERVER_TIMESTAMP,
+                    "logged_via": "chat",
+                    "summary": it.summary or text,
+                    "calories": it.data.get("calories", 5)
+                }
+                
+                # Save to users/{userId}/supplement_logs subcollection
+                db.collection("users").document(current_user.user_id)\
+                  .collection("supplement_logs").add(supplement_log)
+            
             elif it.category in ("task", "reminder"):
                 # Create task immediately
                 t = Task(
