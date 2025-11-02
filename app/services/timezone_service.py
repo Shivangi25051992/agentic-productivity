@@ -18,6 +18,7 @@ def get_user_timezone(user_id: str) -> str:
     """
     Get user's timezone from their profile.
     Returns 'UTC' if not found or on error.
+    Validates timezone is in IANA format.
     """
     try:
         db = _get_firestore_db()
@@ -25,11 +26,19 @@ def get_user_timezone(user_id: str) -> str:
         
         if doc.exists:
             profile_data = doc.to_dict()
-            return profile_data.get("timezone", "UTC")
+            tz_str = profile_data.get("timezone", "UTC")
+            
+            # Validate it's a valid IANA timezone
+            try:
+                pytz.timezone(tz_str)
+                return tz_str
+            except pytz.exceptions.UnknownTimeZoneError:
+                print(f"⚠️  Invalid timezone '{tz_str}' for user {user_id}, using UTC")
+                return "UTC"
         
         return "UTC"
     except Exception as e:
-        print(f"Error fetching user timezone: {e}")
+        print(f"⚠️  Timezone lookup failed for user {user_id}: {e}")
         return "UTC"
 
 
