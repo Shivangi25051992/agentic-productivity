@@ -123,8 +123,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Feedback submitted! Thank you!'),
+            content: Text(
+              '✅ Feedback received! Thank you for helping us improve. '
+              'We review all feedback within 24 hours.',
+            ),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 4),
+            behavior: SnackBarBehavior.floating,
           ),
         );
       }
@@ -223,6 +228,16 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+              // Helper text for feedback types
+              Text(
+                '🐛 Bug: Something broken | 💡 Suggestion: Improvement idea | ❓ Question: Need help | 👍 Praise: Love it!',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey[600],
+                  height: 1.3,
+                ),
+              ),
               const SizedBox(height: 24),
 
               // Comment (Required)
@@ -236,6 +251,10 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               const SizedBox(height: 8),
               TextField(
                 controller: _commentController,
+                style: const TextStyle(
+                  color: Colors.black,  // Fix: Make text black instead of grey
+                  fontSize: 16,
+                ),
                 maxLines: null,  // Unlimited lines - collect as much info as possible
                 minLines: 4,
                 keyboardType: TextInputType.multiline,
