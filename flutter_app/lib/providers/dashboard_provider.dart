@@ -147,12 +147,14 @@ class DashboardProvider extends ChangeNotifier {
       print('📊 Fitness response body: ${fitnessResponse.body}');
 
       // Fetch tasks for the day
+      print('🔍 Fetching tasks: ${AppConstants.apiBaseUrl}/tasks?start=$startStr&end=$endStr');
       final tasksResponse = await http.get(
         Uri.parse('${AppConstants.apiBaseUrl}/tasks?start=$startStr&end=$endStr'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
       print('📋 Tasks response status: ${tasksResponse.statusCode}');
+      print('📋 Tasks response body: ${tasksResponse.body}');
 
       if (fitnessResponse.statusCode == 200 && tasksResponse.statusCode == 200) {
         // Backend returns lists directly, not wrapped in objects
