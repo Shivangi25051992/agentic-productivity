@@ -36,8 +36,18 @@ echo -e "${BLUE}═════════════════════�
 echo -e "${GREEN}Step 1/4: Deploying Backend to Cloud Run${NC}"
 echo -e "${BLUE}═══════════════════════════════════════${NC}"
 
-# Load OpenAI API key from .env.local
+# Load environment variables from .env.local
 OPENAI_KEY=$(grep "OPENAI_API_KEY" .env.local | cut -d '=' -f2)
+ADMIN_USER=$(grep "ADMIN_USERNAME" .env.local | cut -d '=' -f2)
+ADMIN_PASS=$(grep "ADMIN_PASSWORD" .env.local | cut -d '=' -f2)
+ADMIN_SECRET=$(grep "ADMIN_SECRET_KEY" .env.local | cut -d '=' -f2)
+
+# Use defaults if not found in .env.local
+ADMIN_USER=${ADMIN_USER:-admin}
+ADMIN_PASS=${ADMIN_PASS:-admin123}
+ADMIN_SECRET=${ADMIN_SECRET:-your-secret-key-change-in-production}
+
+echo "🔐 Admin credentials will be set: $ADMIN_USER"
 
 gcloud run deploy $SERVICE_NAME \
   --source . \
@@ -45,7 +55,7 @@ gcloud run deploy $SERVICE_NAME \
   --region $REGION \
   --allow-unauthenticated \
   --project $PROJECT_ID \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPENAI_MODEL=gpt-4o-mini,OPENAI_API_KEY=$OPENAI_KEY" \
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPENAI_MODEL=gpt-4o-mini,OPENAI_API_KEY=$OPENAI_KEY,ADMIN_USERNAME=$ADMIN_USER,ADMIN_PASSWORD=$ADMIN_PASS,ADMIN_SECRET_KEY=$ADMIN_SECRET" \
   --max-instances=2 \
   --min-instances=0 \
   --memory=1Gi \
