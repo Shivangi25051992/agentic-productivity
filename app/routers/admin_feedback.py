@@ -4,7 +4,7 @@ Allows admins to view, filter, and manage user feedback
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -46,7 +46,7 @@ def list_feedback(
     filter_type: Optional[str] = None,
     filter_status: Optional[str] = None,
     limit: int = 50
-) -> Dict[str, any]:
+) -> Dict[str, Any]:
     """
     List all feedback with optional filters
     """
