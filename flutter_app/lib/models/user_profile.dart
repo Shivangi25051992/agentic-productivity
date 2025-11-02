@@ -92,6 +92,8 @@ class UserProfileModel {
   final int totalDaysLogged;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String timezone;
+  final String units;
 
   UserProfileModel({
     required this.userId,
@@ -112,6 +114,8 @@ class UserProfileModel {
     this.totalDaysLogged = 0,
     required this.createdAt,
     required this.updatedAt,
+    this.timezone = 'UTC',
+    this.units = 'metric',
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -136,6 +140,8 @@ class UserProfileModel {
       totalDaysLogged: json['total_days_logged'] as int? ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      timezone: json['timezone'] as String? ?? 'UTC',
+      units: json['units'] as String? ?? 'metric',
     );
   }
 
@@ -159,6 +165,8 @@ class UserProfileModel {
       'total_days_logged': totalDaysLogged,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'timezone': timezone,
+      'units': units,
     };
   }
 

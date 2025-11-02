@@ -47,8 +47,20 @@ class MultiFoodParser:
     # Conjunctions that separate foods within same meal
     FOOD_SEPARATORS = [" and ", " with ", ", "]
     
-    def __init__(self):
-        self.current_time = datetime.now()
+    def __init__(self, user_id: Optional[str] = None):
+        self.user_id = user_id
+        self.current_time = self._get_current_time()
+    
+    def _get_current_time(self) -> datetime:
+        """Get current time in user's timezone if available"""
+        if self.user_id:
+            try:
+                from app.services.timezone_service import get_user_local_time
+                return get_user_local_time(self.user_id)
+            except Exception as e:
+                print(f"Error getting user local time: {e}")
+                return datetime.now()
+        return datetime.now()
     
     def parse(self, text: str) -> List[MealEntry]:
         """

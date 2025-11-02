@@ -280,7 +280,18 @@ def _get_openai_client():
         return None
 
 
-def _classify_with_llm(text: str) -> tuple[List[ChatItem], bool, Optional[str]]:
+def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[ChatItem], bool, Optional[str]]:
+    # Get user's local time for meal classification
+    user_local_time = None
+    user_timezone = "UTC"
+    if user_id:
+        try:
+            from app.services.timezone_service import get_user_local_time, get_user_timezone
+            user_local_time = get_user_local_time(user_id)
+            user_timezone = get_user_timezone(user_id)
+        except Exception as e:
+            print(f"Error getting user timezone: {e}")
+    
     client = _get_openai_client()
     if not client:
         # Fallback heuristic with nutrition lookup
@@ -315,9 +326,14 @@ def _classify_with_llm(text: str) -> tuple[List[ChatItem], bool, Optional[str]]:
     except Exception:
         template_from_admin = None
 
-    default_prompt = '''
+    # Add user timezone context to prompt
+    timezone_context = ""
+    if user_local_time:
+        timezone_context = f"\n\n**USER CONTEXT:**\n- Current time in user's timezone ({user_timezone}): {user_local_time.strftime('%Y-%m-%d %H:%M:%S')}\n- Current hour: {user_local_time.hour}\n- Use this time for meal type classification if user doesn't specify!\n"
+    
+    default_prompt = f'''
 You are an expert fitness/nutrition/activity assistant and entity extractor.
-
+{timezone_context}
 ⚠️ **CRITICAL: FEATURE BOUNDARIES** ⚠️
 You ONLY support these features:
 1. Logging meals/snacks and calculating macros
@@ -657,7 +673,7 @@ async def chat_endpoint(
     
     # If still no items, use LLM as final fallback
     if not cache_hit:
-        items, needs_clarification, clarification_question = _classify_with_llm(text)
+        items, needs_clarification, clarification_question = _classify_with_llm(text, user_id)
     
     # If clarification is needed, still return the parsed items (don't persist them yet)
     # This allows the user to see what was understood before answering clarification

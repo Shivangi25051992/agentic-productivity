@@ -49,6 +49,7 @@ class OnboardRequest(BaseModel):
     diet_preference: DietPreference = DietPreference.none
     allergies: list[str] = []
     disliked_foods: list[str] = []
+    timezone: str = "UTC"  # Auto-detected from frontend
 
 
 # Firestore collection for profiles
@@ -130,6 +131,7 @@ def onboard_user(
         onboarding_completed=True,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
+        timezone=request.timezone,  # Store user's timezone
     )
     
     # Save to Firestore

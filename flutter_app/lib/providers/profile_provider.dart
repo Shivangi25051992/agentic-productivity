@@ -41,6 +41,9 @@ class ProfileProvider extends ChangeNotifier {
         throw Exception('Not authenticated');
       }
 
+      // Detect user's timezone
+      final timezone = DateTime.now().timeZoneName;
+      
       final response = await http.post(
         Uri.parse('${AppConstants.apiBaseUrl}/profile/onboard'),
         headers: {
@@ -59,6 +62,7 @@ class ProfileProvider extends ChangeNotifier {
           'diet_preference': _dietPreferenceToApi(dietPreference),
           'allergies': allergies,
           'disliked_foods': dislikedFoods,
+          'timezone': timezone,  // Auto-detect timezone
         }),
       );
 
