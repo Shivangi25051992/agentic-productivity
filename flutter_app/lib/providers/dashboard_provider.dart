@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../utils/constants.dart';
+import '../services/api_service.dart';
 import 'auth_provider.dart';
 
 /// Daily nutrition and fitness statistics
@@ -114,7 +115,7 @@ class DashboardProvider extends ChangeNotifier {
   String get selectedDateFormatted => DateFormat('MMM dd, yyyy').format(_selectedDate);
   bool get isToday => DateFormat('yyyy-MM-dd').format(_selectedDate) == DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-  /// Fetch daily stats from backend
+  /// Fetch daily stats from backend using ApiService (consistent with profile/chat)
   Future<void> fetchDailyStats(AuthProvider authProvider, {DateTime? date}) async {
     _isLoading = true;
     _errorMessage = null;
@@ -122,54 +123,46 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final token = await authProvider.getIdToken();
-      if (token == null) {
-        throw Exception('Not authenticated');
-      }
-
+      // Create ApiService instance (same pattern as used elsewhere in the app)
+      final apiService = ApiService(authProvider);
+      
       // Get start and end of the selected day
       final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
-      
-      // Format as ISO 8601 for backend
-      final startStr = startOfDay.toUtc().toIso8601String();
-      final endStr = endOfDay.toUtc().toIso8601String();
 
-      print('🔍 Fetching fitness logs: ${AppConstants.apiBaseUrl}/fitness/logs?start=$startStr&end=$endStr');
+      print('🔍 Fetching data for ${DateFormat('yyyy-MM-dd').format(_selectedDate)}');
 
-      // Fetch fitness logs for the day
-      final fitnessResponse = await http.get(
-        Uri.parse('${AppConstants.apiBaseUrl}/fitness/logs?start=$startStr&end=$endStr'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      print('📊 Fitness response status: ${fitnessResponse.statusCode}');
-      print('📊 Fitness response body: ${fitnessResponse.body}');
-
-      // Fetch tasks for the day
-      print('🔍 Fetching tasks: ${AppConstants.apiBaseUrl}/tasks?start=$startStr&end=$endStr');
-      final tasksResponse = await http.get(
-        Uri.parse('${AppConstants.apiBaseUrl}/tasks?start=$startStr&end=$endStr'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
-
-      print('📋 Tasks response status: ${tasksResponse.statusCode}');
-      print('📋 Tasks response body: ${tasksResponse.body}');
-
-      if (fitnessResponse.statusCode == 200 && tasksResponse.statusCode == 200) {
-        // Backend returns lists directly, not wrapped in objects
-        final fitnessLogs = jsonDecode(fitnessResponse.body) as List<dynamic>;
-        final tasks = jsonDecode(tasksResponse.body) as List<dynamic>;
-
-        print('✅ Received ${fitnessLogs.length} fitness logs and ${tasks.length} tasks');
-        
-        _processStats(fitnessLogs, tasks);
-      } else {
-        _errorMessage = 'Failed to fetch stats (${fitnessResponse.statusCode}, ${tasksResponse.statusCode})';
-        print('❌ Error: $_errorMessage');
+      // Fetch fitness logs using ApiService (handles auth, HTTPS, errors automatically)
+      List<dynamic> fitnessLogs = [];
+      try {
+        final logs = await apiService.getFitnessLogs(
+          startDate: startOfDay,
+          endDate: endOfDay,
+        );
+        fitnessLogs = logs.map((log) => log.toJson()).toList();
+        print('✅ Fetched ${fitnessLogs.length} fitness logs');
+      } catch (e) {
+        print('⚠️  Fitness logs fetch error: $e');
+        _errorMessage = 'Failed to load meals: $e';
       }
+
+      // Fetch tasks using ApiService (independent of fitness logs)
+      List<dynamic> tasks = [];
+      try {
+        final taskModels = await apiService.getTasks(date: startOfDay);
+        tasks = taskModels.map((task) => task.toJson()).toList();
+        print('✅ Fetched ${tasks.length} tasks');
+      } catch (e) {
+        print('⚠️  Tasks fetch error: $e (continuing with meals only)');
+        // Don't set error message - tasks are optional
+      }
+
+      // Process data (even if one source failed)
+      print('🔄 Processing ${fitnessLogs.length} logs and ${tasks.length} tasks');
+      _processStats(fitnessLogs, tasks);
+      
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = 'Failed to load data: $e';
       print('❌ Exception in fetchDailyStats: $e');
     } finally {
       _isLoading = false;
@@ -194,15 +187,16 @@ class DashboardProvider extends ChangeNotifier {
     // Process fitness logs
     final logs = fitnessLogs;
     for (var log in logs) {
-      final logType = log['log_type'] as String?;
-      final content = log['content'] as String? ?? '';
-      final calories = log['calories'] as int? ?? 0;
-      final aiParsedData = log['ai_parsed_data'] as Map<String, dynamic>? ?? {};
-      final timestamp = DateTime.parse(log['timestamp'] as String);
+      try {
+        final logType = log['log_type'] as String?;
+        final content = log['content'] as String? ?? '';
+        final calories = log['calories'] as int? ?? 0;
+        final aiParsedData = log['ai_parsed_data'] as Map<String, dynamic>? ?? {};
+        final timestamp = DateTime.parse(log['timestamp'] as String);
 
-      print('  📝 Processing log: type=$logType, content=$content, calories=$calories');
+        print('  📝 Processing log: type=$logType, content=$content, calories=$calories');
 
-      if (logType == 'meal') {
+        if (logType == 'meal') {
         // Extract macros from ai_parsed_data
         final protein = (aiParsedData['protein_g'] as num?)?.toDouble() ?? 0;
         final carbs = (aiParsedData['carbs_g'] as num?)?.toDouble() ?? 0;
@@ -237,6 +231,10 @@ class DashboardProvider extends ChangeNotifier {
           timestamp: timestamp,
           data: aiParsedData,
         ));
+      }
+      } catch (e) {
+        print('⚠️  Error processing log: $e');
+        // Continue processing other logs
       }
     }
 
