@@ -135,11 +135,16 @@ class DashboardProvider extends ChangeNotifier {
       final startStr = startOfDay.toUtc().toIso8601String();
       final endStr = endOfDay.toUtc().toIso8601String();
 
+      print('🔍 Fetching fitness logs: ${AppConstants.apiBaseUrl}/fitness/logs?start=$startStr&end=$endStr');
+
       // Fetch fitness logs for the day
       final fitnessResponse = await http.get(
         Uri.parse('${AppConstants.apiBaseUrl}/fitness/logs?start=$startStr&end=$endStr'),
         headers: {'Authorization': 'Bearer $token'},
       );
+
+      print('📊 Fitness response status: ${fitnessResponse.statusCode}');
+      print('📊 Fitness response body: ${fitnessResponse.body}');
 
       // Fetch tasks for the day
       final tasksResponse = await http.get(
@@ -147,17 +152,23 @@ class DashboardProvider extends ChangeNotifier {
         headers: {'Authorization': 'Bearer $token'},
       );
 
+      print('📋 Tasks response status: ${tasksResponse.statusCode}');
+
       if (fitnessResponse.statusCode == 200 && tasksResponse.statusCode == 200) {
         // Backend returns lists directly, not wrapped in objects
         final fitnessLogs = jsonDecode(fitnessResponse.body) as List<dynamic>;
         final tasks = jsonDecode(tasksResponse.body) as List<dynamic>;
 
+        print('✅ Received ${fitnessLogs.length} fitness logs and ${tasks.length} tasks');
+        
         _processStats(fitnessLogs, tasks);
       } else {
         _errorMessage = 'Failed to fetch stats (${fitnessResponse.statusCode}, ${tasksResponse.statusCode})';
+        print('❌ Error: $_errorMessage');
       }
     } catch (e) {
       _errorMessage = e.toString();
+      print('❌ Exception in fetchDailyStats: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -166,6 +177,8 @@ class DashboardProvider extends ChangeNotifier {
 
   /// Process raw data into stats
   void _processStats(List<dynamic> fitnessLogs, List<dynamic> tasks) {
+    print('🔄 Processing ${fitnessLogs.length} fitness logs...');
+    
     int totalCalories = 0;
     int totalCaloriesBurned = 0;
     double totalProtein = 0;
@@ -184,6 +197,8 @@ class DashboardProvider extends ChangeNotifier {
       final calories = log['calories'] as int? ?? 0;
       final aiParsedData = log['ai_parsed_data'] as Map<String, dynamic>? ?? {};
       final timestamp = DateTime.parse(log['timestamp'] as String);
+
+      print('  📝 Processing log: type=$logType, content=$content, calories=$calories');
 
       if (logType == 'meal') {
         // Extract macros from ai_parsed_data
