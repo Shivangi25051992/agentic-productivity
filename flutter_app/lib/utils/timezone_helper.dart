@@ -5,15 +5,20 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 class TimezoneHelper {
   /// Get user's timezone in IANA format (e.g., "Asia/Kolkata")
   static Future<String> getLocalTimezone() async {
+    debugPrint('🔍 TimezoneHelper.getLocalTimezone() called');
+    debugPrint('🔍 Platform: ${kIsWeb ? "WEB" : "MOBILE"}');
+    
     try {
       if (kIsWeb) {
         // Web: Infer from UTC offset (JavaScript Intl API not easily accessible in Flutter web)
         final offset = DateTime.now().timeZoneOffset;
+        debugPrint('🔍 UTC Offset detected: $offset');
         final timezone = _timezoneFromOffset(offset);
         debugPrint('✅ Web timezone (from offset): $timezone (offset: $offset)');
         return timezone;
       } else {
         // Mobile (iOS/Android): Use flutter_timezone package
+        debugPrint('🔍 Attempting flutter_timezone...');
         try {
           final timezone = await FlutterTimezone.getLocalTimezone();
           debugPrint('✅ Mobile timezone detected: $timezone');
@@ -24,7 +29,7 @@ class TimezoneHelper {
         }
       }
     } catch (e) {
-      debugPrint('⚠️  Timezone detection failed: $e, using UTC');
+      debugPrint('❌ Timezone detection FAILED: $e, returning UTC');
       return 'UTC';
     }
   }

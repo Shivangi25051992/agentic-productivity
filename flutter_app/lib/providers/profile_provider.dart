@@ -43,8 +43,10 @@ class ProfileProvider extends ChangeNotifier {
       }
 
       // Detect user's timezone (works on Web, iOS, Android)
+      debugPrint('🔍 ONBOARDING: About to detect timezone...');
       final timezone = await TimezoneHelper.getLocalTimezone();
-      debugPrint('✅ Timezone for onboarding: $timezone');
+      debugPrint('✅ ONBOARDING: Timezone detected: $timezone');
+      debugPrint('🔍 ONBOARDING: Sending timezone to backend: $timezone');
       
       final response = await http.post(
         Uri.parse('${AppConstants.apiBaseUrl}/profile/onboard'),
