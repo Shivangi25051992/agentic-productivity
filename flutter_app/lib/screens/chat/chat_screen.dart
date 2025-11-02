@@ -197,7 +197,11 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text('AI Assistant'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            // Use pushReplacementNamed instead of pop for better PWA compatibility
+            // This ensures we always return to home screen, not a white page
+            Navigator.of(context).pushReplacementNamed('/home');
+          },
         ),
         actions: [
           // Logout button
