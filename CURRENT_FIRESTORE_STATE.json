@@ -1,0 +1,221 @@
+{
+  "project": {
+    "id": "productivityai-mvp",
+    "region": "us-central1",
+    "database": "(default)"
+  },
+  "collections": {
+    "users": {
+      "description": "User profiles and settings",
+      "document_structure": {
+        "user_id": "string (primary key, Firebase UID)",
+        "email": "string",
+        "display_name": "string",
+        "created_at": "timestamp",
+        "updated_at": "timestamp",
+        "fitness_goal": "string (lose_weight|gain_muscle|maintain)",
+        "daily_calorie_goal": "number",
+        "preferred_foods": "array<string>",
+        "disliked_foods": "array<string>"
+      },
+      "indexes": [],
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "write": "auth.uid == userId"
+      },
+      "validation": "NONE",
+      "issues": [
+        "No enum validation on fitness_goal",
+        "No range validation on daily_calorie_goal",
+        "Flat structure (not using subcollections)"
+      ]
+    },
+    "tasks": {
+      "description": "User tasks and reminders",
+      "document_structure": {
+        "task_id": "string (auto-generated)",
+        "user_id": "string (foreign key)",
+        "title": "string",
+        "description": "string",
+        "due_date": "timestamp",
+        "priority": "string (low|medium|high)",
+        "status": "string (pending|in_progress|completed|cancelled)",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "indexes": [],
+      "security_rules": {
+        "read": "auth.uid == resource.data.user_id",
+        "create": "auth.uid == request.resource.data.user_id",
+        "update": "auth.uid == resource.data.user_id",
+        "delete": "auth.uid == resource.data.user_id"
+      },
+      "validation": "NONE",
+      "issues": [
+        "Missing composite index: user_id + status",
+        "Missing composite index: user_id + due_date",
+        "No enum validation",
+        "Flat structure"
+      ]
+    },
+    "fitness_logs": {
+      "description": "Meal and workout logs",
+      "document_structure": {
+        "log_id": "string (UUID)",
+        "user_id": "string (foreign key)",
+        "log_type": "string (meal|workout)",
+        "content": "string (description)",
+        "calories": "number",
+        "timestamp": "timestamp",
+        "ai_parsed_data": {
+          "description": "Unstructured nested object",
+          "fields": {
+            "meal_type": "string (breakfast|lunch|dinner|snack|unknown)",
+            "protein_g": "number",
+            "carbs_g": "number",
+            "fat_g": "number",
+            "fiber_g": "number",
+            "items": "array<string>",
+            "activity_type": "string (for workouts)",
+            "duration_minutes": "number (for workouts)",
+            "intensity": "string (for workouts)"
+          }
+        },
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": [
+            {"fieldPath": "user_id", "order": "ASCENDING"},
+            {"fieldPath": "timestamp", "order": "DESCENDING"}
+          ],
+          "status": "DEPLOYED"
+        }
+      ],
+      "security_rules": {
+        "read": "auth.uid == resource.data.user_id",
+        "create": "auth.uid == request.resource.data.user_id",
+        "update": "auth.uid == resource.data.user_id",
+        "delete": "auth.uid == resource.data.user_id"
+      },
+      "validation": "NONE",
+      "issues": [
+        "ai_parsed_data is unstructured (no schema)",
+        "Missing index: user_id + log_type + timestamp",
+        "No validation on calories range",
+        "Flat structure"
+      ]
+    },
+    "chat_history": {
+      "description": "Chat conversation history (7-day retention)",
+      "document_structure": {
+        "user_id": "string (foreign key)",
+        "role": "string (user|assistant)",
+        "content": "string (message text)",
+        "metadata": {
+          "description": "Unstructured nested object",
+          "fields": {
+            "category": "string",
+            "items_count": "number",
+            "net_calories": "number",
+            "formatted": "boolean"
+          }
+        },
+        "timestamp": "SERVER_TIMESTAMP",
+        "expires_at": "timestamp (7 days from creation)"
+      },
+      "indexes": [
+        {
+          "fields": [
+            {"fieldPath": "user_id", "order": "ASCENDING"},
+            {"fieldPath": "timestamp", "order": "DESCENDING"}
+          ],
+          "status": "DEPLOYED"
+        }
+      ],
+      "security_rules": {
+        "read": "auth.uid == resource.data.user_id",
+        "create": "auth.uid == request.resource.data.user_id",
+        "delete": "auth.uid == resource.data.user_id"
+      },
+      "validation": "NONE",
+      "issues": [
+        "No automatic cleanup of expired messages",
+        "No Cloud Function for TTL",
+        "Flat structure"
+      ]
+    },
+    "food_database": {
+      "description": "Nutrition database for food items",
+      "document_structure": {
+        "name": "string (food name)",
+        "aliases": "array<string> (alternative names)",
+        "calories": "number",
+        "protein_g": "number",
+        "carbs_g": "number",
+        "fat_g": "number",
+        "fiber_g": "number",
+        "serving_size": "string",
+        "category": "string (fruit|vegetable|protein|grain|dairy|etc)"
+      },
+      "indexes": [],
+      "security_rules": {
+        "read": "auth != null",
+        "write": "false (backend only)"
+      },
+      "validation": "NONE",
+      "issues": [
+        "No full-text search capability",
+        "Fuzzy search loads all documents (not scalable)",
+        "No composite index for category + name",
+        "Missing serving_size_unit field"
+      ]
+    }
+  },
+  "deployed_indexes": [
+    {
+      "collection": "fitness_logs",
+      "fields": [
+        {"fieldPath": "user_id", "order": "ASCENDING"},
+        {"fieldPath": "timestamp", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collection": "chat_history",
+      "fields": [
+        {"fieldPath": "user_id", "order": "ASCENDING"},
+        {"fieldPath": "timestamp", "order": "DESCENDING"}
+      ]
+    }
+  ],
+  "missing_indexes": [
+    {
+      "collection": "fitness_logs",
+      "fields": ["user_id", "log_type", "timestamp"],
+      "reason": "Filter by log_type (meal vs workout)"
+    },
+    {
+      "collection": "tasks",
+      "fields": ["user_id", "status", "due_date"],
+      "reason": "Filter by status and sort by due date"
+    },
+    {
+      "collection": "tasks",
+      "fields": ["user_id", "status"],
+      "reason": "Filter by status only"
+    }
+  ],
+  "security_rules_status": "DEPLOYED",
+  "validation_rules_status": "NONE (No schema validation)",
+  "critical_issues": [
+    "Flat collection structure (not using subcollections)",
+    "No schema validation on nested objects",
+    "No enum validation",
+    "No range validation on numeric fields",
+    "No automatic cleanup for expired data",
+    "Food database not scalable for fuzzy search",
+    "Missing indexes for common query patterns"
+  ]
+}
+

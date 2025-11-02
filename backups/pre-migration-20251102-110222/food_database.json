@@ -1,0 +1,1573 @@
+[
+  {
+    "aliases": [
+      "chicken",
+      "chicken breast",
+      "grilled chicken"
+    ],
+    "preparations": {
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:33.804000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:33.804000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "FoodData Central",
+    "accuracy_score": 95,
+    "source": "USDA",
+    "cuisine": "universal",
+    "portions": {
+      "100g": 100,
+      "200g": 200,
+      "1 piece": 150
+    },
+    "subcategory": null,
+    "name": "Chicken Breast, Cooked",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": false,
+    "food_id": "chicken_breast_cooked",
+    "search_keywords": [
+      "chicken",
+      "breast,",
+      "cooked",
+      "chicken",
+      "chicken breast",
+      "grilled chicken"
+    ],
+    "micros": {},
+    "macros": {
+      "unit_size": 100,
+      "calories": 165,
+      "unit_type": "per_100g",
+      "protein_g": 31.0,
+      "fat_g": 3.6,
+      "carbs_g": 0.0,
+      "fiber_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:33.804000+00:00",
+    "_id": "chicken_breast_cooked"
+  },
+  {
+    "aliases": [
+      "4 bean mix",
+      "4 bean mix"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:26.623000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:26.623000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "4 Bean Mix",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_4_bean_mix",
+    "search_keywords": [
+      "4",
+      "bean",
+      "mix",
+      "4",
+      "bean",
+      "mix"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 49.4,
+      "protein_g": 0.9,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.1,
+      "unit_size": 130.0,
+      "fiber_g": 0.0,
+      "carbs_g": 11.5
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:26.623000+00:00",
+    "_id": "custom_4_bean_mix"
+  },
+  {
+    "aliases": [
+      "asparagus, fresh",
+      "asparagus, fresh"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:18.004000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:18.004000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 bunch": 1.0
+    },
+    "subcategory": null,
+    "name": "Asparagus, Fresh",
+    "category": "vegetables",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_asparagus,_fresh",
+    "search_keywords": [
+      "asparagus,",
+      "fresh",
+      "asparagus,",
+      "fresh"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 40.0,
+      "protein_g": 4.4,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.2,
+      "unit_size": 200.0,
+      "fiber_g": 0.0,
+      "carbs_g": 7.8
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:18.004000+00:00",
+    "_id": "custom_asparagus,_fresh"
+  },
+  {
+    "aliases": [
+      "avocado",
+      "avocado"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:32.389000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:32.389000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 half": 1.0
+    },
+    "subcategory": null,
+    "name": "Avocado",
+    "category": "fats",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_avocado",
+    "search_keywords": [
+      "avocado",
+      "avocado"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 64.0,
+      "protein_g": 0.8,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 5.9,
+      "unit_size": 40.0,
+      "fiber_g": 0.0,
+      "carbs_g": 3.4
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:32.389000+00:00",
+    "_id": "custom_avocado"
+  },
+  {
+    "aliases": [
+      "banana",
+      "banana"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:30.612000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:30.612000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "Banana",
+    "category": "fruits",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_banana",
+    "search_keywords": [
+      "banana",
+      "banana"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 200.3,
+      "protein_g": 2.5,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.7,
+      "unit_size": 225.0,
+      "fiber_g": 0.0,
+      "carbs_g": 51.4
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:30.612000+00:00",
+    "_id": "custom_banana"
+  },
+  {
+    "aliases": [
+      "black beans, canned",
+      "black beans, canned"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:23.432000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:23.432000+00:00",
+    "food_group": "plant_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Black Beans, Canned",
+    "category": "legumes",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_black_beans,_canned",
+    "search_keywords": [
+      "black",
+      "beans,",
+      "canned",
+      "black",
+      "beans,",
+      "canned"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 91.0,
+      "protein_g": 6.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.3,
+      "unit_size": 100.0,
+      "fiber_g": 0.0,
+      "carbs_g": 16.6
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:23.432000+00:00",
+    "_id": "custom_black_beans,_canned"
+  },
+  {
+    "aliases": [
+      "black beans cooked",
+      "black beans cooked"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:32.741000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:32.741000+00:00",
+    "food_group": "plant_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Black Beans Cooked",
+    "category": "legumes",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_black_beans_cooked",
+    "search_keywords": [
+      "black",
+      "beans",
+      "cooked",
+      "black",
+      "beans",
+      "cooked"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 443.3,
+      "protein_g": 28.1,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 1.8,
+      "unit_size": 130.0,
+      "fiber_g": 0.0,
+      "carbs_g": 81.1
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:32.741000+00:00",
+    "_id": "custom_black_beans_cooked"
+  },
+  {
+    "aliases": [
+      "broad beans , canned",
+      "broad beans , canned"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:27.354000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:27.354000+00:00",
+    "food_group": "plant_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0,
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "Broad Beans , Canned",
+    "category": "legumes",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_broad_beans_,_canned",
+    "search_keywords": [
+      "broad",
+      "beans",
+      ",",
+      "canned",
+      "broad",
+      "beans",
+      ",",
+      "canned"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 111.6,
+      "protein_g": 8.6,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.4,
+      "unit_size": 157.1,
+      "fiber_g": 0.0,
+      "carbs_g": 19.5
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:27.354000+00:00",
+    "_id": "custom_broad_beans_,_canned"
+  },
+  {
+    "aliases": [
+      "brown rice, raw",
+      "brown rice, raw"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:29.148000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:29.148000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Brown Rice, Raw",
+    "category": "carbs",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_brown_rice,_raw",
+    "search_keywords": [
+      "brown",
+      "rice,",
+      "raw",
+      "brown",
+      "rice,",
+      "raw"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 226.3,
+      "protein_g": 4.7,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 1.7,
+      "unit_size": 63.0,
+      "fiber_g": 0.0,
+      "carbs_g": 47.6
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:29.148000+00:00",
+    "_id": "custom_brown_rice,_raw"
+  },
+  {
+    "aliases": [
+      "chia seeds",
+      "chia seeds"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:21.307000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:21.307000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Chia seeds",
+    "category": "fats",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_chia_seeds",
+    "search_keywords": [
+      "chia",
+      "seeds",
+      "chia",
+      "seeds"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 97.2,
+      "protein_g": 3.3,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 6.1,
+      "unit_size": 20.0,
+      "fiber_g": 0.0,
+      "carbs_g": 8.4
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:21.307000+00:00",
+    "_id": "custom_chia_seeds"
+  },
+  {
+    "aliases": [
+      "chicken breast",
+      "chicken breast"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:29.870000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:29.870000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Chicken Breast",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_chicken_breast",
+    "search_keywords": [
+      "chicken",
+      "breast",
+      "chicken",
+      "breast"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 192.0,
+      "protein_g": 36.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 4.2,
+      "unit_size": 160.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:29.870000+00:00",
+    "_id": "custom_chicken_breast"
+  },
+  {
+    "aliases": [
+      "edamame",
+      "edamame"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:29.518000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:29.518000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "Edamame",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_edamame",
+    "search_keywords": [
+      "edamame",
+      "edamame"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 128.6,
+      "protein_g": 13.2,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 5.6,
+      "unit_size": 118.0,
+      "fiber_g": 0.0,
+      "carbs_g": 9.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:29.518000+00:00",
+    "_id": "custom_edamame"
+  },
+  {
+    "aliases": [
+      "egg white",
+      "egg white"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:30.264000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:30.264000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "Egg White",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_egg_white",
+    "search_keywords": [
+      "egg",
+      "white",
+      "egg",
+      "white"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 131.6,
+      "protein_g": 27.6,
+      "sugar_g": null,
+      "unit_type": "per_piece",
+      "fat_g": 0.4,
+      "unit_size": 253.0,
+      "fiber_g": 0.0,
+      "carbs_g": 1.8
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:30.264000+00:00",
+    "_id": "custom_egg_white"
+  },
+  {
+    "aliases": [
+      "husk",
+      "husk"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:21.730000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:21.730000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Husk",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_husk",
+    "search_keywords": [
+      "husk",
+      "husk"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 0.0,
+      "protein_g": 0.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.0,
+      "unit_size": 13.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:21.730000+00:00",
+    "_id": "custom_husk"
+  },
+  {
+    "aliases": [
+      "lamb mince",
+      "lamb mince"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:31.712000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:31.712000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 serving": 1.0
+    },
+    "subcategory": null,
+    "name": "Lamb Mince",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_lamb_mince",
+    "search_keywords": [
+      "lamb",
+      "mince",
+      "lamb",
+      "mince"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 236.9,
+      "protein_g": 21.4,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 16.7,
+      "unit_size": 115.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.1
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:31.712000+00:00",
+    "_id": "custom_lamb_mince"
+  },
+  {
+    "aliases": [
+      "maple syrup",
+      "maple syrup"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:30.980000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:30.980000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 serving": 1
+    },
+    "subcategory": null,
+    "name": "Maple Syrup",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_maple_syrup",
+    "search_keywords": [
+      "maple",
+      "syrup",
+      "maple",
+      "syrup"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 216.0,
+      "protein_g": 0.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.0,
+      "unit_size": 80.0,
+      "fiber_g": 0.0,
+      "carbs_g": 53.9
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:30.980000+00:00",
+    "_id": "custom_maple_syrup"
+  },
+  {
+    "aliases": [
+      "mct oil",
+      "mct oil"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:31.358000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:31.358000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 tbsp": 1.0
+    },
+    "subcategory": null,
+    "name": "MCT oil",
+    "category": "fats",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_mct_oil",
+    "search_keywords": [
+      "mct",
+      "oil",
+      "mct",
+      "oil"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 116.0,
+      "protein_g": 0.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 12.9,
+      "unit_size": 13.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:31.358000+00:00",
+    "_id": "custom_mct_oil"
+  },
+  {
+    "aliases": [
+      "olive oil",
+      "olive oil"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:26.992000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:26.992000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 teaspoon": 1.0,
+      "1 tsp": 1.0
+    },
+    "subcategory": null,
+    "name": "Olive Oil",
+    "category": "fats",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_olive_oil",
+    "search_keywords": [
+      "olive",
+      "oil",
+      "olive",
+      "oil"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 37.6,
+      "protein_g": 0.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 4.2,
+      "unit_size": 4.2,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:26.992000+00:00",
+    "_id": "custom_olive_oil"
+  },
+  {
+    "aliases": [
+      "organic cacao powder",
+      "organic cacao powder"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:20.070000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:20.070000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 teaspoon": 1.0
+    },
+    "subcategory": null,
+    "name": "Organic Cacao Powder",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_organic_cacao_powder",
+    "search_keywords": [
+      "organic",
+      "cacao",
+      "powder",
+      "organic",
+      "cacao",
+      "powder"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 0.0,
+      "protein_g": 0.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.0,
+      "unit_size": 5.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:20.070000+00:00",
+    "_id": "custom_organic_cacao_powder"
+  },
+  {
+    "aliases": [
+      "peanuts, raw",
+      "peanuts, raw"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:25.074000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:25.074000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 serving": 1
+    },
+    "subcategory": null,
+    "name": "Peanuts, Raw",
+    "category": "fats",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_peanuts,_raw",
+    "search_keywords": [
+      "peanuts,",
+      "raw",
+      "peanuts,",
+      "raw"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 160.7,
+      "protein_g": 7.3,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 14.0,
+      "unit_size": 28.0,
+      "fiber_g": 0.0,
+      "carbs_g": 4.6
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:25.074000+00:00",
+    "_id": "custom_peanuts,_raw"
+  },
+  {
+    "aliases": [
+      "pineapple, fresh",
+      "pineapple, fresh"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:22.972000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:22.972000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 1.0
+    },
+    "subcategory": null,
+    "name": "Pineapple, Fresh",
+    "category": "fruits",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_pineapple,_fresh",
+    "search_keywords": [
+      "pineapple,",
+      "fresh",
+      "pineapple,",
+      "fresh"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 82.5,
+      "protein_g": 0.9,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.2,
+      "unit_size": 165.0,
+      "fiber_g": 0.0,
+      "carbs_g": 21.6
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:22.972000+00:00",
+    "_id": "custom_pineapple,_fresh"
+  },
+  {
+    "aliases": [
+      "prawns",
+      "prawns"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:28.061000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:28.061000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Prawns",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_prawns",
+    "search_keywords": [
+      "prawns",
+      "prawns"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 111.4,
+      "protein_g": 26.3,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.7,
+      "unit_size": 131.0,
+      "fiber_g": 0.0,
+      "carbs_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:28.061000+00:00",
+    "_id": "custom_prawns"
+  },
+  {
+    "aliases": [
+      "pumpkin",
+      "pumpkin"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:28.427000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:28.427000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Pumpkin",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_pumpkin",
+    "search_keywords": [
+      "pumpkin",
+      "pumpkin"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 78.0,
+      "protein_g": 3.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.3,
+      "unit_size": 300.0,
+      "fiber_g": 0.0,
+      "carbs_g": 19.5
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:28.427000+00:00",
+    "_id": "custom_pumpkin"
+  },
+  {
+    "aliases": [
+      "red potato",
+      "red potato"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:32.052000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:32.052000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 serving": 1
+    },
+    "subcategory": null,
+    "name": "Red Potato",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_red_potato",
+    "search_keywords": [
+      "red",
+      "potato",
+      "red",
+      "potato"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 258.3,
+      "protein_g": 7.0,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.5,
+      "unit_size": 369.0,
+      "fiber_g": 0.0,
+      "carbs_g": 58.7
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:32.052000+00:00",
+    "_id": "custom_red_potato"
+  },
+  {
+    "aliases": [
+      "rye bread",
+      "rye bread"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:24.586000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:24.586000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 serving": 1
+    },
+    "subcategory": null,
+    "name": "Rye Bread",
+    "category": "carbs",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_rye_bread",
+    "search_keywords": [
+      "rye",
+      "bread",
+      "rye",
+      "bread"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 18.1,
+      "protein_g": 0.6,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.2,
+      "unit_size": 7.0,
+      "fiber_g": 0.0,
+      "carbs_g": 3.4
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:24.586000+00:00",
+    "_id": "custom_rye_bread"
+  },
+  {
+    "aliases": [
+      "sweet potato",
+      "sweet potato"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:26.272000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:26.272000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Sweet Potato",
+    "category": "other",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_sweet_potato",
+    "search_keywords": [
+      "sweet",
+      "potato",
+      "sweet",
+      "potato"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 204.2,
+      "protein_g": 3.7,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.1,
+      "unit_size": 237.5,
+      "fiber_g": 0.0,
+      "carbs_g": 47.8
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:26.272000+00:00",
+    "_id": "custom_sweet_potato"
+  },
+  {
+    "aliases": [
+      "tofu",
+      "tofu"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:18.395000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:18.395000+00:00",
+    "food_group": "plant_protein",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "Tofu",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_tofu",
+    "search_keywords": [
+      "tofu",
+      "tofu"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 324.0,
+      "protein_g": 22.6,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 24.2,
+      "unit_size": 120.0,
+      "fiber_g": 0.0,
+      "carbs_g": 10.6
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:18.395000+00:00",
+    "_id": "custom_tofu"
+  },
+  {
+    "aliases": [
+      "white rice",
+      "white rice"
+    ],
+    "preparations": {
+      "cooked": 1.0,
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "raw": 1.0,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:19.640000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:19.640000+00:00",
+    "food_group": "other",
+    "source_reference": "Prashant Chintanwar Diet Charts",
+    "accuracy_score": 95,
+    "source": "user_diet_chart",
+    "cuisine": "universal",
+    "portions": {
+      "1 portion": 1.0
+    },
+    "subcategory": null,
+    "name": "White Rice",
+    "category": "carbs",
+    "is_public": true,
+    "is_custom": true,
+    "food_id": "custom_white_rice",
+    "search_keywords": [
+      "white",
+      "rice",
+      "white",
+      "rice"
+    ],
+    "micros": {},
+    "macros": {
+      "calories": 266.9,
+      "protein_g": 4.9,
+      "sugar_g": null,
+      "unit_type": "per_100g",
+      "fat_g": 0.5,
+      "unit_size": 74.1,
+      "fiber_g": 0.0,
+      "carbs_g": 58.8
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:19.640000+00:00",
+    "_id": "custom_white_rice"
+  },
+  {
+    "aliases": [
+      "egg",
+      "eggs",
+      "boiled egg",
+      "hard boiled egg"
+    ],
+    "preparations": {
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:33.097000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:33.097000+00:00",
+    "food_group": "animal_protein",
+    "source_reference": "FoodData Central",
+    "accuracy_score": 95,
+    "source": "USDA",
+    "cuisine": "universal",
+    "portions": {
+      "3 eggs": 3,
+      "1 egg": 1,
+      "2 eggs": 2
+    },
+    "subcategory": null,
+    "name": "Egg, Boiled",
+    "category": "protein",
+    "is_public": true,
+    "is_custom": false,
+    "food_id": "egg_boiled",
+    "search_keywords": [
+      "egg,",
+      "boiled",
+      "egg",
+      "eggs",
+      "boiled egg",
+      "hard boiled egg"
+    ],
+    "micros": {},
+    "macros": {
+      "unit_size": 50,
+      "calories": 70,
+      "unit_type": "per_piece",
+      "protein_g": 6.0,
+      "fat_g": 5.0,
+      "carbs_g": 0.5,
+      "fiber_g": 0.0
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:33.097000+00:00",
+    "_id": "egg_boiled"
+  },
+  {
+    "aliases": [
+      "rice",
+      "white rice",
+      "steamed rice",
+      "chawal"
+    ],
+    "preparations": {
+      "boiled": 1.0,
+      "grilled": 1.1,
+      "fried": 1.3
+    },
+    "created_at": "2025-11-01T05:22:33.450000+00:00",
+    "name_local": null,
+    "updated_at": "2025-11-01T05:22:33.450000+00:00",
+    "food_group": "other",
+    "source_reference": "FoodData Central",
+    "accuracy_score": 95,
+    "source": "USDA",
+    "cuisine": "universal",
+    "portions": {
+      "1 cup": 150,
+      "100g": 100,
+      "1 bowl": 200
+    },
+    "subcategory": null,
+    "name": "Rice, White, Cooked",
+    "category": "carbs",
+    "is_public": true,
+    "is_custom": false,
+    "food_id": "rice_white_cooked",
+    "search_keywords": [
+      "rice,",
+      "white,",
+      "cooked",
+      "rice",
+      "white rice",
+      "steamed rice",
+      "chawal"
+    ],
+    "micros": {},
+    "macros": {
+      "unit_size": 100,
+      "calories": 130,
+      "unit_type": "per_100g",
+      "protein_g": 2.7,
+      "fat_g": 0.3,
+      "carbs_g": 28.0,
+      "fiber_g": 0.4
+    },
+    "added_by_user_id": null,
+    "verified_by": "expert",
+    "verified": true,
+    "last_verified_at": "2025-11-01T05:22:33.450000+00:00",
+    "_id": "rice_white_cooked"
+  }
+]

@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 from pydantic import BaseModel
 import json
 import time
+import logging
 from datetime import datetime, timezone, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -11,6 +12,12 @@ from dotenv import load_dotenv
 import os
 from app.services.auth import get_current_user
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 dotenv_local_path = os.path.join(os.getcwd(), '.env.local')
@@ -18,6 +25,10 @@ if os.path.exists(dotenv_local_path):
     load_dotenv(dotenv_local_path, override=True)
 
 app = FastAPI(title="AI Fitness & Task Tracker API", version="0.1.0")
+
+# Add error handler middleware
+from app.utils.error_handler import ErrorHandlerMiddleware
+app.add_middleware(ErrorHandlerMiddleware)
 
 # HTTPS Enforcement Middleware (Production only)
 # DISABLED - Cloud Run already handles HTTPS enforcement
@@ -90,25 +101,35 @@ app.include_router(meals_router)
 @app.get("/insights")
 async def get_ai_insights(current_user: User = Depends(get_current_user)):
     """Get AI-powered insights for the user"""
-    from app.services.ai_insights_service import get_insights_service
-    from app.services import database as db_module
-    
-    insights_service = get_insights_service()
-    
-    # Get user's profile for goals
-    profile = db_module.get_user_profile(current_user.user_id)
-    if not profile:
-        return {"insights": [], "summary": "Complete your profile to get personalized insights!"}
-    
-    # Get today's stats
-    from datetime import datetime, timezone
-    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    logs = db_module.list_fitness_logs_by_user(
-        user_id=current_user.user_id,
-        start_ts=today_start,
-        log_type=None,
-        limit=100
-    )
+    try:
+        logger.info(f"Fetching insights for user: {current_user.user_id}")
+        
+        from app.services.ai_insights_service import get_insights_service
+        from app.services import database as db_module
+        
+        insights_service = get_insights_service()
+        
+        # Get user's profile for goals
+        logger.info(f"Fetching profile for insights: {current_user.user_id}")
+        profile = db_module.get_user_profile(current_user.user_id)
+        if not profile:
+            logger.warning(f"No profile found for insights: {current_user.user_id}")
+            return {"insights": [], "summary": "Complete your profile to get personalized insights!"}
+        
+        # Get today's stats
+        from datetime import datetime, timezone
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        logger.info(f"Fetching logs for insights: {current_user.user_id}")
+        logs = db_module.list_fitness_logs_by_user(
+            user_id=current_user.user_id,
+            start_ts=today_start,
+            log_type=None,
+            limit=100
+        )
+        logger.info(f"Found {len(logs)} logs for insights")
+    except Exception as e:
+        logger.error(f"Error in get_ai_insights for user {current_user.user_id}: {str(e)}", exc_info=True)
+        return {"insights": [], "summary": "Unable to generate insights at this time. Please try again later."}
     
     # Calculate totals
     calories_consumed = 0

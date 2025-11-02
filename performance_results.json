@@ -1,0 +1,48 @@
+{
+  "timestamp": 1762070709.396283,
+  "summary": {
+    "total": 5,
+    "passed": 1,
+    "failed": 4,
+    "success_rate": 20.0
+  },
+  "results": [
+    {
+      "name": "Health",
+      "endpoint": "/health",
+      "iterations": 20,
+      "successes": 20,
+      "avg_ms": 3.95,
+      "median_ms": 3.13,
+      "min_ms": 1.94,
+      "max_ms": 21.63,
+      "p95_ms": 21.63,
+      "threshold_ms": 100,
+      "passed": true
+    },
+    {
+      "name": "Chat History",
+      "endpoint": "/chat/history?limit=50",
+      "passed": false,
+      "error": "All requests failed"
+    },
+    {
+      "name": "Logs Today",
+      "endpoint": "/logs/today",
+      "passed": false,
+      "error": "All requests failed"
+    },
+    {
+      "name": "Chat Stats",
+      "endpoint": "/chat/stats",
+      "passed": false,
+      "error": "All requests failed"
+    },
+    {
+      "name": "Chat",
+      "endpoint": "/chat",
+      "passed": false,
+      "error": "All requests failed"
+    }
+  ]
+}

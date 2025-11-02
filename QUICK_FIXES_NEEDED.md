@@ -72,3 +72,4 @@ def format_food_name(name: str) -> str:
 
 **Note:** Food formatting is a polish item. Focus on core functionality first (chat history, calorie deficit, AI insights), then come back to this for UI polish.
 
+

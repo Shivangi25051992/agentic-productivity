@@ -1,0 +1,389 @@
+{
+  "model_name": "Global-Standard Modular Fitness & Productivity Platform",
+  "inspiration": "MyFitnessPal + Google Fit + Headspace + Notion",
+  "principles": [
+    "User data isolation via subcollections",
+    "Denormalization for performance",
+    "Structured schema with validation",
+    "GDPR-compliant (easy user data deletion)",
+    "Scalable to millions of users",
+    "Real-time sync capable",
+    "Offline-first ready"
+  ],
+  "collections": {
+    "users": {
+      "path": "users/{userId}",
+      "description": "Root user document (profile only)",
+      "document_structure": {
+        "userId": "string (Firebase UID)",
+        "email": "string",
+        "displayName": "string",
+        "photoURL": "string",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp",
+        "lastActiveAt": "timestamp",
+        "accountStatus": "string (active|suspended|deleted)",
+        "privacySettings": {
+          "shareProfile": "boolean",
+          "shareProgress": "boolean",
+          "allowAnalytics": "boolean"
+        }
+      },
+      "subcollections": [
+        "profile",
+        "daily_stats",
+        "fitness_logs",
+        "tasks",
+        "chat_sessions",
+        "preferences",
+        "achievements"
+      ],
+      "indexes": [],
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "write": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/profile": {
+      "path": "users/{userId}/profile/current",
+      "description": "User fitness profile (single document)",
+      "document_structure": {
+        "fitnessGoal": "string (lose_weight|gain_muscle|maintain|improve_health)",
+        "activityLevel": "string (sedentary|lightly_active|moderately_active|very_active|extra_active)",
+        "dailyCalorieGoal": "number (1200-5000)",
+        "macroTargets": {
+          "proteinPercent": "number (10-40)",
+          "carbsPercent": "number (30-60)",
+          "fatPercent": "number (20-40)"
+        },
+        "measurements": {
+          "weight": "number (kg)",
+          "height": "number (cm)",
+          "age": "number",
+          "gender": "string (male|female|other|prefer_not_to_say)"
+        },
+        "preferences": {
+          "preferredFoods": "array<string>",
+          "dislikedFoods": "array<string>",
+          "allergies": "array<string>",
+          "dietaryRestrictions": "array<string> (vegetarian|vegan|halal|kosher|gluten_free|etc)"
+        },
+        "updatedAt": "timestamp"
+      },
+      "validation": {
+        "dailyCalorieGoal": "range(1200, 5000)",
+        "macroTargets": "sum(protein+carbs+fat) == 100",
+        "fitnessGoal": "enum(lose_weight, gain_muscle, maintain, improve_health)"
+      },
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "write": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/daily_stats": {
+      "path": "users/{userId}/daily_stats/{date}",
+      "description": "Denormalized daily summary (YYYY-MM-DD)",
+      "document_structure": {
+        "date": "string (YYYY-MM-DD)",
+        "calories": {
+          "consumed": "number",
+          "burned": "number",
+          "net": "number",
+          "goal": "number",
+          "remaining": "number"
+        },
+        "macros": {
+          "protein": "number (grams)",
+          "carbs": "number (grams)",
+          "fat": "number (grams)",
+          "fiber": "number (grams)"
+        },
+        "counts": {
+          "meals": "number",
+          "workouts": "number",
+          "tasks_completed": "number",
+          "water_glasses": "number"
+        },
+        "streak": {
+          "current": "number (days)",
+          "longest": "number (days)"
+        },
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["date"],
+          "order": "DESCENDING"
+        }
+      ],
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "write": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/fitness_logs": {
+      "path": "users/{userId}/fitness_logs/{logId}",
+      "description": "Individual meal/workout logs",
+      "document_structure": {
+        "logId": "string (auto-generated)",
+        "logType": "string (meal|workout|supplement|water)",
+        "timestamp": "timestamp",
+        "date": "string (YYYY-MM-DD for querying)",
+        "meal": {
+          "mealType": "string (breakfast|lunch|dinner|snack)",
+          "items": [
+            {
+              "name": "string",
+              "quantity": "number",
+              "unit": "string (g|ml|oz|cup|piece)",
+              "calories": "number",
+              "protein": "number",
+              "carbs": "number",
+              "fat": "number",
+              "fiber": "number"
+            }
+          ],
+          "totalCalories": "number",
+          "totalProtein": "number",
+          "totalCarbs": "number",
+          "totalFat": "number",
+          "totalFiber": "number",
+          "notes": "string"
+        },
+        "workout": {
+          "activityType": "string (running|cycling|gym|yoga|swimming|walking|etc)",
+          "duration": "number (minutes)",
+          "intensity": "string (low|moderate|high)",
+          "caloriesBurned": "number",
+          "distance": "number (km, optional)",
+          "notes": "string"
+        },
+        "supplement": {
+          "name": "string",
+          "dosage": "string",
+          "calories": "number (usually 0-10)"
+        },
+        "water": {
+          "amount": "number (ml)",
+          "glasses": "number"
+        },
+        "source": "string (manual|ai_parsed|imported)",
+        "confidence": "number (0.0-1.0 for AI parsed)",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["date", "timestamp"],
+          "order": ["DESC", "DESC"]
+        },
+        {
+          "fields": ["logType", "timestamp"],
+          "order": ["ASC", "DESC"]
+        }
+      ],
+      "validation": {
+        "logType": "enum(meal, workout, supplement, water)",
+        "meal.mealType": "enum(breakfast, lunch, dinner, snack)",
+        "workout.intensity": "enum(low, moderate, high)",
+        "confidence": "range(0.0, 1.0)"
+      },
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "create": "auth.uid == userId",
+        "update": "auth.uid == userId && resource.data.createdAt == request.resource.data.createdAt",
+        "delete": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/tasks": {
+      "path": "users/{userId}/tasks/{taskId}",
+      "description": "User tasks and reminders",
+      "document_structure": {
+        "taskId": "string (auto-generated)",
+        "title": "string",
+        "description": "string",
+        "status": "string (pending|in_progress|completed|cancelled)",
+        "priority": "string (low|medium|high|urgent)",
+        "dueDate": "timestamp",
+        "completedAt": "timestamp",
+        "tags": "array<string>",
+        "category": "string (fitness|health|work|personal|other)",
+        "reminderAt": "timestamp",
+        "recurrence": {
+          "enabled": "boolean",
+          "frequency": "string (daily|weekly|monthly)",
+          "interval": "number",
+          "endDate": "timestamp"
+        },
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["status", "dueDate"],
+          "order": ["ASC", "ASC"]
+        },
+        {
+          "fields": ["category", "status"],
+          "order": ["ASC", "ASC"]
+        }
+      ],
+      "validation": {
+        "status": "enum(pending, in_progress, completed, cancelled)",
+        "priority": "enum(low, medium, high, urgent)"
+      },
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "create": "auth.uid == userId",
+        "update": "auth.uid == userId",
+        "delete": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/chat_sessions": {
+      "path": "users/{userId}/chat_sessions/{sessionId}",
+      "description": "Chat sessions (group messages by day/topic)",
+      "document_structure": {
+        "sessionId": "string (YYYY-MM-DD or custom)",
+        "title": "string (auto-generated or custom)",
+        "startedAt": "timestamp",
+        "lastMessageAt": "timestamp",
+        "messageCount": "number",
+        "expiresAt": "timestamp (7 days from lastMessageAt)",
+        "archived": "boolean"
+      },
+      "subcollections": ["messages"],
+      "indexes": [
+        {
+          "fields": ["lastMessageAt"],
+          "order": "DESC"
+        }
+      ],
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "create": "auth.uid == userId",
+        "update": "auth.uid == userId",
+        "delete": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/chat_sessions/{sessionId}/messages": {
+      "path": "users/{userId}/chat_sessions/{sessionId}/messages/{messageId}",
+      "description": "Individual chat messages",
+      "document_structure": {
+        "messageId": "string (auto-generated)",
+        "role": "string (user|assistant)",
+        "content": "string",
+        "metadata": {
+          "itemsLogged": "number",
+          "netCalories": "number",
+          "categories": "array<string>"
+        },
+        "timestamp": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["timestamp"],
+          "order": "ASC"
+        }
+      ],
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "create": "auth.uid == userId",
+        "delete": "auth.uid == userId"
+      }
+    },
+    "users/{userId}/achievements": {
+      "path": "users/{userId}/achievements/{achievementId}",
+      "description": "User achievements and milestones",
+      "document_structure": {
+        "achievementId": "string",
+        "type": "string (streak|weight_loss|workout_count|etc)",
+        "title": "string",
+        "description": "string",
+        "unlockedAt": "timestamp",
+        "progress": "number (0-100)",
+        "target": "number",
+        "current": "number"
+      },
+      "security_rules": {
+        "read": "auth.uid == userId",
+        "write": "false (backend only)"
+      }
+    },
+    "food_database": {
+      "path": "food_database/{foodId}",
+      "description": "Global nutrition database (shared across all users)",
+      "document_structure": {
+        "foodId": "string (auto-generated)",
+        "name": "string",
+        "nameNormalized": "string (lowercase, for search)",
+        "aliases": "array<string>",
+        "category": "string (fruit|vegetable|protein|grain|dairy|snack|beverage|etc)",
+        "nutrition": {
+          "servingSize": "number",
+          "servingUnit": "string (g|ml|oz|cup|piece)",
+          "calories": "number",
+          "protein": "number",
+          "carbs": "number",
+          "fat": "number",
+          "fiber": "number",
+          "sugar": "number",
+          "sodium": "number"
+        },
+        "verified": "boolean",
+        "source": "string (usda|user_contributed|manual)",
+        "popularity": "number (search ranking)",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      },
+      "indexes": [
+        {
+          "fields": ["nameNormalized", "popularity"],
+          "order": ["ASC", "DESC"]
+        },
+        {
+          "fields": ["category", "popularity"],
+          "order": ["ASC", "DESC"]
+        }
+      ],
+      "security_rules": {
+        "read": "auth != null",
+        "write": "false (backend only)"
+      }
+    }
+  },
+  "cloud_functions": [
+    {
+      "name": "cleanupExpiredChatSessions",
+      "trigger": "scheduled (daily at 2am)",
+      "purpose": "Delete chat sessions where expiresAt < now"
+    },
+    {
+      "name": "updateDailyStats",
+      "trigger": "onCreate/onUpdate fitness_logs",
+      "purpose": "Update denormalized daily_stats document"
+    },
+    {
+      "name": "calculateStreak",
+      "trigger": "scheduled (daily at midnight)",
+      "purpose": "Calculate and update user streaks"
+    },
+    {
+      "name": "checkAchievements",
+      "trigger": "onUpdate daily_stats",
+      "purpose": "Check and unlock achievements"
+    }
+  ],
+  "advantages_over_current": [
+    "User data isolation (all data under users/{userId})",
+    "Easy GDPR compliance (delete users/{userId} deletes everything)",
+    "Better query performance (no cross-user queries)",
+    "Denormalized daily_stats for fast dashboard loading",
+    "Structured schema with validation",
+    "Scalable to millions of users",
+    "Chat sessions grouped by day (better UX)",
+    "Automatic cleanup via Cloud Functions",
+    "Achievement system built-in",
+    "Better food database with popularity ranking"
+  ]
+}
+

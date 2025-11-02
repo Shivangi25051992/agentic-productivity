@@ -496,3 +496,4 @@ Return: ~125 cal per 100g (AI estimated, 85% confidence)
 
 **Want me to implement the Firestore migration now?** 🚀
 
+

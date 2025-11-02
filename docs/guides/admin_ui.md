@@ -29,3 +29,4 @@ app.mount("/admin-ui", StaticFiles(directory="app/static/admin"), name="admin-ui
 
 
 
+

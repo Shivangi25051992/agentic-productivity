@@ -1,0 +1,165 @@
+[
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T17:07:52.793000+00:00",
+    "metadata": {
+      "formatted": true,
+      "category": "workout",
+      "net_calories": -400,
+      "items_count": 1
+    },
+    "expires_at": "2025-11-08T17:07:52.536969+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83c\udfc3 Exercise\n\n\u2022 5 km Running \u2192 burns approximately 400 kcal - moderate intensity\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~0 kcal\n\u2022 Calories burned: ~400 kcal\n\u2022 Net: \u2248 -400 kcal (deficit)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1992 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83c\udfc3 First workout of the day! Great start! \ud83d\udcca 1592 kcal remaining for today. You're on track!",
+    "_id": "9FSA6VL77EJ3wPnFeYS2"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T17:31:49.357000+00:00",
+    "metadata": {},
+    "expires_at": "2025-11-08T17:31:49.057175+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "1 egg and 50 gm avacado for breakfast",
+    "_id": "P7dd2uWGBJelLVHVldJ8"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T17:26:55.661000+00:00",
+    "metadata": {},
+    "expires_at": "2025-11-08T17:26:51.787032+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "2 eggs for breakfast",
+    "_id": "S6pAgsHWp1y7DuZ0fAS8"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-02T05:10:24.468000+00:00",
+    "content": "add 2 eggs + 1 cup tea and 1 multivitamin",
+    "expires_at": "2025-11-09T05:10:24.044777+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "metadata": {},
+    "_id": "TlS2PWRbN2noMIjA9dsB"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T11:20:18.715000+00:00",
+    "content": "Nice! Omlet+ 1 bowl rice+ beans curry 100 gm + 1 egg dosa + 1.5 litres water + 1 multivitamin added - 200 kcal, 10g protein Nice! Omega 3 capsule added - 200 kcal, 10g protein Nice! Probiotics added - 200 kcal, 10g protein Keep up the great work! \ud83c\udfaf",
+    "expires_at": "2025-11-08T11:20:18.415542+00:00",
+    "user_id": "OTrchhaOjvc1hlPSleLBSOjwOYt2",
+    "metadata": {
+      "calories": 200,
+      "protein_g": 10,
+      "category": "meal",
+      "fat_g": 5,
+      "items_count": 3,
+      "carbs_g": 25
+    },
+    "_id": "a0OTvd28S4It2RSiLVyJ"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T17:07:23.951000+00:00",
+    "metadata": {},
+    "expires_at": "2025-11-08T17:07:23.689452+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "ran 5 km",
+    "_id": "belz5hGR0IwQ655g5Nvw"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-02T05:10:55.990000+00:00",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83e\udd58 Food Intake\n\n\u2022 Eggs 2 [Breakfast] \u2192 ~140 kcal | 12g protein | 10g fat | 1g carbs\n\u2022 Multivitamin 1 tablet \u2192 ~5 kcal | 0g protein | 0g fat | 0g carbs\n\nEstimated Total (Food): ~145 kcal | ~12g protein | ~10g fat | ~1g carbs\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~145 kcal\n\u2022 Net: \u2248 +145 kcal (surplus)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1447 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83d\udcca 1452 kcal remaining for today. You're on track! \ud83d\udcdd I notice you love chicken breast! Great choice!",
+    "expires_at": "2025-11-09T05:10:55.626965+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "metadata": {
+      "formatted": true,
+      "category": "meal",
+      "net_calories": 145,
+      "items_count": 3
+    },
+    "_id": "dZTVXhuI5wtZGXOsaA7n"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T17:23:30.736000+00:00",
+    "metadata": {},
+    "expires_at": "2025-11-08T17:23:30.477819+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "2 eggs for breakfast",
+    "_id": "kAeyp5LOsurtOkUvIu5Q"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T17:32:16.701000+00:00",
+    "metadata": {
+      "formatted": true,
+      "category": "meal",
+      "net_calories": 150,
+      "items_count": 2
+    },
+    "expires_at": "2025-11-08T17:32:16.397061+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83e\udd58 Food Intake\n\n\u2022 Egg 1 [Breakfast] \u2192 ~70 kcal | 6g protein | 5g fat | 1g carbs\n\u2022 Avocado 50g [Breakfast] \u2192 ~80 kcal | 1g protein | 7g fat | 4g carbs\n\nEstimated Total (Food): ~150 kcal | ~7g protein | ~12g fat | ~5g carbs\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~150 kcal\n\u2022 Net: \u2248 +150 kcal (surplus)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1442 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83d\udcca 892 kcal remaining for today. You're on track! \ud83d\udcdd I notice you love chicken breast! Great choice!",
+    "_id": "m2RHdd8QPW85oywAEMy8"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T17:08:21.030000+00:00",
+    "metadata": {},
+    "expires_at": "2025-11-08T17:08:18.192674+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "I had 1 scoop of protein shake, 1 banana and 100 gm chicken breast",
+    "_id": "nxqInv3sgYt43Y1rJWTj"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T17:27:24.343000+00:00",
+    "metadata": {
+      "formatted": true,
+      "category": "meal",
+      "net_calories": 140,
+      "items_count": 1
+    },
+    "expires_at": "2025-11-08T17:27:24.054313+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83e\udd58 Food Intake\n\n\u2022 Eggs 2 [Breakfast] \u2192 ~140 kcal | 12g protein | 10g fat | 1g carbs\n\nEstimated Total (Food): ~140 kcal | ~12g protein | ~10g fat | ~1g carbs\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~140 kcal\n\u2022 Net: \u2248 +140 kcal (surplus)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1452 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83d\udcca 1042 kcal remaining for today. You're on track! \ud83d\udcdd I notice you love chicken breast! Great choice!",
+    "_id": "qNIEvNmU0LiYTnau1aP7"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T17:08:51.342000+00:00",
+    "metadata": {
+      "formatted": true,
+      "category": "supplement",
+      "net_calories": 390,
+      "items_count": 3
+    },
+    "expires_at": "2025-11-08T17:08:51.062971+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83e\udd58 Food Intake\n\n\u2022 Banana 1 \u2192 ~105 kcal | 1g protein | 0.3g fat | 27g carbs\n\u2022 Chicken Breast 100 gm (cooked) \u2192 ~165 kcal | 31g protein | 3.6g fat | 0g carbs\n\u2022 Protein Shake 1 scoop \u2192 ~120 kcal | 0g protein | 0g fat | 0g carbs\n\nEstimated Total (Food): ~390 kcal | ~32g protein | ~3.9g fat | ~27g carbs\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~390 kcal\n\u2022 Net: \u2248 +390 kcal (surplus)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1202 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83d\udcca 1322 kcal remaining for today. You're on track! \ud83d\udcdd I notice you love chicken breast! Great choice!",
+    "_id": "u2JBeB9u1DFqcOovjGba"
+  },
+  {
+    "role": "user",
+    "timestamp": "2025-11-01T11:19:59.220000+00:00",
+    "content": "2 egg Omlet+ 1 bowl of rice+ beans curry 100 gm + 1 egg dosa + 1.5 litres of water + 1 Multivitamin, 1 omega 3 capsule, 1 probiotics",
+    "expires_at": "2025-11-08T11:19:56.207000+00:00",
+    "user_id": "OTrchhaOjvc1hlPSleLBSOjwOYt2",
+    "metadata": {},
+    "_id": "wVPk1MXeWKO2Mo45NIU9"
+  },
+  {
+    "role": "assistant",
+    "timestamp": "2025-11-01T17:24:15.088000+00:00",
+    "metadata": {
+      "formatted": true,
+      "category": "meal",
+      "net_calories": 140,
+      "items_count": 1
+    },
+    "expires_at": "2025-11-08T17:24:14.820322+00:00",
+    "user_id": "ujQx7Gpzy8NosRLND2CBWLMATQh2",
+    "content": "Here's a quick nutrition + activity summary for what you listed today \ud83d\udc47\n\n\ud83e\udd58 Food Intake\n\n\u2022 Eggs 2 [Breakfast] \u2192 ~140 kcal | 12g protein | 10g fat | 1g carbs\n\nEstimated Total (Food): ~140 kcal | ~12g protein | ~10g fat | ~1g carbs\n\n\u2696\ufe0f Net Estimate\n\n\u2022 Calories consumed: ~140 kcal\n\u2022 Net: \u2248 +140 kcal (surplus)\n\n\ud83d\udca1 Suggestions:\nGreat! You have 1452 kcal remaining. Focus on protein-rich foods to preserve muscle while losing fat.\nYour protein intake is low. Add eggs, chicken, fish, or legumes to your next meal.\n\n\ud83d\udcac Personal Insights:\n\ud83d\udd25 Amazing! 30-day logging streak! Keep it up! \ud83d\udcca 1182 kcal remaining for today. You're on track! \ud83d\udcdd I notice you love chicken breast! Great choice!",
+    "_id": "yHvRucmsG4IQbxDYFzpM"
+  }
+]

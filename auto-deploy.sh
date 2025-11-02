@@ -246,3 +246,4 @@ echo "   https://github.com/prashantrepocollection/agentic-productivity"
 echo ""
 echo -e "${BLUE}🎉 All done! Tests will run automatically.${NC}"
 
+

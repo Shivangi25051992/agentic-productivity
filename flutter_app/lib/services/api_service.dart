@@ -9,10 +9,30 @@ import '../models/user.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
 
-class ApiException implements Exception { final String message; ApiException(this.message); }
-class NetworkException implements Exception { final String message; NetworkException(this.message); }
-class AuthException implements Exception { final String message; AuthException(this.message); }
-class ValidationException implements Exception { final String message; ValidationException(this.message); }
+class ApiException implements Exception { 
+  final String message; 
+  ApiException(this.message); 
+  @override
+  String toString() => message;
+}
+class NetworkException implements Exception { 
+  final String message; 
+  NetworkException(this.message); 
+  @override
+  String toString() => message;
+}
+class AuthException implements Exception { 
+  final String message; 
+  AuthException(this.message); 
+  @override
+  String toString() => message;
+}
+class ValidationException implements Exception { 
+  final String message; 
+  ValidationException(this.message); 
+  @override
+  String toString() => message;
+}
 
 class ApiService {
   final Dio _dio;
@@ -163,6 +183,48 @@ class ApiService {
       final resp = await _dio.patch('/users/${_authProvider.currentUser?.uid}', data: updates);
       return AppUser.fromJson((resp.data as Map).cast<String, dynamic>());
     } on DioException catch (e) { _handleDioError(e); rethrow; }
+  }
+
+  // Generic GET method for custom endpoints
+  Future<Map<String, dynamic>> get(String path) async {
+    try {
+      final resp = await _dio.get(path);
+      return (resp.data as Map).cast<String, dynamic>();
+    } on DioException catch (e) { _handleDioError(e); rethrow; }
+  }
+
+  // Generic DELETE method for custom endpoints
+  Future<Map<String, dynamic>> delete(String path) async {
+    try {
+      final resp = await _dio.delete(path);
+      if (resp.data is Map) {
+        return (resp.data as Map).cast<String, dynamic>();
+      } else {
+        throw ApiException('Invalid response format');
+      }
+    } on DioException catch (e) { 
+      _handleDioError(e); 
+      rethrow; 
+    } catch (e) {
+      throw ApiException('Failed to parse response: $e');
+    }
+  }
+
+  // Generic POST method for custom endpoints
+  Future<Map<String, dynamic>> post(String path, Map<String, dynamic> data) async {
+    try {
+      final resp = await _dio.post(path, data: data);
+      if (resp.data is Map) {
+        return (resp.data as Map).cast<String, dynamic>();
+      } else {
+        throw ApiException('Invalid response format');
+      }
+    } on DioException catch (e) { 
+      _handleDioError(e); 
+      rethrow; 
+    } catch (e) {
+      throw ApiException('Failed to parse response: $e');
+    }
   }
 
   Never _handleDioError(DioException e) {

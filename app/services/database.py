@@ -167,40 +167,90 @@ def list_tasks_by_user(
 # ----------------------
 # FitnessLog CRUD
 # ----------------------
+# Feature flag for migration
+USE_NEW_STRUCTURE = True
+
 def create_fitness_log(log: FitnessLog) -> FitnessLog:
-    doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log.log_id)
-    doc_ref.set(log.to_dict())
+    """Create fitness log (supports both old and new structure)"""
+    if USE_NEW_STRUCTURE:
+        # NEW: Save to user's subcollection
+        doc_ref = db.collection('users').document(log.user_id)\
+                    .collection('fitness_logs').document(log.log_id)
+        doc_ref.set(log.to_dict())
+    else:
+        # OLD: Save to flat collection
+        doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log.log_id)
+        doc_ref.set(log.to_dict())
     return log
 
 
-def get_fitness_log(log_id: str) -> Optional[FitnessLog]:
-    doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
-    doc = doc_ref.get()
-    if not doc.exists:
-        return None
-    data = doc.to_dict() or {}
-    try:
-        return FitnessLog.from_dict(data)
-    except ValidationError as exc:
-        raise ValueError(f"Invalid fitness log data for {log_id}: {exc}")
+def get_fitness_log(log_id: str, user_id: str = None) -> Optional[FitnessLog]:
+    """Get fitness log by ID"""
+    if USE_NEW_STRUCTURE and user_id:
+        # NEW: Get from user's subcollection
+        doc_ref = db.collection('users').document(user_id)\
+                    .collection('fitness_logs').document(log_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            return None
+        data = doc.to_dict() or {}
+        try:
+            return FitnessLog.from_dict(data)
+        except ValidationError as exc:
+            raise ValueError(f"Invalid fitness log data for {log_id}: {exc}")
+    else:
+        # OLD: Get from flat collection
+        doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            return None
+        data = doc.to_dict() or {}
+        try:
+            return FitnessLog.from_dict(data)
+        except ValidationError as exc:
+            raise ValueError(f"Invalid fitness log data for {log_id}: {exc}")
 
 
-def update_fitness_log(log_id: str, updates: Dict[str, Any]) -> Optional[FitnessLog]:
-    doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
-    try:
-        doc_ref.update(updates)
-    except NotFound:
-        return None
-    return get_fitness_log(log_id)
+def update_fitness_log(log_id: str, updates: Dict[str, Any], user_id: str = None) -> Optional[FitnessLog]:
+    """Update fitness log"""
+    if USE_NEW_STRUCTURE and user_id:
+        # NEW: Update in user's subcollection
+        doc_ref = db.collection('users').document(user_id)\
+                    .collection('fitness_logs').document(log_id)
+        try:
+            doc_ref.update(updates)
+        except NotFound:
+            return None
+        return get_fitness_log(log_id, user_id)
+    else:
+        # OLD: Update in flat collection
+        doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
+        try:
+            doc_ref.update(updates)
+        except NotFound:
+            return None
+        return get_fitness_log(log_id)
 
 
-def delete_fitness_log(log_id: str) -> bool:
-    doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
-    try:
-        doc_ref.delete()
-        return True
-    except NotFound:
-        return False
+def delete_fitness_log(log_id: str, user_id: str = None) -> bool:
+    """Delete fitness log"""
+    if USE_NEW_STRUCTURE and user_id:
+        # NEW: Delete from user's subcollection
+        doc_ref = db.collection('users').document(user_id)\
+                    .collection('fitness_logs').document(log_id)
+        try:
+            doc_ref.delete()
+            return True
+        except NotFound:
+            return False
+    else:
+        # OLD: Delete from flat collection
+        doc_ref = db.collection(FITNESS_LOGS_COLLECTION).document(log_id)
+        try:
+            doc_ref.delete()
+            return True
+        except NotFound:
+            return False
 
 
 def list_fitness_logs_by_user(
@@ -210,22 +260,94 @@ def list_fitness_logs_by_user(
     end_ts: Optional[Any] = None,
     log_type: Optional[FitnessLogType] = None,
 ) -> List[FitnessLog]:
+    """List fitness logs for a user (with automatic fallback to old structure)"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logs: List[FitnessLog] = []
+    
+    try:
+        if USE_NEW_STRUCTURE:
+            # NEW: Query user's subcollection (no user_id filter needed!)
+            logger.info(f"Querying NEW structure for user: {user_id}")
+            query = db.collection('users').document(user_id)\
+                      .collection('fitness_logs')
+            
+            if log_type is not None:
+                query = query.where("log_type", "==", log_type.value)
+            if start_ts is not None:
+                query = query.where("timestamp", ">=", start_ts)
+            if end_ts is not None:
+                query = query.where("timestamp", "<=", end_ts)
+            
+            query = query.order_by("timestamp", direction=firestore.Query.DESCENDING).limit(limit)
+            docs = query.stream()
+            
+            for doc in docs:
+                data = doc.to_dict() or {}
+                try:
+                    logs.append(FitnessLog.from_dict(data))
+                except ValidationError as e:
+                    logger.warning(f"Skipping invalid fitness log: {e}")
+                    continue
+            
+            logger.info(f"Found {len(logs)} logs in NEW structure")
+            
+            # If no logs found in new structure, try old structure as fallback
+            if len(logs) == 0:
+                logger.info(f"No logs in NEW structure, trying OLD structure for user: {user_id}")
+                return _query_old_structure(user_id, limit, start_ts, end_ts, log_type)
+            
+            return logs
+        else:
+            # OLD: Query flat collection with user_id filter
+            return _query_old_structure(user_id, limit, start_ts, end_ts, log_type)
+    
+    except Exception as e:
+        logger.error(f"Error querying fitness logs for user {user_id}: {str(e)}", exc_info=True)
+        # Try fallback to old structure
+        logger.info("Attempting fallback to OLD structure due to error")
+        try:
+            return _query_old_structure(user_id, limit, start_ts, end_ts, log_type)
+        except Exception as fallback_error:
+            logger.error(f"Fallback also failed: {str(fallback_error)}", exc_info=True)
+            return []
+
+
+def _query_old_structure(
+    user_id: str,
+    limit: int,
+    start_ts: Optional[Any],
+    end_ts: Optional[Any],
+    log_type: Optional[FitnessLogType],
+) -> List[FitnessLog]:
+    """Query fitness logs from old flat collection structure"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"Querying OLD structure for user: {user_id}")
     query = db.collection(FITNESS_LOGS_COLLECTION).where("user_id", "==", user_id)
+    
     if log_type is not None:
         query = query.where("log_type", "==", log_type.value)
     if start_ts is not None:
         query = query.where("timestamp", ">=", start_ts)
     if end_ts is not None:
         query = query.where("timestamp", "<=", end_ts)
+    
     query = query.order_by("timestamp", direction=firestore.Query.DESCENDING).limit(limit)
     docs = query.stream()
+    
     logs: List[FitnessLog] = []
     for doc in docs:
         data = doc.to_dict() or {}
         try:
             logs.append(FitnessLog.from_dict(data))
-        except ValidationError:
+        except ValidationError as e:
+            logger.warning(f"Skipping invalid fitness log: {e}")
             continue
+    
+    logger.info(f"Found {len(logs)} logs in OLD structure")
     return logs
 
 

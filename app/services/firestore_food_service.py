@@ -193,3 +193,4 @@ def search_foods(query: str) -> List[Tuple[str, Dict]]:
         return [(result['name'], result)]
     return []
 
+

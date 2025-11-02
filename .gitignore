@@ -19,55 +19,26 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 .venv/
 venv/
 ENV/
 env/
-
-# Flask/FastAPI
-instance/
-.webassets-cache
-
-# PyTest
-.pytest_cache/
-.coverage
-htmlcov/
-*.cover
-.hypothesis/
-
-# Jupyter Notebook
-.ipynb_checkpoints
 
 # Environment variables
 .env
 .env.local
 *.env
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+
+# OS
 .DS_Store
-
-# Logs
-*.log
-logs/
-*.pid
-
-# Firebase
-firebase-debug.log
-firestore-debug.log
-ui-debug.log
-*-debug.log
-*.json.backup
-
-# Credentials (IMPORTANT!)
-*credentials*.json
-*service-account*.json
-agentic-productivity-*.json
+Thumbs.db
 
 # Flutter
 flutter_app/.dart_tool/
@@ -75,37 +46,73 @@ flutter_app/.flutter-plugins
 flutter_app/.flutter-plugins-dependencies
 flutter_app/.packages
 flutter_app/build/
-flutter_app/.pub-cache/
-flutter_app/.pub/
-flutter_app/ios/Pods/
-flutter_app/ios/.symlinks/
-flutter_app/ios/Flutter/Flutter.framework
-flutter_app/ios/Flutter/Flutter.podspec
-flutter_app/macos/Flutter/ephemeral/
-flutter_app/linux/flutter/ephemeral/
-flutter_app/windows/flutter/ephemeral/
+flutter_app/ios/
+flutter_app/android/
+flutter_app/linux/
+flutter_app/macos/
+flutter_app/windows/
+flutter_app/.metadata
 
-# Test data
-test_users.json
-test_data.json
-user_data.json
-simulation_report.json
+# But DO include Flutter source code
+!flutter_app/lib/
+!flutter_app/lib/**/*
 
-# Reports
-test-reports/
-benchmarks/
-coverage/
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Logs
+*.log
+backend_local.log
+frontend_local.log
+deployment.log
+deploy_fix.log
+
+# PID files
+.backend_pid
+.frontend_pid
+
+# Test outputs
+.pytest_cache/
+htmlcov/
+.coverage
 
 # Temporary files
 *.tmp
-*.temp
-.cache/
+*.bak
+*.swp
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
+# Google Cloud
+service-account-key.json
+*-service-account.json
 
-# Node (if using any JS tools)
-node_modules/
-package-lock.json
+# Documentation (keep only essential docs)
+REFACTOR_SUMMARY.md
+IMPLEMENTATION_STATUS.md
+FRONTEND_PROGRESS.md
+ONBOARDING_COMPLETE.md
+TEST_ONBOARDING.md
+FEATURES_COMPLETE.md
+ERRORS_FIXED.md
+TESTING_GUIDE.md
+QUICK_TEST_GUIDE.md
+TEST_RESULTS.md
+CRITICAL_FIX_NEEDED.md
+FEATURES_COMPLETED.md
+FINAL_SUMMARY.md
+PRODUCT_ROADMAP.md
+MVP_COMPLETE_SUMMARY.md
+AI_REFERENCE_SYSTEM_PLAN.md
+PHASE1_COMPLETE.md
+TOMORROW_ACTION_PLAN.md
+AI_CACHE_SYSTEM_COMPLETE.md
+SESSION_SUMMARY_*.md
+ONBOARDING_FLOW_ANALYSIS.md
+ONBOARDING_FIX_COMPLETE.md
+GOAL_CALCULATION_EXPLAINED.md
+CHAT_ASSISTANT_FIX_PLAN.md
+AI_INTELLIGENCE_ROADMAP.md
+test_multi_food_live.py
+test_eggs_debug.py
+test_clarification.py

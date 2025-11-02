@@ -50,3 +50,4 @@ echo "   2. Open browser: http://localhost:8080"
 echo "   3. Follow: MANUAL_TESTING_GUIDE.md"
 echo ""
 
+

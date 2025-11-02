@@ -156,24 +156,37 @@ def onboard_user(
 @router.get("/me")
 def get_my_profile(current_user: User = Depends(get_current_user)):
     """Get current user's profile"""
-    db = _get_firestore_db()
-    doc = db.collection(PROFILES_COLLECTION).document(current_user.user_id).get()
+    import logging
+    logger = logging.getLogger(__name__)
     
-    if not doc.exists:
-        raise HTTPException(status_code=404, detail="Profile not found. Please complete onboarding.")
-    
-    profile_data = doc.to_dict()
-    
-    # Convert datetime objects to ISO strings for JSON serialization
-    if "created_at" in profile_data and profile_data["created_at"]:
-        profile_data["created_at"] = profile_data["created_at"].isoformat() if hasattr(profile_data["created_at"], "isoformat") else str(profile_data["created_at"])
-    if "updated_at" in profile_data and profile_data["updated_at"]:
-        profile_data["updated_at"] = profile_data["updated_at"].isoformat() if hasattr(profile_data["updated_at"], "isoformat") else str(profile_data["updated_at"])
-    
-    return {
-        "status": "success",
-        "profile": profile_data
-    }
+    try:
+        db = _get_firestore_db()
+        logger.info(f"Fetching profile for user: {current_user.user_id}")
+        
+        doc = db.collection(PROFILES_COLLECTION).document(current_user.user_id).get()
+        
+        if not doc.exists:
+            logger.warning(f"Profile not found for user: {current_user.user_id}")
+            raise HTTPException(status_code=404, detail="Profile not found. Please complete onboarding.")
+        
+        profile_data = doc.to_dict()
+        logger.info(f"Profile found for user: {current_user.user_id}")
+        
+        # Convert datetime objects to ISO strings for JSON serialization
+        if "created_at" in profile_data and profile_data["created_at"]:
+            profile_data["created_at"] = profile_data["created_at"].isoformat() if hasattr(profile_data["created_at"], "isoformat") else str(profile_data["created_at"])
+        if "updated_at" in profile_data and profile_data["updated_at"]:
+            profile_data["updated_at"] = profile_data["updated_at"].isoformat() if hasattr(profile_data["updated_at"], "isoformat") else str(profile_data["updated_at"])
+        
+        return {
+            "status": "success",
+            "profile": profile_data
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching profile for user {current_user.user_id}: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to fetch profile: {str(e)}")
 
 
 @router.put("/me")

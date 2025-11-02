@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# Flutter
+flutter_app/
+
+# Migration scripts
+migration_scripts/
+backups/
+
+# Test files
+test_*.py
+*_test.py
+
+# Environment files (will be set via Cloud Run env vars)
+.env
+.env.local
+.env.production
+
+# Firebase
+firebase.json
+.firebaserc
+firestore.rules
+firestore.indexes.json
+

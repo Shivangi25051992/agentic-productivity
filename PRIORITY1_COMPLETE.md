@@ -158,3 +158,4 @@ This will allow users to:
 
 **Next**: Implementing meal detail view so users can tap on meals and see the full breakdown! 🎯
 
+

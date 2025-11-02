@@ -1,0 +1,1277 @@
+{
+  "summary": {
+    "total_users": 2,
+    "total_tests": 96,
+    "passed": 0,
+    "failed": 96,
+    "pass_rate": 0.0
+  },
+  "users": [
+    {
+      "user_id": 1,
+      "goal": "improve_fitness",
+      "total_calories": 0,
+      "daily_calories": {},
+      "meals_logged": 0,
+      "chat_messages": 0
+    },
+    {
+      "user_id": 2,
+      "goal": "gain_muscle",
+      "total_calories": 0,
+      "daily_calories": {},
+      "meals_logged": 0,
+      "chat_messages": 0
+    }
+  ],
+  "test_results": [
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "breakfast",
+      "input": "protein oatmeal",
+      "timestamp": "2025-11-01T11:38:33.885868",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "breakfast",
+      "input": "smoothie bowl",
+      "timestamp": "2025-11-01T11:43:33.131513",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "lunch",
+      "input": "chicken wrap",
+      "timestamp": "2025-11-01T11:48:29.371243",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T11:53:14.877966",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "snack",
+      "input": "energy balls",
+      "timestamp": "2025-11-01T11:58:09.100922",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "dinner",
+      "input": "grilled chicken with vegetables",
+      "timestamp": "2025-11-01T12:02:45.700902",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 1,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T12:07:07.091877",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "breakfast",
+      "input": "protein oatmeal",
+      "timestamp": "2025-11-01T12:12:05.963361",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T12:16:24.701480",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T12:23:08.383741",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "lunch",
+      "input": "chicken wrap",
+      "timestamp": "2025-11-01T12:28:00.605017",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "snack",
+      "input": "protein shake",
+      "timestamp": "2025-11-01T12:32:35.917305",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "dinner",
+      "input": "fish with quinoa",
+      "timestamp": "2025-11-01T12:36:43.008419",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 2,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T12:41:14.296672",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T12:46:07.248845",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "breakfast",
+      "input": "protein oatmeal",
+      "timestamp": "2025-11-01T12:50:49.022307",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T12:55:33.854223",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "lunch",
+      "input": "chicken wrap",
+      "timestamp": "2025-11-01T13:03:25.557972",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "snack",
+      "input": "protein shake",
+      "timestamp": "2025-11-01T13:25:24.293969",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "dinner",
+      "input": "grilled chicken with vegetables",
+      "timestamp": "2025-11-01T13:30:18.816233",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 3,
+      "meal_type": "dinner",
+      "input": "fish with quinoa",
+      "timestamp": "2025-11-01T13:34:49.360929",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T13:39:48.651268",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "breakfast",
+      "input": "protein oatmeal",
+      "timestamp": "2025-11-01T13:43:57.820858",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "lunch",
+      "input": "chicken wrap",
+      "timestamp": "2025-11-01T13:48:46.482741",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T13:53:25.342817",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "snack",
+      "input": "trail mix",
+      "timestamp": "2025-11-01T13:58:20.717344",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "dinner",
+      "input": "grilled chicken with vegetables",
+      "timestamp": "2025-11-01T14:02:24.658758",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 4,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T14:06:56.590752",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "breakfast",
+      "input": "smoothie bowl",
+      "timestamp": "2025-11-01T14:11:21.070069",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T14:15:37.687539",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T14:20:27.505261",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "lunch",
+      "input": "quinoa bowl",
+      "timestamp": "2025-11-01T14:25:19.704192",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "snack",
+      "input": "trail mix",
+      "timestamp": "2025-11-01T14:30:02.747051",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T14:34:52.026185",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 5,
+      "meal_type": "dinner",
+      "input": "fish with quinoa",
+      "timestamp": "2025-11-01T14:39:14.418557",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "breakfast",
+      "input": "protein oatmeal",
+      "timestamp": "2025-11-01T14:43:50.063493",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T14:48:50.147865",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "lunch",
+      "input": "chicken wrap",
+      "timestamp": "2025-11-01T14:53:37.047303",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T14:58:19.391616",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "snack",
+      "input": "energy balls",
+      "timestamp": "2025-11-01T15:03:09.711368",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T15:07:48.979830",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 6,
+      "meal_type": "dinner",
+      "input": "fish with quinoa",
+      "timestamp": "2025-11-01T15:12:16.896306",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "breakfast",
+      "input": "smoothie bowl",
+      "timestamp": "2025-11-01T15:16:43.392631",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "breakfast",
+      "input": "2 eggs and avocado",
+      "timestamp": "2025-11-01T15:21:39.896779",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "lunch",
+      "input": "quinoa bowl",
+      "timestamp": "2025-11-01T15:26:19.433255",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "lunch",
+      "input": "salmon salad",
+      "timestamp": "2025-11-01T15:30:38.071768",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "snack",
+      "input": "trail mix",
+      "timestamp": "2025-11-01T15:35:37.556354",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "dinner",
+      "input": "fish with quinoa",
+      "timestamp": "2025-11-01T15:40:01.187726",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User1(improve_fitness, 52y, female, 72.52252887692539kg)",
+      "day": 7,
+      "meal_type": "dinner",
+      "input": "tofu stir fry",
+      "timestamp": "2025-11-01T15:44:55.366987",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "breakfast",
+      "input": "egg sandwich with cheese",
+      "timestamp": "2025-11-01T15:49:29.803911",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "breakfast",
+      "input": "3 eggs and oatmeal",
+      "timestamp": "2025-11-01T15:53:59.595510",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "lunch",
+      "input": "salmon with quinoa",
+      "timestamp": "2025-11-01T16:02:56.036980",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "lunch",
+      "input": "turkey with pasta",
+      "timestamp": "2025-11-01T16:07:32.601729",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "snack",
+      "input": "protein shake",
+      "timestamp": "2025-11-01T16:11:59.458394",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "dinner",
+      "input": "chicken with rice and beans",
+      "timestamp": "2025-11-01T16:16:32.430626",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 1,
+      "meal_type": "dinner",
+      "input": "steak with potatoes",
+      "timestamp": "2025-11-01T16:21:10.135119",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T16:25:38.688176",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "breakfast",
+      "input": "egg sandwich with cheese",
+      "timestamp": "2025-11-01T16:30:38.924483",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "lunch",
+      "input": "chicken breast with rice",
+      "timestamp": "2025-11-01T16:35:08.798834",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "lunch",
+      "input": "beef with sweet potato",
+      "timestamp": "2025-11-01T16:40:08.819796",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "dinner",
+      "input": "chicken with rice and beans",
+      "timestamp": "2025-11-01T16:44:45.062981",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 2,
+      "meal_type": "dinner",
+      "input": "lamb with vegetables",
+      "timestamp": "2025-11-01T16:49:13.010135",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T16:53:46.500164",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "breakfast",
+      "input": "4 eggs with toast",
+      "timestamp": "2025-11-01T16:58:45.999184",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "lunch",
+      "input": "salmon with quinoa",
+      "timestamp": "2025-11-01T17:03:30.498052",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "lunch",
+      "input": "turkey with pasta",
+      "timestamp": "2025-11-01T17:07:44.659294",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "snack",
+      "input": "protein shake",
+      "timestamp": "2025-11-01T17:13:04.289114",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "dinner",
+      "input": "chicken with rice and beans",
+      "timestamp": "2025-11-01T17:17:29.243506",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 3,
+      "meal_type": "dinner",
+      "input": "lamb with vegetables",
+      "timestamp": "2025-11-01T17:22:08.491202",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T17:26:36.466821",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "breakfast",
+      "input": "4 eggs with toast",
+      "timestamp": "2025-11-01T17:32:15.287530",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "lunch",
+      "input": "salmon with quinoa",
+      "timestamp": "2025-11-01T17:37:00.696709",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "lunch",
+      "input": "beef with sweet potato",
+      "timestamp": "2025-11-01T17:41:55.627322",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "snack",
+      "input": "protein bar",
+      "timestamp": "2025-11-01T17:48:37.122272",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "dinner",
+      "input": "steak with potatoes",
+      "timestamp": "2025-11-01T17:52:41.832545",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 4,
+      "meal_type": "dinner",
+      "input": "chicken with rice and beans",
+      "timestamp": "2025-11-01T17:57:12.383819",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "breakfast",
+      "input": "3 eggs and oatmeal",
+      "timestamp": "2025-11-01T18:01:17.511190",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T18:06:10.492734",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "lunch",
+      "input": "salmon with quinoa",
+      "timestamp": "2025-11-01T18:10:40.874831",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "lunch",
+      "input": "beef with sweet potato",
+      "timestamp": "2025-11-01T18:15:36.850936",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "snack",
+      "input": "protein shake",
+      "timestamp": "2025-11-01T18:37:53.143931",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "dinner",
+      "input": "fish with pasta",
+      "timestamp": "2025-11-01T18:42:19.386391",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 5,
+      "meal_type": "dinner",
+      "input": "chicken with rice and beans",
+      "timestamp": "2025-11-01T18:47:13.588365",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "breakfast",
+      "input": "4 eggs with toast",
+      "timestamp": "2025-11-01T18:51:22.138905",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T18:56:14.395793",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "lunch",
+      "input": "salmon with quinoa",
+      "timestamp": "2025-11-01T19:00:47.714395",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "lunch",
+      "input": "beef with sweet potato",
+      "timestamp": "2025-11-01T19:05:22.486978",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "dinner",
+      "input": "fish with pasta",
+      "timestamp": "2025-11-01T19:09:47.096204",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 6,
+      "meal_type": "dinner",
+      "input": "steak with potatoes",
+      "timestamp": "2025-11-01T19:14:35.254777",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "breakfast",
+      "input": "3 eggs and oatmeal",
+      "timestamp": "2025-11-01T19:19:27.240473",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "breakfast",
+      "input": "protein pancakes",
+      "timestamp": "2025-11-01T19:24:26.109925",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "lunch",
+      "input": "chicken breast with rice",
+      "timestamp": "2025-11-01T19:29:14.750382",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "lunch",
+      "input": "beef with sweet potato",
+      "timestamp": "2025-11-01T19:33:51.574023",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "snack",
+      "input": "protein bar",
+      "timestamp": "2025-11-01T19:38:15.749079",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "dinner",
+      "input": "steak with potatoes",
+      "timestamp": "2025-11-01T19:42:47.998269",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    },
+    {
+      "user": "User2(gain_muscle, 38y, male, 63.02159969278564kg)",
+      "day": 7,
+      "meal_type": "dinner",
+      "input": "lamb with vegetables",
+      "timestamp": "2025-11-01T19:47:02.946611",
+      "expected": {},
+      "actual": {},
+      "passed": false,
+      "errors": [
+        "Failed to authenticate user"
+      ]
+    }
+  ]
+}

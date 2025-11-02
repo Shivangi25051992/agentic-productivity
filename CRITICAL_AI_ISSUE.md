@@ -224,3 +224,4 @@ GEMINI_API_KEY=your-gemini-key-here
 
 **This is the #1 priority to fix!** The app cannot be truly intelligent without this.
 
+

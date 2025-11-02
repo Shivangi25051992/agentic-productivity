@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-11-02T11:02:40.235927",
+  "project_id": "productivityai-mvp",
+  "collections": [
+    "users",
+    "tasks",
+    "fitness_logs",
+    "chat_history",
+    "food_database"
+  ],
+  "total_documents": 187,
+  "backup_directory": "backups/pre-migration-20251102-110222"
+}

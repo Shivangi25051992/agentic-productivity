@@ -154,8 +154,8 @@ class MultiFoodParser:
         """
         foods = []
         
-        # Split by common separators: comma, 'and', or '+'
-        parts = re.split(r'[,+]|\band\b', text)
+        # Split by common separators: newlines, comma, 'and', or '+'
+        parts = re.split(r'[\n,+]|\band\b', text)
         
         for part in parts:
             part = part.strip()

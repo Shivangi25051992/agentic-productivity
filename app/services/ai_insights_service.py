@@ -303,3 +303,4 @@ def get_insights_service() -> AIInsightsService:
         _service = AIInsightsService()
     return _service
 
+

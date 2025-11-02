@@ -371,3 +371,4 @@ OPENAI_API_KEY=your_key_here (for future AI features)
 
 **Congratulations on building a production-grade AI fitness app!** 🎊🎉🚀
 
+

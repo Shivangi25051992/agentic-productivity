@@ -399,3 +399,4 @@ curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/chat/stats
 
 **Ready to test? Open the app and try typing "eggs"!** 🥚
 
+

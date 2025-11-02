@@ -29,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    // Load chat history on init to persist messages
     _loadChatHistory();
   }
 
@@ -49,8 +50,8 @@ class _ChatScreenState extends State<ChatScreen> {
         onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'),
       );
       
-      // TODO: Add get method to ApiService
-      final response = null; // await api.get('/chat/history?limit=50');
+      // Load chat history from backend
+      final response = await api.get('/chat/history?limit=50');
       
       if (response != null && response['messages'] != null) {
         final messages = (response['messages'] as List).cast<Map<String, dynamic>>();
@@ -114,27 +115,20 @@ class _ChatScreenState extends State<ChatScreen> {
     final items = (result['items'] as List?)?.cast<Map<String, dynamic>>() ?? [];
     final aiMessage = result['message']?.toString() ?? '';
     
-    // Add AI message if present (clarification, confirmation, etc.)
+    // Only add AI message (ChatGPT-style summary) - no individual cards
     if (aiMessage.isNotEmpty) {
       setState(() {
         _items.add(_ChatItem.aiMessage(aiMessage, DateTime.now()));
       });
     }
     
+    // Still update providers for dashboard, but don't show cards in chat
     for (final it in items) {
       final category = (it['category'] ?? '').toString();
       final data = (it['data'] ?? const {}).cast<String, dynamic>();
       if (category == 'meal') {
         final mealTitle = data['meal']?.toString() ?? (data['items']?.toString() ?? 'Meal');
         final kcal = int.tryParse('${data['calories'] ?? ''}') ?? 0;
-        _items.add(_ChatItem.summaryFitness(
-          meal: mealTitle,
-          calories: kcal,
-          macros: '',
-          time: DateTime.now(),
-          detailedMacros: data, // Pass the entire data object with all macros
-        ));
-        // Update provider so dashboard reflects changes
         context.read<FitnessProvider>().add(FitnessLogModel(
           id: UniqueKey().toString(),
           userId: context.read<AuthProvider>().currentUser?.uid ?? 'me',
@@ -144,16 +138,8 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
-        // Removed SnackBar - chat history shows what was logged
       } else if (category == 'workout') {
         final title = it['summary']?.toString() ?? 'Workout';
-        _items.add(_ChatItem.summaryFitness(
-          meal: title,
-          calories: int.tryParse('${data['calories'] ?? ''}') ?? 0,
-          macros: '',
-          time: DateTime.now(),
-          detailedMacros: data,
-        ));
         context.read<FitnessProvider>().add(FitnessLogModel(
           id: UniqueKey().toString(),
           userId: context.read<AuthProvider>().currentUser?.uid ?? 'me',
@@ -163,15 +149,8 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
-        // Removed SnackBar - chat history shows what was logged
       } else if (category == 'task' || category == 'reminder') {
         final title = data['title']?.toString() ?? it['summary']?.toString() ?? 'Task';
-        _items.add(_ChatItem.summaryTask(
-          title: title,
-          due: DateTime.now().add(const Duration(hours: 2)),
-          priority: 'medium',
-          status: 'pending',
-        ));
         context.read<TaskProvider>().add(TaskModel(
           id: UniqueKey().toString(),
           userId: context.read<AuthProvider>().currentUser?.uid ?? 'me',
@@ -183,15 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ));
-        // Removed SnackBar - chat history shows what was logged
-      } else {
-        _items.add(_ChatItem.message(role: 'assistant', text: it['summary']?.toString() ?? 'Noted'));
       }
-    }
-    
-    // Add AI conversational feedback message
-    if (aiMessage.isNotEmpty) {
-      _items.add(_ChatItem.message(role: 'assistant', text: aiMessage));
     }
     
     _autoScroll();
@@ -224,7 +195,10 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Assistant'),
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           // Logout button
           Consumer<AuthProvider>(

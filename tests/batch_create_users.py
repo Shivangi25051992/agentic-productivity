@@ -107,3 +107,4 @@ if __name__ == "__main__":
         count = sum(1 for u in users if u['goal'] == goal)
         print(f"  {goal}: {count} users")
 
+

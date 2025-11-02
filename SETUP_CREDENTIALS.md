@@ -179,3 +179,4 @@ If you're still having issues:
 5. Make sure virtual environment is activated: `source .venv/bin/activate`
 
 
+
