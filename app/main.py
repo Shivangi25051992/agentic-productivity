@@ -20,22 +20,10 @@ if os.path.exists(dotenv_local_path):
 app = FastAPI(title="AI Fitness & Task Tracker API", version="0.1.0")
 
 # HTTPS Enforcement Middleware (Production only)
-class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        # Skip HTTPS check for local development
-        if request.url.hostname in ["localhost", "127.0.0.1"]:
-            return await call_next(request)
-        
-        # In production, enforce HTTPS
-        if request.url.scheme != "https":
-            # Redirect HTTP to HTTPS
-            url = request.url.replace(scheme="https")
-            return HTTPException(status_code=301, headers={"Location": str(url)})
-        
-        return await call_next(request)
-
-# Add HTTPS enforcement
-app.add_middleware(HTTPSRedirectMiddleware)
+# DISABLED - Cloud Run already handles HTTPS enforcement
+# class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
+#     async def dispatch(self, request: Request, call_next):
+#         return await call_next(request)
 
 # CORS configuration - Only allow HTTPS origins in production
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")
