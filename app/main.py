@@ -106,15 +106,22 @@ async def get_ai_insights(current_user: User = Depends(get_current_user)):
         
         from app.services.ai_insights_service import get_insights_service
         from app.services import database as db_module
+        from google.cloud import firestore
+        import os
         
         insights_service = get_insights_service()
         
         # Get user's profile for goals
         logger.info(f"Fetching profile for insights: {current_user.user_id}")
-        profile = db_module.get_user_profile(current_user.user_id)
-        if not profile:
+        project = os.getenv("GOOGLE_CLOUD_PROJECT", "productivityai-mvp")
+        db = firestore.Client(project=project)
+        profile_doc = db.collection("user_profiles").document(current_user.user_id).get()
+        
+        if not profile_doc.exists:
             logger.warning(f"No profile found for insights: {current_user.user_id}")
             return {"insights": [], "summary": "Complete your profile to get personalized insights!"}
+        
+        profile = profile_doc.to_dict()
         
         # Get today's stats
         from datetime import datetime, timezone

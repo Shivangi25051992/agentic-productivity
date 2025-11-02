@@ -11,8 +11,9 @@ from datetime import datetime
 
 def fetch_logs(limit=100):
     """Fetch recent logs from Cloud Run"""
+    gcloud_path = "/Users/pchintanwar/google-cloud-sdk/bin/gcloud"
     cmd = [
-        "gcloud", "run", "services", "logs", "read",
+        gcloud_path, "run", "services", "logs", "read",
         "aiproductivity-backend",
         "--region", "us-central1",
         "--project", "productivityai-mvp",

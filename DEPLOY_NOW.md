@@ -218,7 +218,7 @@ flutter build ios --release
    ```
 
 2. **Upload to App Store Connect**:
-   - Open Xcode
+   - Open Xcodeimage.png
    - Window > Organizer
    - Select archive
    - Click "Distribute App"
