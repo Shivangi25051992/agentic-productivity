@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_timezone/flutter_timezone.dart';
 
 import '../models/user_profile.dart';
 import '../utils/constants.dart';
+import '../utils/timezone_helper.dart';
 import 'auth_provider.dart';
 
 class ProfileProvider extends ChangeNotifier {
@@ -42,15 +42,9 @@ class ProfileProvider extends ChangeNotifier {
         throw Exception('Not authenticated');
       }
 
-      // Detect user's timezone using flutter_timezone (returns IANA format like "Asia/Kolkata")
-      String timezone = 'UTC';  // Default fallback
-      try {
-        timezone = await FlutterTimezone.getLocalTimezone();
-        debugPrint('✅ Detected timezone: $timezone');
-      } catch (e) {
-        debugPrint('⚠️  Timezone detection failed: $e, using UTC');
-        timezone = 'UTC';
-      }
+      // Detect user's timezone (works on Web, iOS, Android)
+      final timezone = await TimezoneHelper.getLocalTimezone();
+      debugPrint('✅ Timezone for onboarding: $timezone');
       
       final response = await http.post(
         Uri.parse('${AppConstants.apiBaseUrl}/profile/onboard'),
