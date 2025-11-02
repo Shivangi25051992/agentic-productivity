@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi import Body, Depends
 from typing import Any, List, Optional
 from pydantic import BaseModel
@@ -6,6 +6,7 @@ import json
 import time
 from datetime import datetime, timezone, timedelta
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from dotenv import load_dotenv
 import os
 from app.services.auth import get_current_user
@@ -18,10 +19,34 @@ if os.path.exists(dotenv_local_path):
 
 app = FastAPI(title="AI Fitness & Task Tracker API", version="0.1.0")
 
-# CORS configuration
+# HTTPS Enforcement Middleware (Production only)
+class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Skip HTTPS check for local development
+        if request.url.hostname in ["localhost", "127.0.0.1"]:
+            return await call_next(request)
+        
+        # In production, enforce HTTPS
+        if request.url.scheme != "https":
+            # Redirect HTTP to HTTPS
+            url = request.url.replace(scheme="https")
+            return HTTPException(status_code=301, headers={"Location": str(url)})
+        
+        return await call_next(request)
+
+# Add HTTPS enforcement
+app.add_middleware(HTTPSRedirectMiddleware)
+
+# CORS configuration - Only allow HTTPS origins in production
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")
 if cors_origins_env.strip() == "*":
-    allowed_origins = ["*"]
+    # In production, restrict to HTTPS only
+    allowed_origins = [
+        "https://productivityai-mvp.web.app",
+        "https://productivityai-mvp.firebaseapp.com",
+        "http://localhost:3000",  # Allow local dev
+        "http://localhost:8080",
+    ]
 else:
     allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 
@@ -49,7 +74,7 @@ from app.routers import (
     admin_config_router,
     profile_router,
 )  # noqa: E402
-from app.routers.feedback import router as feedback_router  # noqa: E402
+from app.routers.feedback_production import router as feedback_router  # noqa: E402
 
 # Import models/services for persistence
 from app.services import database as dbsvc  # noqa: E402
@@ -78,20 +103,19 @@ app.include_router(meals_router)
 async def get_ai_insights(current_user: User = Depends(get_current_user)):
     """Get AI-powered insights for the user"""
     from app.services.ai_insights_service import get_insights_service
-    from app.services.database import get_database_service
+    from app.services import database as db_module
     
-    dbsvc = get_database_service()
     insights_service = get_insights_service()
     
     # Get user's profile for goals
-    profile = dbsvc.get_user_profile(current_user.user_id)
+    profile = db_module.get_user_profile(current_user.user_id)
     if not profile:
         return {"insights": [], "summary": "Complete your profile to get personalized insights!"}
     
     # Get today's stats
     from datetime import datetime, timezone
     today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    logs = dbsvc.list_fitness_logs_by_user(
+    logs = db_module.list_fitness_logs_by_user(
         user_id=current_user.user_id,
         start_ts=today_start,
         log_type=None,
@@ -274,63 +298,180 @@ def _classify_with_llm(text: str) -> tuple[List[ChatItem], bool, Optional[str]]:
         template_from_admin = None
 
     default_prompt = '''
-You are a friendly, conversational AI fitness and productivity assistant. Your job is to:
+You are an expert fitness/nutrition/activity assistant and entity extractor.
 
-1. **Parse user input** naturally - understand meals, workouts, tasks, reminders in any phrasing
-2. **Infer meal type** from time of day if not specified:
-   - 5am-10am → breakfast
-   - 11am-2pm → lunch  
-   - 3pm-5pm → snack
-   - 6pm-10pm → dinner
-   - 11pm-4am → late night snack
-3. **Ask clarifying questions** ONLY when truly ambiguous:
-   - Food preparation: "Did you have boiled, fried, or scrambled eggs?"
-   - Quantity: "How much rice did you have? (e.g., 1 cup, 200g)"
-   - Missing details: "When is this task due?" or "What priority?"
-4. **Normalize food names** to standard items (e.g., "2 boiled eggs" not "some eggs")
-5. **Estimate calories** using realistic portions if not specified
-6. **Be positive and encouraging** in your responses
+Your job is to:
+- Parse ANY free-form text (even with typos, multi-line, multiple categories, wrong English)
+- For EVERY line/item, identify and extract:
+  
+  **Category Classification:**
+  - category: "meal", "snack", "workout", "supplement", "task", "reminder", "other"
+  - meal_type: "breakfast", "lunch", "dinner", "snack", "unknown" (infer from time/context or mark unknown)
+  - activity_type (if workout): "run", "walk", "cycle", "gym", "yoga", "sport", "swim", "other"
+  - supplement_type (if supplement): vitamin name/type (e.g., "multivitamin", "omega-3", "protein")
+  
+  **Entity Extraction:**
+  - item: normalized, spell-corrected name (e.g., "omlet" → "omelet", "banan" → "banana")
+  - quantity: smart guess with units if missing (e.g., "2", "1 cup", "100g", "5 km")
+  - preparation: for meals, if mentioned (e.g., "boiled", "fried", "grilled", "raw")
+  - time: if explicitly mentioned or can be inferred
+  
+  **Nutrition/Activity Data:**
+  - For meals: calories, protein_g, carbs_g, fat_g, fiber_g (use realistic values based on food database knowledge)
+  - For workouts: duration_minutes, intensity ("low", "moderate", "high"), calories_burned
+  - For supplements: dosage, nutrients provided
+  
+  **Confidence Scoring:**
+  - confidence_category: 0.0-1.0 (how confident about the category)
+  - confidence_meal_type: 0.0-1.0 (how confident about meal type)
+  - confidence_macros: 0.0-1.0 (how confident about nutrition values)
 
-**Response Format (strict JSON):**
+**Critical Rules:**
+1. **Split multi-line inputs**: Each line is a SEPARATE item in the array
+2. **Handle typos**: Correct common misspellings automatically (omlet→omelet, banan→banana)
+3. **Smart Assumptions (BE INTELLIGENT LIKE CHATGPT)**:
+   - If quantity/size is reasonable to assume, ASSUME IT (e.g., "chocolate bar" = 40-50g regular size)
+   - If preparation is common, ASSUME IT (e.g., eggs = boiled unless stated, omelet = light oil)
+   - If calorie range is appropriate, provide RANGE (e.g., "5km run" = 350-450 kcal depending on pace)
+   - Default to standard portions: 1 egg=70kcal, 1 cup rice=200kcal, 1 chocolate bar=200kcal
+4. **Meal type inference (CRITICAL - MOST IMPORTANT RULE)**:
+   - **PRIORITY 1**: If user explicitly says "for breakfast", "at breakfast", "breakfast time", etc. → meal_type="breakfast" (confidence=1.0)
+   - **PRIORITY 2**: If user says "for lunch", "at lunch" → meal_type="lunch" (confidence=1.0)
+   - **PRIORITY 3**: If user says "for dinner", "at dinner" → meal_type="dinner" (confidence=1.0)
+   - **PRIORITY 4**: ONLY if NO explicit mention, use current time to guess (5-10am=breakfast, 11am-2pm=lunch, 3-5pm=snack, 6-10pm=dinner) with confidence=0.8
+   - **NEVER EVER override explicit user input!** If they say "2 eggs for breakfast", it's breakfast regardless of time!
+5. **Confidence scoring rules**:
+   - confidence_category: 1.0 if category is clear (meal/workout/supplement), 0.5-0.8 if ambiguous
+   - confidence_meal_type: 1.0 if explicitly stated (e.g., "for breakfast"), 0.9 if inferred from time, 0.5 if unknown
+   - confidence_macros: 0.9-1.0 if you know the food well OR made smart assumption, 0.5-0.8 if rough estimate, 0.3 if very uncertain
+6. **Clarification threshold**: ONLY set needs_clarification=true if:
+   - Input is too vague (e.g., "had lunch" with NO food details)
+   - Quantity is critical and completely unknown (e.g., "ate rice" - could be 50g or 500g)
+   - DO NOT ask for chocolate bar size, protein shake brand, etc. - make smart assumptions!
+
+**Output Format (strict JSON):**
 {
   "items": [
     {
-      "category": "meal|workout|supplement|task|reminder|other",
-      "summary": "Friendly confirmation message",
+      "category": "meal|snack|workout|supplement|task|reminder|other",
+      "summary": "Friendly confirmation (e.g., '2 boiled eggs for breakfast (140 kcal)')",
       "data": {
-        // For meals:
-        "meal_type": "breakfast|lunch|dinner|snack",
-        "items": ["food1", "food2"],
-        "quantity": "2 eggs, 1 cup rice",
-        "preparation": "boiled|fried|grilled|raw",
-        "calories": 450,
-        // For workouts:
-        "workout_type": "cardio|strength|yoga|sports",
-        "duration_minutes": 30,
-        "calories": 250,
-        // For tasks:
-        "title": "Task name",
-        "due_date": "YYYY-MM-DD",
-        "priority": "high|medium|low"
+        "item": "normalized name",
+        "quantity": "with units",
+        "preparation": "if applicable",
+        "meal_type": "breakfast|lunch|dinner|snack|unknown",
+        "activity_type": "if workout",
+        "supplement_type": "if supplement",
+        "calories": number,
+        "protein_g": number,
+        "carbs_g": number,
+        "fat_g": number,
+        "fiber_g": number,
+        "duration_minutes": number (for workouts),
+        "intensity": "low|moderate|high" (for workouts),
+        "calories_burned": number (for workouts),
+        "confidence_category": 0.0-1.0,
+        "confidence_meal_type": 0.0-1.0,
+        "confidence_macros": 0.0-1.0
       }
     }
   ],
   "needs_clarification": false,
-  "clarification_question": "Optional: Ask ONE specific question if ambiguous"
+  "clarification_questions": ["Array of specific questions, max 2"]
 }
 
 **Examples:**
-Input: "I ate 2 eggs"
-→ Infer time → breakfast, ask: "Did you have them boiled, fried, or scrambled?"
 
-Input: "2 boiled eggs for breakfast"
-→ Perfect! Log: "Logged: 2 boiled eggs for breakfast (140 kcal, 12g protein)! 🍳"
+Input: "2 eggs for breakfast"
+Output: {
+  "items": [{
+    "category": "meal",
+    "summary": "2 eggs for breakfast (140 kcal, 12g protein)",
+    "data": {
+      "item": "eggs",
+      "quantity": "2",
+      "meal_type": "breakfast",
+      "calories": 140,
+      "protein_g": 12,
+      "carbs_g": 1,
+      "fat_g": 10,
+      "fiber_g": 0,
+      "confidence_category": 1.0,
+      "confidence_meal_type": 1.0,
+      "confidence_macros": 0.95
+    }
+  }],
+  "needs_clarification": false,
+  "clarification_questions": []
+}
 
-Input: "ran 5k"
-→ Log: "Great run! 5K logged (~300 kcal burned). Keep it up! 🏃"
+Input: "2 egg omlet\\nran 5km\\n1 multivitamin tablet\\nchocolate bar"
+Output: {
+  "items": [
+    {
+      "category": "meal",
+      "summary": "2 egg omelet with light oil (200 kcal)",
+      "data": {
+        "item": "egg omelet",
+        "quantity": "2 eggs",
+        "preparation": "light oil",
+        "meal_type": "breakfast",
+        "calories": 200,
+        "protein_g": 14,
+        "carbs_g": 2,
+        "fat_g": 15,
+        "confidence_category": 1.0,
+        "confidence_meal_type": 0.9,
+        "confidence_macros": 0.9
+      }
+    },
+    {
+      "category": "workout",
+      "summary": "5K run (350-450 kcal burned)",
+      "data": {
+        "item": "running",
+        "quantity": "5 km",
+        "activity_type": "run",
+        "duration_minutes": 30,
+        "intensity": "moderate",
+        "calories_burned": 400,
+        "calories_burned_range": "350-450",
+        "confidence_category": 1.0
+      }
+    },
+    {
+      "category": "supplement",
+      "summary": "1 multivitamin tablet (5 kcal)",
+      "data": {
+        "item": "multivitamin",
+        "quantity": "1 tablet",
+        "supplement_type": "multivitamin",
+        "calories": 5,
+        "confidence_category": 1.0
+      }
+    },
+    {
+      "category": "meal",
+      "summary": "Chocolate bar regular 40g (200 kcal)",
+      "data": {
+        "item": "chocolate bar",
+        "quantity": "40g",
+        "meal_type": "snack",
+        "calories": 200,
+        "protein_g": 2,
+        "carbs_g": 25,
+        "fat_g": 10,
+        "confidence_category": 1.0,
+        "confidence_meal_type": 0.9,
+        "confidence_macros": 0.85
+      }
+    }
+  ],
+  "needs_clarification": false,
+  "clarification_questions": []
+}
 
-Input: "call mom tomorrow"
-→ Create reminder: "Reminder set: Call mom tomorrow ☎️"
+**Always split each food/activity/supplement onto its own item in the array. Be smart, accurate, and only ask for clarification when truly needed.**
 '''
 
     system_prompt = template_from_admin or default_prompt
@@ -355,14 +496,44 @@ Input: "call mom tomorrow"
         data = json.loads(content)
         items_json = data.get("items") or []
         items: List[ChatItem] = []
+        
+        # Log confidence scores for analytics
+        low_confidence_items = []
         for it in items_json:
-            items.append(ChatItem(category=it.get("category", "other"), summary=it.get("summary", ""), data=it.get("data") or {}))
+            item_data = it.get("data") or {}
+            conf_category = item_data.get("confidence_category", 1.0)
+            conf_meal_type = item_data.get("confidence_meal_type", 1.0)
+            conf_macros = item_data.get("confidence_macros", 1.0)
+            
+            # Track low confidence items for analytics (only log, don't affect clarification)
+            if conf_category < 0.8 or conf_meal_type < 0.8 or conf_macros < 0.6:
+                low_confidence_items.append({
+                    "item": item_data.get("item"),
+                    "conf_category": conf_category,
+                    "conf_meal_type": conf_meal_type,
+                    "conf_macros": conf_macros
+                })
+            
+            items.append(ChatItem(
+                category=it.get("category", "other"),
+                summary=it.get("summary", ""),
+                data=item_data
+            ))
+        
+        if low_confidence_items:
+            print(f"⚠️  Low confidence items detected: {low_confidence_items}")
+        
         if not items:
             items = [ChatItem(category="task", summary="Task created", data={"title": text})]
         
-        # Store clarification info in a global or return it separately
-        # For now, we'll handle it in the endpoint
-        return items, data.get("needs_clarification", False), data.get("clarification_question")
+        # Handle clarification_questions (plural) - join them if multiple
+        clarification_questions = data.get("clarification_questions", [])
+        clarification_question = None
+        if clarification_questions:
+            # Join multiple questions with newlines
+            clarification_question = "\n".join(clarification_questions)
+        
+        return items, data.get("needs_clarification", False), clarification_question
     except Exception as e:
         print(f"LLM classification error: {e}")
         return [ChatItem(category="task", summary="Task created", data={"title": text})], False, None
@@ -391,6 +562,7 @@ async def chat_endpoint(
     user_id = current_user.user_id  # Fixed: User model uses 'user_id' not 'uid'
     
     # Save user message to history
+    print(f"💾 Saving user message to history: user_id={user_id}, text={text[:50]}...")
     chat_history.save_message(user_id, 'user', text)
     
     # PHASE 1: Try cache-first approach for food logging
@@ -442,91 +614,15 @@ async def chat_endpoint(
         print(f"⚠️  Cache lookup error (falling back to LLM): {e}")
         cache_hit = False
     
-    # If cache miss, try multi-food parser first
-    if not cache_hit:
-        try:
-            from app.services.multi_food_parser import get_parser
-            parser = get_parser()
-            meal_entries = parser.parse(text)
-            
-            if len(meal_entries) > 1:
-                # Multiple meals detected! Parse each separately
-                print(f"🎯 MULTI-FOOD DETECTED: {len(meal_entries)} meals")
-                items = []
-                for entry in meal_entries:
-                    macros = parser.calculate_macros(entry)
-                    # Create description with quantity if available
-                    description = f"{entry.quantity} {entry.food}" if entry.quantity else entry.food
-                    items.append(ChatItem(
-                        category="meal",
-                        summary=f"{entry.food} ({entry.meal_type})",
-                        data={
-                            "meal": entry.food,
-                            "description": description,  # Add description for UI display
-                            "meal_type": entry.meal_type,
-                            "quantity": entry.quantity,
-                            "calories": macros.get("calories", 0),
-                            "protein_g": macros.get("protein", 0),
-                            "carbs_g": macros.get("carbs", 0),
-                            "fat_g": macros.get("fat", 0),
-                            "fiber_g": macros.get("fiber", 0),
-                            "estimated": macros.get("estimated", False),
-                            "multi_food_parsed": True
-                        }
-                    ))
-                cache_hit = True  # Skip LLM
-            elif len(meal_entries) == 1:
-                # Single meal, but with accurate macros
-                entry = meal_entries[0]
-                macros = parser.calculate_macros(entry)
-                
-                # Check if clarification is needed
-                if macros.get("needs_clarification"):
-                    clarification_msg = macros.get("clarification_question", "Could you provide more details?")
-                    
-                    # Save AI clarification to history
-                    chat_history.save_message(user_id, 'assistant', clarification_msg, {
-                        'needs_clarification': True,
-                        'category': 'clarification'
-                    })
-                    
-                    return ChatResponse(
-                        items=[],
-                        original=text,
-                        message=clarification_msg,
-                        needs_clarification=True,
-                        clarification_question=clarification_msg
-                    )
-                
-                # Create description with quantity if available
-                description = f"{entry.quantity} {entry.food}" if entry.quantity else entry.food
-                items = [ChatItem(
-                    category="meal",
-                    summary=f"{entry.food} ({entry.meal_type})",
-                    data={
-                        "meal": entry.food,
-                        "description": description,  # Add description for UI display
-                        "meal_type": entry.meal_type,
-                        "quantity": entry.quantity or macros.get("assumed_quantity"),
-                        "calories": macros.get("calories", 0),
-                        "protein_g": macros.get("protein", 0),
-                        "carbs_g": macros.get("carbs", 0),
-                        "fat_g": macros.get("fat", 0),
-                        "fiber_g": macros.get("fiber", 0),
-                        "estimated": macros.get("estimated", False),
-                        "multi_food_parsed": True
-                    }
-                )]
-                cache_hit = True  # Skip LLM
-        except Exception as e:
-            print(f"⚠️  Multi-food parser error: {e}")
-            cache_hit = False
+    # If cache miss, ALWAYS use OpenAI for intelligent parsing
+    # OpenAI can handle mixed categories (meals + workouts + supplements) properly
     
     # If still no items, use LLM as final fallback
     if not cache_hit:
         items, needs_clarification, clarification_question = _classify_with_llm(text)
     
-    # If clarification is needed, return early without persisting
+    # If clarification is needed, still return the parsed items (don't persist them yet)
+    # This allows the user to see what was understood before answering clarification
     if needs_clarification and clarification_question:
         # Save AI clarification to history
         chat_history.save_message(user_id, 'assistant', clarification_question, {
@@ -534,8 +630,17 @@ async def chat_endpoint(
             'category': 'clarification'
         })
         
+        # Convert items to response format (but don't save to DB yet)
+        response_items = []
+        for it in items:
+            response_items.append({
+                "category": it.category,
+                "summary": it.summary,
+                "data": it.data
+            })
+        
         return ChatResponse(
-            items=[],
+            items=response_items,  # Return parsed items so user can see them
             original=text,
             message=clarification_question,
             needs_clarification=True,
@@ -589,42 +694,36 @@ async def chat_endpoint(
         pass
 
     # Persist each item to Firestore
+    # Group meals by meal_type to avoid duplicates (combine multi-item meals into one log)
+    meals_by_type = {}
+    
     try:
         for it in items:
             if it.category == "meal":
-                # Convert list to string for content field
-                meal_content = it.data.get("meal")
-                if not meal_content:
-                    items_list = it.data.get("items")
-                    meal_content = ", ".join(items_list) if isinstance(items_list, list) else str(items_list) if items_list else text
+                meal_type = it.data.get("meal_type", "unknown")
                 
-                # Ensure ai_parsed_data has all required fields for meal detail view
-                ai_data = it.data.copy()
-                if "description" not in ai_data:
-                    ai_data["description"] = meal_content
-                if "meal_type" not in ai_data:
-                    # Infer meal type from current time
-                    current_hour = datetime.now().hour
-                    if 5 <= current_hour < 11:
-                        ai_data["meal_type"] = "breakfast"
-                    elif 11 <= current_hour < 15:
-                        ai_data["meal_type"] = "lunch"
-                    elif 15 <= current_hour < 18:
-                        ai_data["meal_type"] = "snack"
-                    elif 18 <= current_hour < 23:
-                        ai_data["meal_type"] = "dinner"
-                    else:
-                        ai_data["meal_type"] = "snack"
+                # Group meals of the same type together
+                if meal_type not in meals_by_type:
+                    meals_by_type[meal_type] = {
+                        "items": [],
+                        "total_calories": 0,
+                        "total_protein": 0,
+                        "total_carbs": 0,
+                        "total_fat": 0,
+                        "meal_type": meal_type
+                    }
                 
-                log = FitnessLog(
-                    user_id=current_user.user_id,
-                    log_type=FitnessLogType.meal,
-                    content=meal_content,
-                    calories=it.data.get("calories"),
-                    ai_parsed_data=ai_data,
-                )
-                dbsvc.create_fitness_log(log)
+                # Add this item to the group
+                item_name = it.data.get("item", "")
+                quantity = it.data.get("quantity", "")
+                meals_by_type[meal_type]["items"].append(f"{quantity} {item_name}".strip())
+                meals_by_type[meal_type]["total_calories"] += it.data.get("calories", 0)
+                meals_by_type[meal_type]["total_protein"] += it.data.get("protein_g", 0)
+                meals_by_type[meal_type]["total_carbs"] += it.data.get("carbs_g", 0)
+                meals_by_type[meal_type]["total_fat"] += it.data.get("fat_g", 0)
+            
             elif it.category == "workout":
+                # Create workout log immediately
                 log = FitnessLog(
                     user_id=current_user.user_id,
                     log_type=FitnessLogType.workout,
@@ -633,9 +732,11 @@ async def chat_endpoint(
                     ai_parsed_data=it.data,
                 )
                 dbsvc.create_fitness_log(log)
+            
             elif it.category in ("task", "reminder"):
+                # Create task immediately
                 t = Task(
-                    task_id=None,  # Task model likely autogenerates
+                    task_id=None,
                     user_id=current_user.user_id,
                     title=it.data.get("title") or it.summary or text,
                     description=it.data.get("notes", ""),
@@ -644,35 +745,85 @@ async def chat_endpoint(
                     status=TaskStatus.pending,
                 )
                 dbsvc.create_task(t)
+        
+        # Now create ONE log per meal type (combines multi-item meals)
+        for meal_type, meal_data in meals_by_type.items():
+            meal_content = ", ".join(meal_data["items"])
+            
+            ai_data = {
+                "description": meal_content,
+                "meal_type": meal_type,
+                "calories": meal_data["total_calories"],
+                "protein_g": meal_data["total_protein"],
+                "carbs_g": meal_data["total_carbs"],
+                "fat_g": meal_data["total_fat"],
+                "items": meal_data["items"]
+            }
+            
+            log = FitnessLog(
+                user_id=current_user.user_id,
+                log_type=FitnessLogType.meal,
+                content=meal_content,
+                calories=meal_data["total_calories"],
+                ai_parsed_data=ai_data,
+            )
+            dbsvc.create_fitness_log(log)
+            
     except Exception as e:
         # Log the error instead of silently swallowing it
         print(f"ERROR persisting data: {type(e).__name__}: {str(e)}")
         import traceback
         traceback.print_exc()
 
-    # Generate conversational AI feedback
-    ai_message = _generate_ai_feedback(items, text)
+    # Generate ChatGPT-style summary format with context awareness
+    from app.services.response_formatter import get_response_formatter
+    from app.services.context_service import get_context_service
+    
+    formatter = get_response_formatter()
+    context_service = get_context_service(dbsvc)
+    
+    # Get user context for intelligent feedback
+    user_context = context_service.get_user_context(current_user.user_id)
+    
+    # Convert items to dict format for formatter
+    items_dict = []
+    for item in items:
+        items_dict.append({
+            'category': item.category,
+            'summary': item.summary,
+            'data': item.data
+        })
+    
+    # Format response
+    formatted = formatter.format_response(
+        items=items_dict,
+        user_goal=user_context.fitness_goal,
+        daily_calorie_goal=user_context.daily_calorie_goal
+    )
+    
+    # Generate context-aware personalized message
+    context_message = context_service.generate_context_aware_message(user_context, items_dict)
+    
+    # Use ONLY the formatted summary (no duplication, no asterisks)
+    ai_message = formatted.summary_text
+    
+    # Append context-aware feedback if available (clean format, no markdown)
+    if context_message:
+        ai_message = f"{ai_message}\n\n💬 Personal Insights:\n{context_message}"
     
     # Save AI response to history
     metadata = {
         'category': items[0].category if items else 'unknown',
-        'items_count': len(items)
+        'items_count': len(items),
+        'net_calories': formatted.net_calories,
+        'formatted': True  # Mark as using new format
     }
     
-    # Add meal-specific metadata
-    if items and items[0].category == 'meal':
-        meal_data = items[0].data or {}
-        metadata.update({
-            'calories': meal_data.get('calories', 0),
-            'protein_g': meal_data.get('protein_g', 0),
-            'carbs_g': meal_data.get('carbs_g', 0),
-            'fat_g': meal_data.get('fat_g', 0)
-        })
-    
+    print(f"💾 Saving AI message to history: user_id={user_id}, message_length={len(ai_message)}")
     chat_history.save_message(user_id, 'assistant', ai_message, metadata)
     
     return ChatResponse(
-        items=items,
+        items=[],  # Don't return individual cards - summary has everything
         original=text,
         message=ai_message,
         needs_clarification=False,
@@ -686,13 +837,106 @@ async def get_chat_history(
     current_user: User = Depends(get_current_user),
 ):
     """Get chat history for the current user"""
+    print(f"📜 Loading chat history for user: {current_user.user_id}")
     chat_history = get_chat_history_service()
     messages = chat_history.get_user_history(current_user.user_id, limit=limit)
+    print(f"📜 Found {len(messages)} messages")
     
     return {
         "messages": messages,
         "count": len(messages)
     }
+
+
+@app.delete("/user/wipe-logs")
+async def wipe_user_logs(
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Wipe all logs for the current user (fitness logs, chat history, tasks)
+    Keeps profile and goals intact
+    Supports both old flat structure and new subcollection structure
+    """
+    try:
+        from google.cloud import firestore
+        db = firestore.Client()
+        user_id = current_user.user_id
+        
+        deleted_logs = 0
+        deleted_messages = 0
+        deleted_tasks = 0
+        
+        # Delete from NEW structure (subcollections)
+        try:
+            # Delete fitness logs from subcollection
+            fitness_logs_ref = db.collection("users").document(user_id).collection("fitness_logs")
+            for doc in fitness_logs_ref.stream():
+                doc.reference.delete()
+                deleted_logs += 1
+            
+            # Delete chat sessions and messages
+            sessions_ref = db.collection("users").document(user_id).collection("chat_sessions")
+            for session in sessions_ref.stream():
+                # Delete messages in this session
+                messages_ref = session.reference.collection("messages")
+                for msg in messages_ref.stream():
+                    msg.reference.delete()
+                    deleted_messages += 1
+                # Delete the session itself
+                session.reference.delete()
+            
+            # Delete tasks from subcollection
+            tasks_ref = db.collection("users").document(user_id).collection("tasks")
+            for doc in tasks_ref.stream():
+                doc.reference.delete()
+                deleted_tasks += 1
+        except Exception as e:
+            print(f"Error deleting from new structure: {e}")
+        
+        # Delete from OLD structure (flat collections) for backward compatibility
+        try:
+            # Delete fitness logs
+            fitness_logs_ref = db.collection("fitness_logs")
+            query = fitness_logs_ref.where("user_id", "==", user_id)
+            for doc in query.stream():
+                doc.reference.delete()
+                deleted_logs += 1
+            
+            # Delete chat history
+            chat_ref = db.collection("chat_history")
+            query = chat_ref.where("user_id", "==", user_id)
+            for doc in query.stream():
+                doc.reference.delete()
+                deleted_messages += 1
+            
+            # Delete tasks
+            tasks_ref = db.collection("tasks")
+            query = tasks_ref.where("user_id", "==", user_id)
+            for doc in query.stream():
+                doc.reference.delete()
+                deleted_tasks += 1
+        except Exception as e:
+            print(f"Error deleting from old structure: {e}")
+        
+        return {
+            "success": True,
+            "deleted": {
+                "fitness_logs": deleted_logs,
+                "chat_messages": deleted_messages,
+                "tasks": deleted_tasks,
+                "total": deleted_logs + deleted_messages + deleted_tasks
+            },
+            "message": f"Successfully deleted {deleted_logs + deleted_messages + deleted_tasks} items. Profile and goals preserved."
+        }
+    except Exception as e:
+        print(f"Error wiping user logs: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "message": "Failed to wipe logs. Please try again."
+        }
 
 
 @app.get("/chat/stats")
