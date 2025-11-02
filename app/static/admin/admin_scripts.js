@@ -199,14 +199,18 @@
   /* Init */
   document.addEventListener('DOMContentLoaded', ()=>{
     initTheme(); attachFormHandlers(); attachDashboardHandlers(); initShortcuts();
-    // Try to load existing active config to prefill fields
-    loadActiveConfig();
+    // Try to load existing active config to prefill fields (only on dashboard page)
+    if(document.getElementById('content')){
+      loadActiveConfig();
+    }
     const topbar = $('#topbar');
     if(topbar){ window.addEventListener('scroll', ()=>{ topbar.classList.toggle('scrolled', window.scrollY>4); }, { passive:true }); }
   });
 
   async function loadActiveConfig(){
     try{
+      // Only load if we have a token
+      if(!auth.token) return;
       const res = await api('/admin/config/active');
       const cfg = res && res.config ? res.config : null;
       if(!cfg) return;
