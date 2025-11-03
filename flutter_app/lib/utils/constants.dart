@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Global constants for the Flutter app.
 class AppConstants {
   /// Backend API base URL. Override via runtime config if needed.
-  static const String apiBaseUrl = 'https://aiproductivity-backend-rhwrraai2a-uc.a.run.app';
+  static const String apiBaseUrl = 'http://localhost:8000';  // LOCAL DEV
 
   /// Color palette aligning with admin design system.
   static const Color primary = Color(0xFF20B2AA);
