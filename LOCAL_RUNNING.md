@@ -16,9 +16,11 @@ http://localhost:8000
 
 ### Frontend:
 ```
-http://localhost:8080
+http://localhost:9090
 ```
 **Status**: 🔄 Starting (will be ready in ~30 seconds)
+
+**Note**: Port 9090 is dedicated for this fitness app (8080 is used by your other dashboard)
 
 ---
 
