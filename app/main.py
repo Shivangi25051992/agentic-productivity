@@ -44,7 +44,8 @@ if cors_origins_env.strip() == "*":
         "https://productivityai-mvp.web.app",
         "https://productivityai-mvp.firebaseapp.com",
         "http://localhost:3000",  # Allow local dev
-        "http://localhost:8080",
+        "http://localhost:8080",  # Allow local dev
+        "http://localhost:9090",  # Allow local dev (fitness app)
     ]
 else:
     allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
