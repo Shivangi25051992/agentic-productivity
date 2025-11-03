@@ -1,133 +1,137 @@
-# 🚀 Quick Start Guide
+# 🚀 QUICK START - Local Development
 
-## Your App is LIVE! 🎉
-
-### 🌐 Access Your App
-**Web**: https://productivityai-mvp.web.app
-
-### 📱 Test on iPhone
-1. Open Safari: https://productivityai-mvp.web.app
-2. Tap Share → "Add to Home Screen"
-3. Use as native app!
+**Status**: ✅ Environment Ready  
+**Credentials**: ✅ Same as production (will separate later)
 
 ---
 
-## 🔄 Deploy Updates (One Command)
+## ⚡ START LOCAL (2 Commands)
 
+### Terminal 1 - Backend:
 ```bash
-cd /Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity
-./auto_deploy.sh
+cd /Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/app
+source ../venv/bin/activate
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-That's it! This will:
-- Build & deploy backend
-- Build & deploy frontend
-- Update Firestore rules
+**Expected**: `INFO: Uvicorn running on http://0.0.0.0:8000`
 
 ---
 
-## 🧪 Test Features
+### Terminal 2 - Frontend:
+```bash
+cd /Users/pchintanwar/Documents/Projects-AIProductivity/agentic-productivity/flutter_app
 
-### 1. Sign Up
-- Go to https://productivityai-mvp.web.app
-- Create account with email/password
-- You'll receive notification at: shivganga25shingatwar@gmail.com
+# IMPORTANT: First time only - update API URL
+# Edit: lib/utils/constants.dart
+# Line 6: Change to 'http://localhost:8000'
 
-### 2. Chat Assistant
-- Type: "I ate 2 eggs and banana for breakfast"
-- AI will parse and log the meal
-- Check timeline to see it logged
+flutter run -d chrome
+```
 
-### 3. Submit Feedback
-- Click floating button (bottom-right)
-- Add screenshot + comments
-- You'll get email notification
-
-### 4. Wipe Data
-- Go to Settings
-- Tap "Wipe All My Logs"
-- Confirm deletion
+**Expected**: `✓ Built build/web` and browser opens
 
 ---
 
-## 📊 Monitor Your App
+## ✅ VERIFY IT WORKS
 
-### Backend Logs
 ```bash
-gcloud logs tail --project=productivityai-mvp
-```
+# Test backend health
+curl http://localhost:8000/health
+# Should return: {"status":"healthy"}
 
-### Firestore Console
-https://console.firebase.google.com/project/productivityai-mvp/firestore
-
-### Cloud Run Console
-https://console.cloud.google.com/run?project=productivityai-mvp
-
----
-
-## 🐛 If Something Breaks
-
-### Redeploy Everything
-```bash
-./auto_deploy.sh
-```
-
-### Backend Only
-```bash
-gcloud run deploy aiproductivity-backend \
-  --source . \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --project productivityai-mvp
-```
-
-### Frontend Only
-```bash
-cd flutter_app
-flutter build web
-firebase deploy --only hosting
+# Test admin login
+curl -X POST http://localhost:8000/admin/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+# Should return: {"token":"..."}
 ```
 
 ---
 
-## 💡 Tips
+## 🔍 DEBUG TIMEZONE ISSUE
 
-1. **Test on real device** - iOS Safari works best
-2. **Use feedback button** - I get notified instantly
-3. **Check email** - All signups notify you
-4. **Monitor costs** - Check OpenAI usage dashboard
+### In Browser Console (F12):
 
----
+**During signup, look for**:
+```
+🔍 TimezoneHelper.getLocalTimezone() called
+🔍 Platform: WEB
+🔍 UTC Offset detected: 5:30:00.000000
+🌍 Mapping offset +5:30 to timezone
+✅ Web timezone (from offset): Asia/Kolkata
+🔍 ONBOARDING: Timezone detected: Asia/Kolkata
+```
 
-## 📧 Support
-
-**Admin Email**: shivganga25shingatwar@gmail.com
-- New signups → Email notification
-- Feedback → Email with screenshot
-- Errors → (Coming soon with logging)
-
----
-
-## 🎯 What's Working
-
-✅ Signup with email/password  
-✅ AI chat assistant  
-✅ Meal logging & classification  
-✅ Timeline view  
-✅ Feedback system  
-✅ Wipe all logs  
-✅ Invitation notifications  
+**If missing**: TimezoneHelper not being called  
+**If shows UTC**: Offset detection failed
 
 ---
 
-## 🔜 Coming Soon
+## 📊 USEFUL COMMANDS
 
-⏳ Admin dashboard for KPIs  
-⏳ Cost tracking  
-⏳ Production logging  
-⏳ Performance monitoring  
+```bash
+# Check what's running
+lsof -i :8000  # Backend
+lsof -i :XXXX  # Frontend (Flutter shows port)
+
+# View backend logs
+tail -f app/logs/*.log
+
+# View Flutter logs
+flutter logs
+
+# Restart backend (if needed)
+# Ctrl+C in Terminal 1, then re-run uvicorn command
+
+# Restart frontend (if needed)
+# Ctrl+C in Terminal 2, then re-run flutter command
+```
 
 ---
 
-**Your app is production-ready! Start testing! 🚀**
+## 🐛 COMMON ISSUES
+
+### Backend won't start:
+```bash
+# Activate venv first
+source venv/bin/activate
+
+# Check if port is busy
+lsof -i :8000
+kill -9 <PID>  # If needed
+```
+
+### Frontend won't start:
+```bash
+# Clean and retry
+flutter clean
+flutter pub get
+flutter run -d chrome
+```
+
+### CORS errors:
+- Backend already has CORS enabled
+- Make sure apiBaseUrl is 'http://localhost:8000' (not https)
+
+---
+
+## 📝 FILES TO READ
+
+1. **TODAY_PLAN.md** - Complete execution plan
+2. **LOCAL_SETUP_GUIDE.md** - Detailed setup instructions
+3. **TOMORROW_PRIORITY.md** - Timezone fix priority
+
+---
+
+## 🎯 TODAY'S GOAL
+
+1. ✅ Local running
+2. ⏳ Debug timezone detection
+3. ⏳ Fix frontend filtering
+4. ⏳ Test locally
+5. ⏳ Deploy to production
+
+---
+
+**Start with Terminal 1 (Backend), then Terminal 2 (Frontend)!** 🚀
