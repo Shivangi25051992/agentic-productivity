@@ -132,6 +132,10 @@ def onboard_user(
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
         timezone=request.timezone,  # Store user's timezone
+        # Free tier tracking (default for all new users)
+        subscription_tier="free",
+        meal_plans_generated_this_week=0,
+        week_start_for_limit=datetime.utcnow(),
     )
     
     # Save to Firestore

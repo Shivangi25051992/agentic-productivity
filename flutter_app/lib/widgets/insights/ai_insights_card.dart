@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/constants.dart';
 
 /// AI-Powered Insights Card
 /// Displays intelligent, actionable insights for users
@@ -35,55 +36,27 @@ class AIInsightsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Row(
+            // Header - Gen Z Aligned, Motivational
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.lightbulb,
-                    color: Colors.purple,
-                    size: 24,
+                // Main Headline
+                Text(
+                  "How You're Leveling Up 🆙",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF5A41FF), // App accent color
                   ),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'AI Insights',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.purple.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.auto_awesome,
-                        size: 14,
-                        color: Colors.purple.shade700,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Smart',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple.shade700,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 4),
+                // Subheading
+                Text(
+                  "Fresh progress. New wins. Keep going!",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -126,6 +99,21 @@ class AIInsightsCard extends StatelessWidget {
               const SizedBox(height: 16),
               ...insights.map((insight) => _buildInsightItem(context, insight)).toList(),
             ],
+            
+            // "Powered by Yuvi" microtext - subtle, bottom-right
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                "Powered by Yuvi",
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey.shade500,
+                  fontStyle: FontStyle.italic,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
           ],
         ),
       ),

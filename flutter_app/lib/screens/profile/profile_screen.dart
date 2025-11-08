@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import 'package:provider/provider.dart';
 
 import '../../providers/profile_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/user_profile.dart';
+import '../analytics/feedback_analytics_screen.dart';
+import '../settings/home_screen_style_selector.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -173,6 +177,19 @@ class ProfileScreen extends StatelessWidget {
                       _buildPreferencesSection(context, userProfile),
                       const SizedBox(height: 24),
 
+                      // Home Screen Style (iOS only)
+                      if (!kIsWeb && Platform.isIOS) ...[
+                        Text(
+                          'Appearance',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildHomeScreenStyleButton(context),
+                        const SizedBox(height: 24),
+                      ],
+
                       // Actions
                       _buildActionButtons(context, auth),
                     ],
@@ -267,6 +284,9 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
+          // Subscription Tier Badge
+          _buildTierBadge(context, profile.subscriptionTier),
+          const SizedBox(height: 8),
           // Goal
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -298,6 +318,56 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(width: 24),
               _buildStreakBadge(context, '📊', '${profile.totalDaysLogged}', 'Total Days'),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTierBadge(BuildContext context, String tier) {
+    final bool isPremium = tier.toLowerCase() == 'premium';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        gradient: isPremium
+            ? const LinearGradient(
+                colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : null,
+        color: isPremium ? null : Colors.white.withOpacity(0.25),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isPremium ? const Color(0xFFFFD700) : Colors.white.withOpacity(0.5),
+          width: 1.5,
+        ),
+        boxShadow: isPremium
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFFFD700).withOpacity(0.3),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            isPremium ? '👑' : '🆓',
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isPremium ? 'Premium' : 'Free Tier',
+            style: TextStyle(
+              color: isPremium ? Colors.white : Colors.white.withOpacity(0.95),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
@@ -456,9 +526,100 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHomeScreenStyleButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreenStyleSelector(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF6366F1).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Text('🎨', style: TextStyle(fontSize: 24)),
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Home Screen Style',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Choose your preferred design',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.white,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildActionButtons(BuildContext context, AuthProvider auth) {
     return Column(
       children: [
+        // Analytics Dashboard Button (Phase 1)
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const FeedbackAnalyticsScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.analytics),
+            label: const Text('My Feedback'),
+          ),
+        ),
+        const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
           height: 50,

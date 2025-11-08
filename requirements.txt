@@ -7,6 +7,10 @@ python-dotenv>=1.0
 google-cloud-firestore>=2.16
 firebase-admin>=6.5
 openai>=1.40
+tiktoken>=0.7.0
+jsonschema>=4.23
+google-generativeai>=0.3.0
+groq>=0.4.0
 bcrypt>=4.1
 PyJWT>=2.9
 cryptography>=42.0
@@ -16,5 +20,7 @@ pytest>=8.0
 pytest-asyncio>=0.23
 pytest-cov>=4.1
 pytz>=2024.1
+anthropic>=0.7.0
 
 
+pydantic-settings>=2.0.0

@@ -6,6 +6,8 @@ Makes the AI aware of user's history, patterns, and progress
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta, timezone
 from pydantic import BaseModel
+from functools import lru_cache
+import time
 
 
 class UserContext(BaseModel):
@@ -44,17 +46,62 @@ class ContextService:
     
     def __init__(self, db_service):
         self.db = db_service
+        self._cache_ttl_seconds = 30  # 30 seconds (reduced for real-time progress updates)
+    
+    def _get_time_bucket(self) -> int:
+        """Get current time bucket for cache (5-minute intervals)"""
+        return int(time.time() // self._cache_ttl_seconds)
     
     def get_user_context(self, user_id: str) -> UserContext:
         """
-        Build comprehensive user context from database
+        Get user context with 5-minute caching
+        
+        Uses time-bucketed cache to avoid repeated DB queries within 5 minutes
+        """
+        time_bucket = self._get_time_bucket()
+        return self._get_user_context_cached(user_id, time_bucket)
+    
+    def get_today_calories_realtime(self, user_id: str) -> tuple[int, float, int]:
+        """
+        Get today's calories WITHOUT cache (for real-time progress bar)
+        
+        Returns:
+            (calories_consumed, protein_g, meals_logged)
+        """
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        today_logs = self.db.list_fitness_logs_by_user(
+            user_id=user_id,
+            start_ts=today_start,
+            log_type=None,
+            limit=100
+        )
+        
+        calories = 0
+        protein = 0.0
+        meals = 0
+        
+        for log in today_logs:
+            if log.log_type.value == "meal":
+                calories += log.calories or 0
+                meals += 1
+                if log.ai_parsed_data:
+                    protein += log.ai_parsed_data.get("protein_g", 0)
+        
+        return (calories, protein, meals)
+    
+    @lru_cache(maxsize=1000)
+    def _get_user_context_cached(self, user_id: str, time_bucket: int) -> UserContext:
+        """
+        Build comprehensive user context from database (CACHED)
         
         Args:
             user_id: User ID
+            time_bucket: Current time bucket (5-min intervals)
         
         Returns:
             UserContext with all relevant user data
         """
+        print(f"🔄 [CONTEXT CACHE] MISS - Building context for user {user_id[:8]}... (bucket: {time_bucket})")
         context = UserContext(user_id=user_id)
         
         # Get today's logs
@@ -110,8 +157,9 @@ class ContextService:
             elif log.log_type.value == "workout":
                 context.workouts_this_week += 1
         
-        # Calculate logging streak
-        context.logging_streak_days = self._calculate_streak(user_id)
+        # Calculate logging streak (DISABLED FOR PERFORMANCE - TODO: Cache or optimize)
+        # This was making 30 Firestore queries per chat message!
+        context.logging_streak_days = 0  # self._calculate_streak(user_id)
         
         # Find patterns
         context.most_logged_foods = self._find_most_logged_foods(week_logs)

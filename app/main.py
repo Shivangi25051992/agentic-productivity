@@ -1,15 +1,18 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi import Body, Depends
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel
 import json
 import time
 import logging
+import re
 from datetime import datetime, timezone, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from dotenv import load_dotenv
 import os
+import sys
+from google.cloud import firestore
 from app.services.auth import get_current_user
 
 # Configure logging
@@ -24,35 +27,23 @@ dotenv_local_path = os.path.join(os.getcwd(), '.env.local')
 if os.path.exists(dotenv_local_path):
     load_dotenv(dotenv_local_path, override=True)
 
+# Initialize configuration service
+from app.core.config_manager import get_settings
+settings = get_settings()
+
 app = FastAPI(title="AI Fitness & Task Tracker API", version="0.1.0")
 
 # Add error handler middleware
 from app.utils.error_handler import ErrorHandlerMiddleware
 app.add_middleware(ErrorHandlerMiddleware)
 
-# HTTPS Enforcement Middleware (Production only)
-# DISABLED - Cloud Run already handles HTTPS enforcement
-# class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
-#     async def dispatch(self, request: Request, call_next):
-#         return await call_next(request)
-
-# CORS configuration - Only allow HTTPS origins in production
-cors_origins_env = os.getenv("CORS_ORIGINS", "*")
-if cors_origins_env.strip() == "*":
-    # In production, restrict to HTTPS only
-    allowed_origins = [
-        "https://productivityai-mvp.web.app",
-        "https://productivityai-mvp.firebaseapp.com",
-        "http://localhost:3000",  # Allow local dev
-        "http://localhost:8080",  # Allow local dev
-        "http://localhost:9090",  # Allow local dev (fitness app)
-    ]
-else:
-    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+# CORS configuration using settings
+logger.info(f"🔒 [CORS] Configuring CORS for {settings.environment} environment")
+logger.info(f"🔒 [CORS] Allowed origins: {settings.cors_origins_list}")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=settings.cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,6 +66,7 @@ from app.routers import (
     profile_router,
 )  # noqa: E402
 from app.routers.feedback_production import router as feedback_router  # noqa: E402
+from app.routers.timeline import router as timeline_router  # noqa: E402
 
 # Import models/services for persistence
 from app.services import database as dbsvc  # noqa: E402
@@ -83,6 +75,69 @@ from app.models.task import Task, TaskPriority, TaskStatus  # noqa: E402
 from app.models.user import User  # noqa: E402
 from app.services.nutrition_db import get_nutrition_info, estimate_meal_nutrition  # noqa: E402
 from app.services.chat_history_service import get_chat_history_service  # noqa: E402
+
+# Initialize LLM Router for agentic AI (Phase 1)
+_llm_router = None
+try:
+    from app.services.llm.llm_router import LLMRouter
+    from app.models.llm_config import LLMRequest, LLMConfig
+    
+    # Initialize router
+    db_client = dbsvc.get_firestore_client()
+    _llm_router = LLMRouter(db=db_client)
+    
+    # Ensure default OpenAI config exists (synchronous at startup)
+    try:
+        configs_ref = db_client.collection('llm_configs')
+        docs = list(configs_ref.limit(1).stream())
+        
+        print(f"🔍 [AGENTIC AI] Found {len(docs)} existing LLM configs in Firestore")
+        
+        if len(docs) == 0:
+            print("⚠️  [AGENTIC AI] No LLM configs found, creating default OpenAI config...")
+            api_key = os.getenv('OPENAI_API_KEY', '')
+            print(f"🔍 [AGENTIC AI] OpenAI API key: {api_key[:10] if api_key else 'NOT SET'}...")
+            
+            if not api_key:
+                print("⚠️  [AGENTIC AI] OPENAI_API_KEY not set! Router will not work.")
+            else:
+                default_config = LLMConfig(
+                    provider='openai',
+                    model_name='gpt-4o-mini',
+                    api_key=api_key,
+                    priority=1,
+                    is_active=True,
+                    temperature=0.7,
+                    max_tokens=4000,
+                    cost_per_1k_input_tokens=0.00015,
+                    cost_per_1k_output_tokens=0.0006
+                )
+                
+                print(f"🔍 [AGENTIC AI] Creating config document: openai_gpt4o_mini")
+                doc_ref = configs_ref.document('openai_gpt4o_mini')
+                doc_ref.set(default_config.model_dump())
+                print("✅ [AGENTIC AI] Created default OpenAI config successfully")
+                
+                # Verify it was saved
+                verify = doc_ref.get()
+                if verify.exists:
+                    print(f"✅ [AGENTIC AI] Verified config saved: provider={verify.to_dict().get('provider')}")
+                else:
+                    print("❌ [AGENTIC AI] Config not found after save!")
+        else:
+            print(f"✅ [AGENTIC AI] Using existing LLM configs")
+            for doc in docs:
+                data = doc.to_dict()
+                print(f"   - {doc.id}: {data.get('provider')}/{data.get('model_name')} (active={data.get('is_active')})")
+    except Exception as cfg_error:
+        print(f"⚠️  [AGENTIC AI] Failed to create default config: {cfg_error}")
+        import traceback
+        traceback.print_exc()
+    
+    print("✅ [AGENTIC AI] LLM Router initialized successfully")
+except Exception as e:
+    print(f"⚠️ [AGENTIC AI] LLM Router initialization failed (falling back to direct OpenAI): {e}")
+    _llm_router = None
 
 app.include_router(users_router)
 app.include_router(tasks_router)
@@ -93,12 +148,21 @@ app.include_router(admin_auth_router)
 app.include_router(admin_config_router)
 from app.routers.admin_feedback import router as admin_feedback_router
 app.include_router(admin_feedback_router)
+from app.routers.admin import router as admin_llm_router
+app.include_router(admin_llm_router)
 app.include_router(profile_router)
 app.include_router(feedback_router)
+app.include_router(timeline_router)
 
 # Meal management router
 from app.routers.meals import router as meals_router
 app.include_router(meals_router)
+
+# Fasting & Meal Planning routers
+from app.routers.fasting import router as fasting_router
+from app.routers.meal_planning import router as meal_planning_router
+app.include_router(fasting_router)
+app.include_router(meal_planning_router)
 
 # AI Insights endpoint
 @app.get("/insights")
@@ -158,25 +222,25 @@ async def get_ai_insights(current_user: User = Depends(get_current_user)):
         elif log.log_type.value == "workout":
             calories_burned += log.calories or 0
     
-    # Get goals from profile
-    goals = profile.daily_goals
-    calories_goal = goals.calories
-    protein_goal = goals.protein_g
-    carbs_goal = goals.carbs_g
-    fat_goal = goals.fat_g
+    # Get goals from profile (profile is a dict)
+    goals = profile.get("daily_goals", {})
+    calories_goal = goals.get("calories", 2000)
+    protein_goal = goals.get("protein_g", 150)
+    carbs_goal = goals.get("carbs_g", 200)
+    fat_goal = goals.get("fat_g", 65)
     
     # Calculate streak (simplified - just check if logged today)
     streak_days = 1 if len(logs) > 0 else 0
     
     # Get user's fitness goal
     user_goal = "lose_weight"  # Default
-    if hasattr(profile, 'fitness_goal'):
-        goal_map = {
-            "lose_weight": "lose_weight",
-            "gain_muscle": "gain_weight",
-            "maintain": "maintain"
-        }
-        user_goal = goal_map.get(profile.fitness_goal, "lose_weight")
+    fitness_goal = profile.get('fitness_goal', 'lose_weight')
+    goal_map = {
+        "lose_weight": "lose_weight",
+        "gain_muscle": "gain_weight",
+        "maintain": "maintain"
+    }
+    user_goal = goal_map.get(fitness_goal, "lose_weight")
     
     # Generate insights
     insights = insights_service.generate_insights(
@@ -265,7 +329,24 @@ class ChatItem(BaseModel):
 class ChatResponse(BaseModel):
     items: List[ChatItem]
     original: str
-    message: str
+    message: str  # Keep for backward compatibility
+    
+    # ✨ NEW FIELDS (Expandable Chat):
+    summary: Optional[str] = None          # "🍌 1 banana logged! 105 kcal"
+    suggestion: Optional[str] = None       # "Great potassium source!"
+    details: Optional[Dict[str, Any]] = None  # Structured breakdown
+    expandable: bool = False               # Flag for frontend
+    
+    # 🧠 PHASE 2 FIELDS (Explainable AI):
+    confidence_score: Optional[float] = None          # 0.0 - 1.0
+    confidence_level: Optional[str] = None            # "high", "medium", "low"
+    confidence_factors: Optional[Dict[str, float]] = None  # Breakdown
+    explanation: Optional[Dict[str, Any]] = None      # Why AI made this decision
+    alternatives: Optional[List[Dict[str, Any]]] = None  # 2-3 alternative interpretations
+    
+    # 🎨 UX FIX: Message ID for feedback matching
+    message_id: Optional[str] = None                  # Unique ID for this message
+    
     needs_clarification: bool = False
     clarification_question: Optional[str] = None
 
@@ -281,7 +362,7 @@ def _get_openai_client():
         return None
 
 
-def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[ChatItem], bool, Optional[str]]:
+async def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[ChatItem], bool, Optional[str]]:
     # Get user's local time for meal classification
     user_local_time = None
     user_timezone = "UTC"
@@ -333,256 +414,31 @@ def _classify_with_llm(text: str, user_id: Optional[str] = None) -> tuple[List[C
         time_str = user_local_time.strftime('%Y-%m-%d %H:%M:%S')
         timezone_context = "\n\n**USER CONTEXT:**\n- Current time in user's timezone (" + user_timezone + "): " + time_str + "\n- Current hour: " + str(user_local_time.hour) + "\n- Use this time for meal type classification if user doesn't specify!\n"
     
+    # OPTIMIZED: Shorter prompt to reduce token count and speed up response
     default_prompt = '''
-You are an expert fitness/nutrition/activity assistant and entity extractor.
+You are a fitness assistant. Parse user input and extract items as JSON.
 ''' + timezone_context + '''
-⚠️ **CRITICAL: FEATURE BOUNDARIES** ⚠️
-You ONLY support these features:
-1. Logging meals/snacks and calculating macros
-2. Logging tasks and reminders
-3. Logging workouts
-4. Logging water intake
-5. Logging supplements/vitamins
-6. Answering questions about logged data
-7. Summarizing daily progress
+Categories: meal, workout, water, supplement, task, question
 
-You DO NOT support (yet):
-❌ Creating diet plans or meal plans
-❌ Suggesting meals or recipes
-❌ Creating workout plans or exercise routines
-❌ Investment tracking or stock analysis
-❌ Generating weekly schedules
+⚠️ IMPORTANT: Distinguish between:
+- LOGGING: "apple", "2 eggs", "ran 5k" → Use meal/workout/water/supplement categories
+- TASK CREATION: "remind me to X", "call mom at 3pm" → Use task category
+- QUESTIONS/CHAT: "I am frustrated", "how does this work", "why X" → Use question category (NO logging!)
 
-If user asks for unsupported features, respond with:
-"I love that question! 🎯 Right now, I'm focused on helping you log meals and track your macros. 
-[Feature name] is coming soon - we're building something exciting! 
-For now, I can help you log what you eat and track your progress. What would you like to log today?"
+Parse input, extract items as JSON. Correct typos, make smart assumptions for portions/calories.
 
-Your job is to:
-- Parse ANY free-form text (even with typos, multi-line, multiple categories, wrong English)
-- For EVERY line/item, identify and extract:
-  
-  **Category Classification:**
-  - category: "meal", "snack", "workout", "water", "supplement", "task", "reminder", "other"
-  - meal_type: "breakfast", "lunch", "dinner", "snack", "unknown" (infer from time/context or mark unknown)
-  - activity_type (if workout): "run", "walk", "cycle", "gym", "yoga", "sport", "swim", "other"
-  - supplement_type (if supplement): vitamin name/type (e.g., "multivitamin", "omega-3", "protein", "vitamin-d")
-  - water_unit (if water): "glasses", "ml", "liters", "cups", "bottles"
-  
-  **Entity Extraction:**
-  - item: normalized, spell-corrected name (e.g., "omlet" → "omelet", "banan" → "banana")
-  - quantity: smart guess with units if missing (e.g., "2", "1 cup", "100g", "5 km")
-  - preparation: for meals, if mentioned (e.g., "boiled", "fried", "grilled", "raw")
-  - time: if explicitly mentioned or can be inferred
-  
-  **Nutrition/Activity Data:**
-  - For meals: calories, protein_g, carbs_g, fat_g, fiber_g (use realistic values based on food database knowledge)
-  - For workouts: duration_minutes, intensity ("low", "moderate", "high"), calories_burned
-  - For water: quantity_ml (convert to ml: 1 glass=250ml, 1 cup=240ml, 1 liter=1000ml, 1 bottle=500ml)
-  - For supplements: dosage, supplement_name, nutrients provided (e.g., "Vitamin D 1000 IU", "Omega-3 1000mg")
-  
-  **Confidence Scoring:**
-  - confidence_category: 0.0-1.0 (how confident about the category)
-  - confidence_meal_type: 0.0-1.0 (how confident about meal type)
-  - confidence_macros: 0.0-1.0 (how confident about nutrition values)
+Rules:
+- meal_type: If user says "for breakfast/lunch/dinner", use that (confidence=1.0). Otherwise infer from time.
+- Split multi-item inputs into separate array items
+- Water: 1 glass=250ml, 1 litre=1000ml, 1 liter=1000ml, 1l=1000ml, calories=0. ALWAYS return quantity_ml in data.
+- Supplements: minimal calories (5kcal)
+- Questions/conversational messages: Use category="question", no logging data
 
-**Critical Rules:**
-1. **Split multi-line inputs**: Each line is a SEPARATE item in the array
-2. **Handle typos**: Correct common misspellings automatically (omlet→omelet, banan→banana)
-3. **Smart Assumptions (BE INTELLIGENT LIKE CHATGPT)**:
-   - If quantity/size is reasonable to assume, ASSUME IT (e.g., "chocolate bar" = 40-50g regular size)
-   - If preparation is common, ASSUME IT (e.g., eggs = boiled unless stated, omelet = light oil)
-   - If calorie range is appropriate, provide RANGE (e.g., "5km run" = 350-450 kcal depending on pace)
-   - Default to standard portions: 1 egg=70kcal, 1 cup rice=200kcal, 1 chocolate bar=200kcal
-4. **Meal type inference (CRITICAL - MOST IMPORTANT RULE)**:
-   - **PRIORITY 1**: If user explicitly says "for breakfast", "at breakfast", "breakfast time", etc. → meal_type="breakfast" (confidence=1.0)
-   - **PRIORITY 2**: If user says "for lunch", "at lunch" → meal_type="lunch" (confidence=1.0)
-   - **PRIORITY 3**: If user says "for dinner", "at dinner" → meal_type="dinner" (confidence=1.0)
-   - **PRIORITY 4**: ONLY if NO explicit mention, use current time to guess (5-10am=breakfast, 11am-2pm=lunch, 3-5pm=snack, 6-10pm=dinner) with confidence=0.8
-   - **NEVER EVER override explicit user input!** If they say "2 eggs for breakfast", it's breakfast regardless of time!
-5. **Confidence scoring rules**:
-   - confidence_category: 1.0 if category is clear (meal/workout/supplement), 0.5-0.8 if ambiguous
-   - confidence_meal_type: 1.0 if explicitly stated (e.g., "for breakfast"), 0.9 if inferred from time, 0.5 if unknown
-   - confidence_macros: 0.9-1.0 if you know the food well OR made smart assumption, 0.5-0.8 if rough estimate, 0.3 if very uncertain
-6. **Clarification threshold**: ONLY set needs_clarification=true if:
-   - Input is too vague (e.g., "had lunch" with NO food details)
-   - Quantity is critical and completely unknown (e.g., "ate rice" - could be 50g or 500g)
-   - DO NOT ask for chocolate bar size, protein shake brand, etc. - make smart assumptions!
-7. **Water tracking rules**:
-   - Recognize: "drank water", "had water", "2 glasses", "1 liter", "water bottle"
-   - Default: 1 glass = 250ml if no quantity specified
-   - Convert all to ml for consistency
-   - category="water", no calories
-8. **Supplement tracking rules**:
-   - Recognize: "multivitamin", "vitamin d", "omega 3", "protein powder", "calcium", "iron", "zinc"
-   - Extract dosage if mentioned (e.g., "1000 IU", "500mg", "1 tablet")
-   - Default: 1 tablet/capsule if no dosage specified
-   - category="supplement", minimal calories (5-10 kcal for tablets, 100-120 kcal for protein powder)
+JSON format:
+{"items":[{"category":"meal|workout|water|supplement|task|question","summary":"friendly text","data":{...}}],"needs_clarification":false}
 
-**Output Format (strict JSON):**
-{
-  "items": [
-    {
-      "category": "meal|snack|workout|water|supplement|task|reminder|other",
-      "summary": "Friendly confirmation (e.g., '2 boiled eggs for breakfast (140 kcal)' or '2 glasses of water (500ml)' or 'Multivitamin tablet')",
-      "data": {
-        "item": "normalized name",
-        "quantity": "with units",
-        "preparation": "if applicable",
-        "meal_type": "breakfast|lunch|dinner|snack|unknown",
-        "activity_type": "if workout",
-        "supplement_type": "if supplement",
-        "supplement_name": "if supplement",
-        "dosage": "if supplement",
-        "quantity_ml": number (if water),
-        "water_unit": "glasses|ml|liters|cups|bottles" (if water),
-        "calories": number,
-        "protein_g": number,
-        "carbs_g": number,
-        "fat_g": number,
-        "fiber_g": number,
-        "duration_minutes": number (for workouts),
-        "intensity": "low|moderate|high" (for workouts),
-        "calories_burned": number (for workouts),
-        "confidence_category": 0.0-1.0,
-        "confidence_meal_type": 0.0-1.0,
-        "confidence_macros": 0.0-1.0
-      }
-    }
-  ],
-  "needs_clarification": false,
-  "clarification_questions": ["Array of specific questions, max 2"]
-}
-
-**Examples:**
-
-Input: "2 eggs for breakfast"
-Output: {
-  "items": [{
-    "category": "meal",
-    "summary": "2 eggs for breakfast (140 kcal, 12g protein)",
-    "data": {
-      "item": "eggs",
-      "quantity": "2",
-      "meal_type": "breakfast",
-      "calories": 140,
-      "protein_g": 12,
-      "carbs_g": 1,
-      "fat_g": 10,
-      "fiber_g": 0,
-      "confidence_category": 1.0,
-      "confidence_meal_type": 1.0,
-      "confidence_macros": 0.95
-    }
-  }],
-  "needs_clarification": false,
-  "clarification_questions": []
-}
-
-Input: "drank 2 glasses of water"
-Output: {
-  "items": [{
-    "category": "water",
-    "summary": "2 glasses of water (500ml)",
-    "data": {
-      "item": "water",
-      "quantity": "2 glasses",
-      "quantity_ml": 500,
-      "water_unit": "glasses",
-      "calories": 0,
-      "confidence_category": 1.0
-    }
-  }],
-  "needs_clarification": false,
-  "clarification_questions": []
-}
-
-Input: "took vitamin d 1000 IU"
-Output: {
-  "items": [{
-    "category": "supplement",
-    "summary": "Vitamin D 1000 IU",
-    "data": {
-      "item": "vitamin d",
-      "quantity": "1 tablet",
-      "supplement_type": "vitamin",
-      "supplement_name": "Vitamin D",
-      "dosage": "1000 IU",
-      "calories": 5,
-      "confidence_category": 1.0
-    }
-  }],
-  "needs_clarification": false,
-  "clarification_questions": []
-}
-
-Input: "2 egg omlet\\nran 5km\\n1 multivitamin tablet\\nchocolate bar"
-Output: {
-  "items": [
-    {
-      "category": "meal",
-      "summary": "2 egg omelet with light oil (200 kcal)",
-      "data": {
-        "item": "egg omelet",
-        "quantity": "2 eggs",
-        "preparation": "light oil",
-        "meal_type": "breakfast",
-        "calories": 200,
-        "protein_g": 14,
-        "carbs_g": 2,
-        "fat_g": 15,
-        "confidence_category": 1.0,
-        "confidence_meal_type": 0.9,
-        "confidence_macros": 0.9
-      }
-    },
-    {
-      "category": "workout",
-      "summary": "5K run (350-450 kcal burned)",
-      "data": {
-        "item": "running",
-        "quantity": "5 km",
-        "activity_type": "run",
-        "duration_minutes": 30,
-        "intensity": "moderate",
-        "calories_burned": 400,
-        "calories_burned_range": "350-450",
-        "confidence_category": 1.0
-      }
-    },
-    {
-      "category": "supplement",
-      "summary": "1 multivitamin tablet (5 kcal)",
-      "data": {
-        "item": "multivitamin",
-        "quantity": "1 tablet",
-        "supplement_type": "multivitamin",
-        "calories": 5,
-        "confidence_category": 1.0
-      }
-    },
-    {
-      "category": "meal",
-      "summary": "Chocolate bar regular 40g (200 kcal)",
-      "data": {
-        "item": "chocolate bar",
-        "quantity": "40g",
-        "meal_type": "snack",
-        "calories": 200,
-        "protein_g": 2,
-        "carbs_g": 25,
-        "fat_g": 10,
-        "confidence_category": 1.0,
-        "confidence_meal_type": 0.9,
-        "confidence_macros": 0.85
-      }
-    }
-  ],
-  "needs_clarification": false,
-  "clarification_questions": []
-}
-
-**Always split each food/activity/supplement onto its own item in the array. Be smart, accurate, and only ask for clarification when truly needed.**
+Example 1 (logging): "2 eggs for breakfast" → {"items":[{"category":"meal","summary":"2 eggs for breakfast (140kcal)","data":{"item":"eggs","quantity":"2","meal_type":"breakfast","calories":140,"protein_g":12,"carbs_g":1,"fat_g":10}}],"needs_clarification":false}
+Example 2 (question): "I am frustrated" → {"items":[{"category":"question","summary":"User expressing frustration","data":{"type":"emotion"}}],"needs_clarification":false}
 '''
 
     system_prompt = template_from_admin or default_prompt
@@ -594,16 +450,48 @@ Output: {
     user_prompt = f"{time_context}\nInput: {text}"
     
     try:
-        res = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.2,
-            response_format={"type": "json_object"},
-        )
-        content = res.choices[0].message.content or "{}"
+        # Try using LLM Router first (Phase 1 Agentic AI)
+        if _llm_router:
+            try:
+                print("🤖 [AGENTIC AI] Using LLM Router for chat classification")
+                llm_request = LLMRequest(
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                    temperature=0.2,
+                    max_tokens=4000,
+                    response_format="json",
+                    user_id=user_id,
+                    request_type="chat_classification"
+                )
+                llm_response = await _llm_router.route_request(llm_request)
+                content = llm_response.content
+                print(f"✅ [AGENTIC AI] Router success! Provider: {llm_response.provider_used}, Tokens: {llm_response.tokens_used}, Time: {llm_response.response_time_ms}ms")
+            except Exception as router_error:
+                print(f"⚠️ [AGENTIC AI] Router failed, falling back to direct OpenAI: {router_error}")
+                # Fallback to direct OpenAI call
+                res = client.chat.completions.create(
+                    model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    temperature=0.2,
+                    response_format={"type": "json_object"},
+                )
+                content = res.choices[0].message.content or "{}"
+        else:
+            # LLM Router not available, use direct OpenAI
+            res = client.chat.completions.create(
+                model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.2,
+                response_format={"type": "json_object"},
+            )
+            content = res.choices[0].message.content or "{}"
+        
         data = json.loads(content)
         items_json = data.get("items") or []
         items: List[ChatItem] = []
@@ -650,12 +538,193 @@ Output: {
         return [ChatItem(category="task", summary="Task created", data={"title": text})], False, None
 
 
+async def _handle_fasting_commands(text: str, user_id: str, chat_history) -> Optional[ChatResponse]:
+    """
+    Handle fasting-related chat commands
+    
+    Supported commands:
+    - start fast / begin fast / start fasting
+    - stop fast / end fast / stop fasting / break fast
+    - fast status / fasting status / how long have i been fasting
+    """
+    from app.services.fasting_service import get_fasting_service
+    from datetime import datetime, timezone
+    
+    fasting_service = get_fasting_service()
+    
+    # Command patterns
+    start_patterns = ['start fast', 'begin fast', 'start fasting', 'begin fasting', 'starting fast']
+    stop_patterns = ['stop fast', 'end fast', 'stop fasting', 'end fasting', 'break fast', 'breaking fast']
+    status_patterns = ['fast status', 'fasting status', 'how long', 'am i fasting', 'current fast']
+    
+    # Check for start fast command
+    if any(pattern in text for pattern in start_patterns):
+        try:
+            # Check if already fasting
+            current_session = await fasting_service.get_current_session(user_id)
+            if current_session:
+                response_msg = f"⏱️ You're already fasting! Started {_format_time_ago(current_session.start_time)}. Keep going! 💪"
+            else:
+                # Start new fasting session (default 16:8 protocol)
+                session = await fasting_service.start_fasting(user_id, protocol="16:8", target_hours=16)
+                response_msg = f"🎉 Fasting started! Your 16-hour fast is underway. You're in the anabolic state. I'll check in with you as you progress! 💪"
+            
+            # Save AI response to history
+            chat_history.save_message(user_id, 'assistant', response_msg, {
+                'category': 'fasting_command',
+                'command': 'start'
+            })
+            
+            return ChatResponse(
+                items=[{
+                    "category": "fasting",
+                    "summary": "Fasting session started",
+                    "data": {"command": "start", "protocol": "16:8"}
+                }],
+                original=text,
+                message=response_msg,
+                needs_clarification=False
+            )
+        except Exception as e:
+            print(f"❌ [FASTING COMMAND] Error starting fast: {e}")
+            error_msg = f"Sorry, I couldn't start your fast. Please try again or use the Plan tab."
+            chat_history.save_message(user_id, 'assistant', error_msg)
+            return ChatResponse(
+                items=[],
+                original=text,
+                message=error_msg,
+                needs_clarification=False
+            )
+    
+    # Check for stop fast command
+    elif any(pattern in text for pattern in stop_patterns):
+        try:
+            current_session = await fasting_service.get_current_session(user_id)
+            if not current_session:
+                response_msg = "You're not currently fasting. Start a fast anytime by saying 'start fast'! 🍽️"
+            else:
+                # End the fasting session
+                ended_session = await fasting_service.end_fasting(user_id, current_session.session_id)
+                duration_hours = (ended_session.end_time - ended_session.start_time).total_seconds() / 3600
+                response_msg = f"✅ Fast completed! You fasted for {duration_hours:.1f} hours. Great work! 🎉"
+            
+            # Save AI response to history
+            chat_history.save_message(user_id, 'assistant', response_msg, {
+                'category': 'fasting_command',
+                'command': 'stop'
+            })
+            
+            return ChatResponse(
+                items=[{
+                    "category": "fasting",
+                    "summary": "Fasting session ended",
+                    "data": {"command": "stop"}
+                }],
+                original=text,
+                message=response_msg,
+                needs_clarification=False
+            )
+        except Exception as e:
+            print(f"❌ [FASTING COMMAND] Error stopping fast: {e}")
+            error_msg = f"Sorry, I couldn't end your fast. Please try again or use the Plan tab."
+            chat_history.save_message(user_id, 'assistant', error_msg)
+            return ChatResponse(
+                items=[],
+                original=text,
+                message=error_msg,
+                needs_clarification=False
+            )
+    
+    # Check for status command
+    elif any(pattern in text for pattern in status_patterns):
+        try:
+            current_session = await fasting_service.get_current_session(user_id)
+            if not current_session:
+                response_msg = "You're not currently fasting. Ready to start? Just say 'start fast'! 🍽️"
+            else:
+                elapsed_hours = (datetime.now(timezone.utc) - current_session.start_time).total_seconds() / 3600
+                target_hours = current_session.target_hours
+                progress_pct = (elapsed_hours / target_hours * 100) if target_hours > 0 else 0
+                
+                # Determine metabolic stage
+                if elapsed_hours < 4:
+                    stage = "Anabolic State 🟢"
+                    stage_desc = "Your body is digesting and absorbing nutrients"
+                elif elapsed_hours < 16:
+                    stage = "Catabolic State 🟡"
+                    stage_desc = "Your body is breaking down glycogen stores"
+                elif elapsed_hours < 24:
+                    stage = "Fat Burning Zone 🔵"
+                    stage_desc = "Your body is burning fat for energy!"
+                elif elapsed_hours < 48:
+                    stage = "Ketosis 🟣"
+                    stage_desc = "Your body is in ketosis - deep fat burning!"
+                else:
+                    stage = "Deep Ketosis 🌟"
+                    stage_desc = "Maximum autophagy and cellular repair!"
+                
+                response_msg = (
+                    f"⏱️ **Fasting Status**\n\n"
+                    f"• Started: {_format_time_ago(current_session.start_time)}\n"
+                    f"• Duration: {elapsed_hours:.1f} / {target_hours} hours ({progress_pct:.0f}%)\n"
+                    f"• Stage: {stage}\n"
+                    f"• {stage_desc}\n\n"
+                    f"Keep it up! You're doing great! 💪"
+                )
+            
+            # Save AI response to history
+            chat_history.save_message(user_id, 'assistant', response_msg, {
+                'category': 'fasting_command',
+                'command': 'status'
+            })
+            
+            return ChatResponse(
+                items=[{
+                    "category": "fasting",
+                    "summary": "Fasting status",
+                    "data": {"command": "status"}
+                }],
+                original=text,
+                message=response_msg,
+                needs_clarification=False
+            )
+        except Exception as e:
+            print(f"❌ [FASTING COMMAND] Error getting fast status: {e}")
+            error_msg = f"Sorry, I couldn't get your fasting status. Please try again."
+            chat_history.save_message(user_id, 'assistant', error_msg)
+            return ChatResponse(
+                items=[],
+                original=text,
+                message=error_msg,
+                needs_clarification=False
+            )
+    
+    # Not a fasting command
+    return None
+
+
+def _format_time_ago(dt: datetime) -> str:
+    """Format datetime as 'X hours ago' or 'X minutes ago'"""
+    now = datetime.now(timezone.utc)
+    delta = now - dt
+    
+    hours = delta.total_seconds() / 3600
+    if hours >= 1:
+        return f"{int(hours)} hour{'s' if int(hours) != 1 else ''} ago"
+    else:
+        minutes = delta.total_seconds() / 60
+        return f"{int(minutes)} minute{'s' if int(minutes) != 1 else ''} ago"
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(
     req: ChatRequest,
     current_user: User = Depends(get_current_user),
 ):
-    started = time.time()
+    # ⏱️ HIGH-RESOLUTION TIMING
+    t_start = time.perf_counter()
+    request_id = f"{int(time.time() * 1000)}"
+    
     text = (req.user_input or "").strip()
     
     # Validate input - reject meaningless single characters or very short inputs
@@ -672,9 +741,22 @@ async def chat_endpoint(
     chat_history = get_chat_history_service()
     user_id = current_user.user_id  # Fixed: User model uses 'user_id' not 'uid'
     
-    # Save user message to history
-    print(f"💾 Saving user message to history: user_id={user_id}, text={text[:50]}...")
-    chat_history.save_message(user_id, 'user', text)
+    # ⏱️ STEP 1: Save user message (MUST AWAIT to ensure correct timestamp order!)
+    t1 = time.perf_counter()
+    print(f"⏱️ [{request_id}] START - Input: '{text[:50]}...'")
+    # 🐛 FIX: AWAIT user message save to ensure it gets earlier timestamp than AI response
+    await chat_history.save_message(user_id, 'user', text)
+    t2 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 1 - Save user message (awaited): {(t2-t1)*1000:.0f}ms")
+    
+    # CHECK FOR FASTING COMMANDS (Priority: before normal processing)
+    lower_text = text.lower().strip()
+    fasting_command_response = await _handle_fasting_commands(lower_text, user_id, chat_history)
+    if fasting_command_response:
+        return fasting_command_response
+    
+    # ⏱️ STEP 2: Cache lookup
+    t3 = time.perf_counter()
     
     # PHASE 1: Try cache-first approach for food logging
     cache_hit = False
@@ -694,11 +776,25 @@ async def chat_endpoint(
             portion_result = food_service.parse_portion(text, match_result.food_macro)
             
             # Create ChatItem from cache data
+            # Infer meal type from current time (same logic as LLM uses)
+            from datetime import datetime
+            current_hour = datetime.now().hour
+            if 5 <= current_hour < 11:
+                inferred_meal_type = "breakfast"
+            elif 11 <= current_hour < 16:
+                inferred_meal_type = "lunch"
+            elif 16 <= current_hour < 22:
+                inferred_meal_type = "dinner"
+            else:
+                inferred_meal_type = "snack"
+            
             items = [ChatItem(
                 category="meal",
                 summary=f"{match_result.food_macro.display_name} ({portion_result.quantity} {portion_result.unit})",
                 data={
                     "meal": match_result.food_macro.display_name,
+                    "item": match_result.food_macro.display_name,  # ✅ FIX: Add item field
+                    "meal_type": inferred_meal_type,                # ✅ FIX: Add meal_type field
                     "quantity": portion_result.quantity,
                     "unit": portion_result.unit,
                     "calories": round(portion_result.macros.calories, 1),
@@ -725,18 +821,123 @@ async def chat_endpoint(
         print(f"⚠️  Cache lookup error (falling back to LLM): {e}")
         cache_hit = False
     
+    t4 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 2 - Cache lookup: {(t4-t3)*1000:.0f}ms (hit={cache_hit})")
+    
     # If cache miss, ALWAYS use OpenAI for intelligent parsing
     # OpenAI can handle mixed categories (meals + workouts + supplements) properly
     
-    # If still no items, use LLM as final fallback
+    # ⏱️ STEP 3: LLM Classification
+    t5 = time.perf_counter()
     if not cache_hit:
-        items, needs_clarification, clarification_question = _classify_with_llm(text, user_id)
+        items, needs_clarification, clarification_question = await _classify_with_llm(text, user_id)
+    t6 = time.perf_counter()
+    if not cache_hit:
+        print(f"⏱️ [{request_id}] STEP 3 - LLM classification: {(t6-t5)*1000:.0f}ms")
+    
+    # 🧠 PHASE 2: Calculate confidence & generate explanations
+    t_phase2_start = time.perf_counter()
+    confidence_score = None
+    confidence_level = None
+    confidence_factors_dict = None
+    explanation_dict = None
+    alternatives_list = None
+    
+    try:
+        from app.services.confidence_scorer import get_confidence_scorer
+        from app.services.response_explainer import get_response_explainer
+        from app.services.alternative_generator import get_alternative_generator
+        
+        scorer = get_confidence_scorer()
+        explainer = get_response_explainer()
+        alt_generator = get_alternative_generator()
+        
+        # Convert items to dicts for Phase 2 services
+        items_for_scoring = [{'category': it.category, 'summary': it.summary, 'data': it.data} for it in items]
+        
+        # 1. Calculate confidence
+        confidence_score, confidence_factors = scorer.calculate_confidence(
+            user_input=text,
+            parsed_items=items_for_scoring,
+            llm_response=None,  # Could pass LLM response if available
+            user_history=None   # Could pass user history if available
+        )
+        
+        # Determine confidence level
+        from app.models.explainable_response import ExplainableResponse
+        confidence_level_enum = ExplainableResponse.determine_confidence_level(confidence_score)
+        confidence_level = confidence_level_enum.value
+        
+        # Convert factors to dict (use 0.0 for None values)
+        confidence_factors_dict = {
+            'input_clarity': confidence_factors.input_clarity,
+            'data_completeness': confidence_factors.data_completeness,
+            'model_certainty': confidence_factors.model_certainty,
+            'historical_accuracy': confidence_factors.historical_accuracy if confidence_factors.historical_accuracy is not None else 0.0
+        }
+        
+        # 2. Generate explanation
+        primary_category = items[0].category if items else "other"
+        explanation = explainer.explain_classification(
+            user_input=text,
+            parsed_items=items_for_scoring,
+            classification=primary_category,
+            confidence_score=confidence_score,
+            user_context=None  # Could pass user context
+        )
+        
+        explanation_dict = {
+            'reasoning': explanation.reasoning,
+            'data_sources': explanation.data_sources,
+            'assumptions': explanation.assumptions,
+            'why_this_classification': explanation.why_this_classification,
+            'confidence_breakdown': explanation.confidence_breakdown
+        }
+        
+        # 3. Generate alternatives (only if confidence < 0.85 AND category supports alternatives)
+        # Skip alternatives for: water, supplement, task, workout (no ambiguity needed)
+        primary_category = items[0].category if items else "other"
+        categories_with_alternatives = ['meal']  # Only meals need alternatives
+        
+        if items and confidence_score < 0.85 and primary_category in categories_with_alternatives:
+            primary_interpretation = items_for_scoring[0] if items_for_scoring else {}
+            alternatives = alt_generator.generate_alternatives(
+                user_input=text,
+                primary_interpretation=primary_interpretation,
+                primary_confidence=confidence_score,
+                user_context=None  # Could pass user context
+            )
+            
+            # Convert to dicts
+            alternatives_list = [
+                {
+                    'interpretation': alt.interpretation,
+                    'confidence': alt.confidence,
+                    'explanation': alt.explanation,
+                    'data': alt.data
+                }
+                for alt in alternatives
+            ]
+            
+            if alternatives_list:
+                print(f"🧠 [PHASE 2] Generated {len(alternatives_list)} alternatives (confidence={confidence_score:.2f})")
+        
+        print(f"🧠 [PHASE 2] Confidence: {confidence_score:.2f} ({confidence_level})")
+        
+    except Exception as e:
+        print(f"⚠️  [PHASE 2] Explainable AI error (non-fatal): {e}")
+        # Phase 2 is optional - don't break the flow
+        import traceback
+        traceback.print_exc()
+    
+    t_phase2_end = time.perf_counter()
+    print(f"⏱️ [{request_id}] PHASE 2 - Explainable AI: {(t_phase2_end-t_phase2_start)*1000:.0f}ms")
     
     # If clarification is needed, still return the parsed items (don't persist them yet)
     # This allows the user to see what was understood before answering clarification
     if needs_clarification and clarification_question:
-        # Save AI clarification to history
-        chat_history.save_message(user_id, 'assistant', clarification_question, {
+        # Save AI clarification to history (ASYNC)
+        await chat_history.save_message(user_id, 'assistant', clarification_question, {
             'needs_clarification': True,
             'category': 'clarification'
         })
@@ -804,6 +1005,9 @@ async def chat_endpoint(
     except Exception:
         pass
 
+    # ⏱️ STEP 4: Persist to database
+    t7 = time.perf_counter()
+    
     # Persist each item to Firestore
     # Group meals by meal_type to avoid duplicates (combine multi-item meals into one log)
     meals_by_type = {}
@@ -833,6 +1037,13 @@ async def chat_endpoint(
                 meals_by_type[meal_type]["total_carbs"] += it.data.get("carbs_g", 0)
                 meals_by_type[meal_type]["total_fat"] += it.data.get("fat_g", 0)
             
+            elif it.category == "question":
+                # 🎯 NEW: Handle conversational messages - DON'T create logs/tasks
+                # Just skip to response generation
+                print(f"💬 [CONVERSATIONAL] User asked: '{text[:50]}...'")
+                # Don't persist this as a fitness log or task
+                continue
+            
             elif it.category == "workout":
                 # Create workout log immediately
                 log = FitnessLog(
@@ -845,59 +1056,91 @@ async def chat_endpoint(
                 dbsvc.create_fitness_log(log)
             
             elif it.category == "water":
-                # Create water log in subcollection
-                from google.cloud import firestore
-                project = os.getenv("GOOGLE_CLOUD_PROJECT")
-                db = firestore.Client(project=project) if project else firestore.Client()
+                # Parse quantity_ml with fallback for unit conversion
+                quantity_ml = it.data.get("quantity_ml")
                 
-                water_log = {
-                    "user_id": current_user.user_id,
-                    "quantity_ml": it.data.get("quantity_ml", 250),  # Default 1 glass
-                    "water_unit": it.data.get("water_unit", "glasses"),
-                    "quantity": it.data.get("quantity", "1"),
-                    "timestamp": firestore.SERVER_TIMESTAMP,
-                    "logged_via": "chat",
-                    "summary": it.summary or text
-                }
+                if not quantity_ml:
+                    # Fallback: parse from original text if LLM didn't provide quantity_ml
+                    text_lower = text.lower()
+                    
+                    # Check for litres/liters
+                    if "litre" in text_lower or "liter" in text_lower or re.search(r'\d+\.?\d*\s*l\b', text_lower):
+                        match = re.search(r'(\d+\.?\d*)\s*(litres?|liters?|l)\b', text_lower)
+                        if match:
+                            quantity_ml = float(match.group(1)) * 1000
+                        else:
+                            quantity_ml = 1000  # Default to 1 litre
+                    
+                    # Check for glasses
+                    elif "glass" in text_lower:
+                        match = re.search(r'(\d+\.?\d*)\s*glass', text_lower)
+                        if match:
+                            quantity_ml = float(match.group(1)) * 250
+                        else:
+                            quantity_ml = 250  # Default to 1 glass
+                    
+                    # Check for ml
+                    elif "ml" in text_lower:
+                        match = re.search(r'(\d+\.?\d*)\s*ml', text_lower)
+                        if match:
+                            quantity_ml = float(match.group(1))
+                        else:
+                            quantity_ml = 250  # Default
+                    
+                    else:
+                        # No unit specified, default to 1 glass
+                        quantity_ml = 250
                 
-                # Save to users/{userId}/water_logs subcollection
-                db.collection("users").document(current_user.user_id)\
-                  .collection("water_logs").add(water_log)
+                # Create water log - save to main fitness_logs collection (same as meals/workouts)
+                # Format content to include quantity for timeline display
+                glasses = int(quantity_ml / 250)
+                content_text = f"{glasses} glass{'es' if glasses != 1 else ''} of water ({int(quantity_ml)}ml)"
+                
+                log = FitnessLog(
+                    user_id=current_user.user_id,
+                    log_type=FitnessLogType.water,
+                    content=content_text,  # Include quantity in content for timeline
+                    calories=0,  # Water has no calories
+                    ai_parsed_data={
+                        "quantity_ml": int(quantity_ml),
+                        "water_unit": it.data.get("water_unit", "glasses"),
+                        "quantity": it.data.get("quantity", "1"),
+                    },
+                )
+                dbsvc.create_fitness_log(log)
             
             elif it.category == "supplement":
-                # Create supplement log in subcollection
-                from google.cloud import firestore
-                project = os.getenv("GOOGLE_CLOUD_PROJECT")
-                db = firestore.Client(project=project) if project else firestore.Client()
-                
-                supplement_log = {
-                    "user_id": current_user.user_id,
-                    "supplement_name": it.data.get("supplement_name", it.data.get("item", "Unknown")),
-                    "supplement_type": it.data.get("supplement_type", "other"),
-                    "dosage": it.data.get("dosage", "1 tablet"),
-                    "quantity": it.data.get("quantity", "1"),
-                    "timestamp": firestore.SERVER_TIMESTAMP,
-                    "logged_via": "chat",
-                    "summary": it.summary or text,
-                    "calories": it.data.get("calories", 5)
-                }
-                
-                # Save to users/{userId}/supplement_logs subcollection
-                db.collection("users").document(current_user.user_id)\
-                  .collection("supplement_logs").add(supplement_log)
+                # Create supplement log - save to main fitness_logs collection (same as meals/workouts)
+                log = FitnessLog(
+                    user_id=current_user.user_id,
+                    log_type=FitnessLogType.supplement,
+                    content=it.summary or text,
+                    calories=it.data.get("calories", 5),  # Minimal calories
+                    ai_parsed_data={
+                        "supplement_name": it.data.get("supplement_name", it.data.get("item", "Unknown")),
+                        "supplement_type": it.data.get("supplement_type", "other"),
+                        "dosage": it.data.get("dosage", "1 tablet"),
+                        "quantity": it.data.get("quantity", "1"),
+                    },
+                )
+                dbsvc.create_fitness_log(log)
             
             elif it.category in ("task", "reminder"):
                 # Create task immediately
-                t = Task(
-                    task_id=None,
-                    user_id=current_user.user_id,
-                    title=it.data.get("title") or it.summary or text,
-                    description=it.data.get("notes", ""),
-                    due_date=None,
-                    priority=TaskPriority.medium,
-                    status=TaskStatus.pending,
-                )
-                dbsvc.create_task(t)
+                try:
+                    t = Task(
+                        user_id=current_user.user_id,
+                        title=it.data.get("title") or it.summary or text,
+                        description=it.data.get("notes", ""),
+                        due_date=None,  # TODO: Parse due_date from natural language
+                        priority=TaskPriority.medium,
+                        status=TaskStatus.pending,
+                    )
+                    dbsvc.create_task(t)
+                    print(f"✅ Task created: {t.task_id} - {t.title}")
+                except Exception as e:
+                    print(f"❌ Failed to create task: {e}")
+                    # Don't fail the entire request, just log the error
         
         # Now create ONE log per meal type (combines multi-item meals)
         for meal_type, meal_data in meals_by_type.items():
@@ -928,6 +1171,12 @@ async def chat_endpoint(
         import traceback
         traceback.print_exc()
 
+    t8 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 4 - DB persistence: {(t8-t7)*1000:.0f}ms")
+
+    # ⏱️ STEP 5: Get user context
+    t9 = time.perf_counter()
+    
     # Generate ChatGPT-style summary format with context awareness
     from app.services.response_formatter import get_response_formatter
     from app.services.context_service import get_context_service
@@ -938,6 +1187,13 @@ async def chat_endpoint(
     # Get user context for intelligent feedback
     user_context = context_service.get_user_context(current_user.user_id)
     
+    # ✨ FIX: Get TODAY's calories in REAL-TIME (no cache) for accurate progress bar
+    calories_realtime, protein_realtime, meals_realtime = context_service.get_today_calories_realtime(current_user.user_id)
+    print(f"🔍 [REALTIME] Today's actual calories from DB: {calories_realtime}")
+    
+    t10 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 5 - Get user context: {(t10-t9)*1000:.0f}ms")
+    
     # Convert items to dict format for formatter
     items_dict = []
     for item in items:
@@ -947,41 +1203,122 @@ async def chat_endpoint(
             'data': item.data
         })
     
-    # Format response
-    formatted = formatter.format_response(
+    # ⏱️ STEP 6: Generate response
+    t11 = time.perf_counter()
+    
+    # Generate context-aware response based on category
+    from app.services.chat_response_generator import get_chat_response_generator
+    
+    response_generator = get_chat_response_generator()
+    user_context_dict = {
+        "fitness_goal": user_context.fitness_goal,
+        "daily_calorie_goal": user_context.daily_calorie_goal,
+        "daily_water_goal": user_context.daily_water_goal if hasattr(user_context, 'daily_water_goal') else None,
+        # ✨ FIX: Use REALTIME calories (not cached) for accurate cumulative progress bar!
+        "calories_consumed_today": calories_realtime,
+        "protein_today": protein_realtime,
+        "meals_logged_today": meals_realtime,
+    }
+    
+    chat_response = response_generator.generate_response(
         items=items_dict,
-        user_goal=user_context.fitness_goal,
-        daily_calorie_goal=user_context.daily_calorie_goal
+        user_context=user_context_dict
     )
     
-    # Generate context-aware personalized message
+    # Use the generated response
+    ai_message = chat_response.response
+    
+    # Append context-aware personalized message if available
     context_message = context_service.generate_context_aware_message(user_context, items_dict)
-    
-    # Use ONLY the formatted summary (no duplication, no asterisks)
-    ai_message = formatted.summary_text
-    
-    # Append context-aware feedback if available (clean format, no markdown)
     if context_message:
         ai_message = f"{ai_message}\n\n💬 Personal Insights:\n{context_message}"
     
+    t12 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 6 - Generate response: {(t12-t11)*1000:.0f}ms")
+    
+    # ⏱️ STEP 7: Save AI response (ASYNC - non-blocking)
+    t13 = time.perf_counter()
+    
     # Save AI response to history
     metadata = {
-        'category': items[0].category if items else 'unknown',
+        'category': chat_response.category,
         'items_count': len(items),
-        'net_calories': formatted.net_calories,
-        'formatted': True  # Mark as using new format
+        'response_type': 'context_aware',  # Mark as using new context-aware format
+        'categories': chat_response.metadata.get('categories', []) if chat_response.metadata else []
     }
     
-    print(f"💾 Saving AI message to history: user_id={user_id}, message_length={len(ai_message)}")
-    chat_history.save_message(user_id, 'assistant', ai_message, metadata)
+    # 🎨 UX FIX: Generate messageId BEFORE saving (for feedback matching)
+    from datetime import datetime, timezone
+    ai_message_id = str(int(datetime.now(timezone.utc).timestamp() * 1000))
     
-    return ChatResponse(
+    print(f"💾 Saving AI message to history: user_id={user_id}, message_length={len(ai_message)}, message_id={ai_message_id}")
+    # ✨ NEW: Save with expandable fields + Phase 2 fields
+    await chat_history.save_message(
+        user_id=user_id,
+        role='assistant',
+        content=ai_message,
+        metadata=metadata,
+        # ✨ Pass expandable fields from chat_response
+        summary=chat_response.summary,
+        suggestion=chat_response.suggestion,
+        details=chat_response.details,
+        expandable=chat_response.expandable,
+        # 🧠 PHASE 2: Pass confidence & explanation fields
+        confidence_score=confidence_score,
+        confidence_level=confidence_level,
+        confidence_factors=confidence_factors_dict,
+        explanation=explanation_dict,
+        alternatives=alternatives_list,
+        # 🎨 UX FIX: Pass generated messageId
+        message_id=ai_message_id
+    )
+    
+    t14 = time.perf_counter()
+    print(f"⏱️ [{request_id}] STEP 7 - Save AI response: {(t14-t13)*1000:.0f}ms")
+    
+    # ⏱️ TOTAL TIME
+    t_end = time.perf_counter()
+    total_ms = (t_end - t_start) * 1000
+    print(f"⏱️ [{request_id}] ✅ TOTAL TIME: {total_ms:.0f}ms")
+    print(f"⏱️ [{request_id}] BREAKDOWN: Save msg={((t2-t1)*1000):.0f}ms, Cache={((t4-t3)*1000):.0f}ms, LLM={((t6-t5)*1000):.0f}ms, DB={((t8-t7)*1000):.0f}ms, Context={((t10-t9)*1000):.0f}ms, Response={((t12-t11)*1000):.0f}ms, Save AI={((t14-t13)*1000):.0f}ms")
+    
+    # ✨ NEW: Return response with expandable fields + Phase 2 explainable AI
+    response_obj = ChatResponse(
         items=[],  # Don't return individual cards - summary has everything
         original=text,
         message=ai_message,
+        # ✨ Include expandable fields in response
+        summary=chat_response.summary,
+        suggestion=chat_response.suggestion,
+        details=chat_response.details,
+        expandable=chat_response.expandable,
+        # 🧠 PHASE 2: Include explainable AI fields
+        confidence_score=confidence_score,
+        confidence_level=confidence_level,
+        confidence_factors=confidence_factors_dict,
+        explanation=explanation_dict,
+        alternatives=alternatives_list,
+        # 🎨 UX FIX: Return messageId for feedback matching
+        message_id=ai_message_id,
         needs_clarification=False,
         clarification_question=None
     )
+    
+    # 🔍 DEBUG: Log expandable fields
+    print(f"✨ [DEBUG] Expandable fields in response:")
+    print(f"   - summary: {response_obj.summary[:50] if response_obj.summary else 'None'}...")
+    print(f"   - suggestion: {response_obj.suggestion[:50] if response_obj.suggestion else 'None'}...")
+    print(f"   - expandable: {response_obj.expandable}")
+    print(f"   - details keys: {list(response_obj.details.keys()) if response_obj.details else 'None'}")
+    
+    # 🧠 DEBUG: Log Phase 2 fields
+    print(f"🧠 [DEBUG] Phase 2 Explainable AI fields:")
+    print(f"   - confidence_score: {response_obj.confidence_score}")
+    print(f"   - confidence_level: {response_obj.confidence_level}")
+    print(f"   - explanation: {'Present' if response_obj.explanation else 'None'}")
+    print(f"   - alternatives: {len(response_obj.alternatives) if response_obj.alternatives else 0} alternatives")
+    
+    return response_obj
 
 
 @app.get("/chat/history")
@@ -995,10 +1332,109 @@ async def get_chat_history(
     messages = chat_history.get_user_history(current_user.user_id, limit=limit)
     print(f"📜 Found {len(messages)} messages")
     
+    # Debug: Print role distribution
+    user_count = sum(1 for m in messages if m.get('role') == 'user')
+    assistant_count = sum(1 for m in messages if m.get('role') == 'assistant')
+    other_count = len(messages) - user_count - assistant_count
+    print(f"📊 Role distribution: {user_count} user, {assistant_count} assistant, {other_count} other")
+    
+    # Debug: Print first few messages
+    for i, msg in enumerate(messages[:5]):
+        role = msg.get('role', 'NONE')
+        content_preview = (msg.get('content', '')[:50] + '...') if len(msg.get('content', '')) > 50 else msg.get('content', '')
+        print(f"  Message {i+1}: role={role}, content={content_preview}")
+    
+    # 🎨 UX FIX: Query feedback collection and match to messages
+    try:
+        print(f"🔍 [FEEDBACK MATCHING] Querying feedback for user: {current_user.user_id}")
+        db = firestore.Client()
+        feedback_ref = db.collection('chat_feedback') \
+            .where('user_id', '==', current_user.user_id)
+        feedback_docs = list(feedback_ref.stream())
+        print(f"🔍 [FEEDBACK MATCHING] Found {len(feedback_docs)} feedback entries")
+        
+        # Create feedback lookup map
+        feedback_map = {}
+        for doc in feedback_docs:
+            data = doc.to_dict()
+            msg_id = data.get('message_id')
+            if msg_id:
+                feedback_map[msg_id] = {
+                    'rating': data.get('rating'),
+                    'feedback_id': doc.id
+                }
+        print(f"🔍 [FEEDBACK MATCHING] Built feedback map with {len(feedback_map)} entries")
+        
+        # Match feedback to messages
+        matched_count = 0
+        for msg in messages:
+            msg_id = msg.get('messageId')
+            if msg_id and msg_id in feedback_map:
+                msg['feedback_given'] = True
+                msg['feedback_rating'] = feedback_map[msg_id]['rating']
+                matched_count += 1
+            else:
+                msg['feedback_given'] = False
+                msg['feedback_rating'] = None
+        
+        print(f"✅ [FEEDBACK MATCHING] Matched {matched_count}/{len(messages)} messages with feedback")
+        
+    except Exception as e:
+        print(f"⚠️ [FEEDBACK MATCHING] Error matching feedback: {e}")
+        # Don't fail the request - just log and continue without feedback data
+        import traceback
+        traceback.print_exc()
+        # Set default feedback state for all messages
+        for msg in messages:
+            msg['feedback_given'] = False
+            msg['feedback_rating'] = None
+    
     return {
         "messages": messages,
         "count": len(messages)
     }
+
+
+@app.post("/admin/init-llm-config")
+async def init_llm_config():
+    """
+    Admin endpoint to initialize LLM config in Firestore
+    """
+    try:
+        from app.models.llm_config import LLMConfig
+        import os
+        
+        db = dbsvc.get_firestore_client()
+        configs_ref = db.collection('llm_configs')
+        
+        # Check existing
+        docs = list(configs_ref.limit(1).stream())
+        if len(docs) > 0:
+            return {"status": "already_exists", "count": len(docs)}
+        
+        # Create OpenAI config
+        api_key = os.getenv('OPENAI_API_KEY', '')
+        if not api_key:
+            return {"status": "error", "message": "OPENAI_API_KEY not set"}
+        
+        config = LLMConfig(
+            provider='openai',
+            model_name='gpt-4o-mini',
+            api_key=api_key,
+            priority=1,
+            is_active=True,
+            temperature=0.7,
+            max_tokens=4000,
+            cost_per_1k_input_tokens=0.00015,
+            cost_per_1k_output_tokens=0.0006
+        )
+        
+        doc_ref = configs_ref.document('openai_gpt4o_mini')
+        doc_ref.set(config.model_dump())
+        
+        return {"status": "created", "provider": "openai", "model": "gpt-4o-mini"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 @app.delete("/user/wipe-logs")
@@ -1010,24 +1446,30 @@ async def wipe_user_logs(
     Keeps profile and goals intact
     Supports both old flat structure and new subcollection structure
     """
+    print(f"🗑️ [WIPE LOGS] Starting wipe for user: {current_user.user_id}")
     try:
         from google.cloud import firestore
         db = firestore.Client()
         user_id = current_user.user_id
+        print(f"🗑️ [WIPE LOGS] Firestore client initialized for user: {user_id}")
         
         deleted_logs = 0
         deleted_messages = 0
         deleted_tasks = 0
         
+        print(f"🗑️ [WIPE LOGS] Starting deletion from NEW structure...")
         # Delete from NEW structure (subcollections)
         try:
             # Delete fitness logs from subcollection
+            print(f"🗑️ [WIPE LOGS] Deleting fitness logs from subcollection...")
             fitness_logs_ref = db.collection("users").document(user_id).collection("fitness_logs")
             for doc in fitness_logs_ref.stream():
                 doc.reference.delete()
                 deleted_logs += 1
+            print(f"🗑️ [WIPE LOGS] Deleted {deleted_logs} fitness logs from subcollection")
             
             # Delete chat sessions and messages
+            print(f"🗑️ [WIPE LOGS] Deleting chat sessions...")
             sessions_ref = db.collection("users").document(user_id).collection("chat_sessions")
             for session in sessions_ref.stream():
                 # Delete messages in this session
@@ -1037,14 +1479,19 @@ async def wipe_user_logs(
                     deleted_messages += 1
                 # Delete the session itself
                 session.reference.delete()
+            print(f"🗑️ [WIPE LOGS] Deleted {deleted_messages} chat messages from subcollection")
             
             # Delete tasks from subcollection
+            print(f"🗑️ [WIPE LOGS] Deleting tasks from subcollection...")
             tasks_ref = db.collection("users").document(user_id).collection("tasks")
             for doc in tasks_ref.stream():
                 doc.reference.delete()
                 deleted_tasks += 1
+            print(f"🗑️ [WIPE LOGS] Deleted {deleted_tasks} tasks from subcollection")
         except Exception as e:
-            print(f"Error deleting from new structure: {e}")
+            print(f"❌ [WIPE LOGS] Error deleting from new structure: {e}")
+            import traceback
+            traceback.print_exc()
         
         # Delete from OLD structure (flat collections) for backward compatibility
         try:
@@ -1071,18 +1518,21 @@ async def wipe_user_logs(
         except Exception as e:
             print(f"Error deleting from old structure: {e}")
         
+        total = deleted_logs + deleted_messages + deleted_tasks
+        print(f"✅ [WIPE LOGS] Successfully deleted {total} items (logs: {deleted_logs}, messages: {deleted_messages}, tasks: {deleted_tasks})")
+        
         return {
             "success": True,
             "deleted": {
                 "fitness_logs": deleted_logs,
                 "chat_messages": deleted_messages,
                 "tasks": deleted_tasks,
-                "total": deleted_logs + deleted_messages + deleted_tasks
+                "total": total
             },
-            "message": f"Successfully deleted {deleted_logs + deleted_messages + deleted_tasks} items. Profile and goals preserved."
+            "message": f"Successfully deleted {total} items. Profile and goals preserved."
         }
     except Exception as e:
-        print(f"Error wiping user logs: {e}")
+        print(f"❌ [WIPE LOGS] Fatal error: {e}")
         import traceback
         traceback.print_exc()
         return {
@@ -1221,5 +1671,308 @@ def _estimate_calories(text: str, data: dict) -> Optional[int]:
         return None
     kcal_per_100g = FOOD_KCAL_PER_100G[best_key]
     return int(round(kcal_per_100g * grams / 100))
+
+
+# ============================================================================
+# 🎨 CHAT FEEDBACK ENDPOINTS
+# ============================================================================
+
+class ChatFeedbackRequest(BaseModel):
+    message_id: str
+    rating: str  # 'helpful' or 'not_helpful'
+    corrections: List[str] = []
+    comment: Optional[str] = None
+
+class AlternativeSelectionRequest(BaseModel):
+    message_id: str
+    selected_index: int
+    selected_alternative: dict
+    rejected_primary: Optional[dict] = None
+
+@app.post("/chat/feedback")
+async def submit_chat_feedback(
+    feedback_req: ChatFeedbackRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Submit feedback for a chat message (thumbs up/down)
+    """
+    print("=" * 80)
+    print(f"🎯 [FEEDBACK START] Endpoint called")
+    print(f"   User: {current_user.user_id}")
+    print(f"   Message ID: {feedback_req.message_id}")
+    print(f"   Rating: {feedback_req.rating}")
+    print(f"   Corrections: {feedback_req.corrections}")
+    print(f"   Comment: {feedback_req.comment}")
+    sys.stdout.flush()
+    
+    try:
+        print(f"🔵 [FEEDBACK] Step 1: Creating Firestore client...")
+        sys.stdout.flush()
+        db = firestore.Client()
+        print(f"✅ [FEEDBACK] Step 1: Firestore client created")
+        sys.stdout.flush()
+        
+        print(f"🔵 [FEEDBACK] Step 2: Creating document reference...")
+        sys.stdout.flush()
+        feedback_ref = db.collection('chat_feedback').document()
+        print(f"✅ [FEEDBACK] Step 2: Document ref created: {feedback_ref.id}")
+        sys.stdout.flush()
+        
+        feedback_data = {
+            'feedback_id': feedback_ref.id,
+            'user_id': current_user.user_id,
+            'message_id': feedback_req.message_id,
+            'rating': feedback_req.rating,
+            'corrections': feedback_req.corrections,
+            'comment': feedback_req.comment,
+            'created_at': firestore.SERVER_TIMESTAMP,
+        }
+        
+        print(f"🔵 [FEEDBACK] Step 3: Saving to Firestore...")
+        print(f"   Data: {feedback_data}")
+        sys.stdout.flush()
+        feedback_ref.set(feedback_data)
+        print(f"✅ [FEEDBACK] Step 3: Saved successfully!")
+        sys.stdout.flush()
+        
+        print(f"🎉 [FEEDBACK SUCCESS] Feedback {feedback_ref.id} saved for message {feedback_req.message_id}")
+        print("=" * 80)
+        sys.stdout.flush()
+        
+        return {
+            'success': True,
+            'feedback_id': feedback_ref.id,
+            'message': 'Thank you for your feedback!'
+        }
+        
+    except Exception as e:
+        print(f"❌❌❌ [FEEDBACK ERROR] Exception caught!")
+        print(f"   Error type: {type(e).__name__}")
+        print(f"   Error message: {str(e)}")
+        import traceback
+        print(f"   Full traceback:")
+        traceback.print_exc()
+        print("=" * 80)
+        sys.stdout.flush()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to save feedback: {str(e)}"
+        )
+
+@app.post("/chat/select-alternative")
+async def select_alternative(
+    selection_req: AlternativeSelectionRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    User selects an alternative interpretation
+    """
+    print("=" * 80)
+    print(f"🎯 [ALTERNATIVE START] Endpoint called")
+    print(f"   User: {current_user.user_id}")
+    print(f"   Message ID: {selection_req.message_id}")
+    print(f"   Selected Index: {selection_req.selected_index}")
+    print(f"   Alternative: {selection_req.selected_alternative.get('interpretation', 'N/A')}")
+    sys.stdout.flush()
+    
+    try:
+        print(f"🔵 [ALTERNATIVE] Step 1: Creating Firestore client...")
+        sys.stdout.flush()
+        db = firestore.Client()
+        print(f"✅ [ALTERNATIVE] Step 1: Firestore client created")
+        sys.stdout.flush()
+        
+        # Save selection as feedback
+        print(f"🔵 [ALTERNATIVE] Step 2: Creating feedback document...")
+        sys.stdout.flush()
+        feedback_ref = db.collection('chat_feedback').document()
+        feedback_data = {
+            'feedback_id': feedback_ref.id,
+            'user_id': current_user.user_id,
+            'message_id': selection_req.message_id,
+            'rating': 'alternative_selected',
+            'selected_index': selection_req.selected_index,
+            'selected_alternative': selection_req.selected_alternative,
+            'rejected_primary': selection_req.rejected_primary,
+            'created_at': firestore.SERVER_TIMESTAMP,
+        }
+        print(f"🔵 [ALTERNATIVE] Step 3: Saving feedback to Firestore...")
+        sys.stdout.flush()
+        feedback_ref.set(feedback_data)
+        print(f"✅ [ALTERNATIVE] Step 3: Feedback saved: {feedback_ref.id}")
+        sys.stdout.flush()
+        
+        # ✅ Update the original chat message
+        print(f"🔵 [ALTERNATIVE] Step 4: Updating original chat message...")
+        sys.stdout.flush()
+        try:
+            messages_ref = db.collection('chat_history') \
+                .where('messageId', '==', selection_req.message_id) \
+                .limit(1)
+            messages = list(messages_ref.stream())
+            
+            if messages:
+                print(f"✅ [ALTERNATIVE] Step 4a: Found message to update")
+                sys.stdout.flush()
+                msg_doc = messages[0]
+                selected_alt = selection_req.selected_alternative
+                interpretation = selected_alt.get('interpretation', 'Item')
+                calories = selected_alt.get('data', {}).get('calories', 0)
+                updated_summary = f"{interpretation} logged! {int(calories)} kcal"
+                
+                print(f"🔵 [ALTERNATIVE] Step 4b: Updating message with new summary: {updated_summary}")
+                sys.stdout.flush()
+                msg_doc.reference.update({
+                    'alternatives': [],
+                    'summary': updated_summary,
+                    'selected_alternative_index': selection_req.selected_index,
+                    'updated_at': firestore.SERVER_TIMESTAMP
+                })
+                print(f"✅ [ALTERNATIVE] Step 4b: Message {selection_req.message_id} updated successfully")
+                sys.stdout.flush()
+            else:
+                print(f"⚠️ [ALTERNATIVE] Step 4a: No message found with ID {selection_req.message_id}")
+                sys.stdout.flush()
+        except Exception as update_err:
+            print(f"⚠️⚠️⚠️ [ALTERNATIVE] Error updating message!")
+            print(f"   Error: {update_err}")
+            import traceback
+            traceback.print_exc()
+            sys.stdout.flush()
+        
+        print(f"🎉 [ALTERNATIVE SUCCESS] Alternative selected and saved!")
+        print("=" * 80)
+        sys.stdout.flush()
+        
+        return {
+            'success': True,
+            'feedback_id': feedback_ref.id,
+            'message': 'Alternative selected!'
+        }
+        
+    except Exception as e:
+        print(f"❌❌❌ [ALTERNATIVE ERROR] Exception caught!")
+        print(f"   Error type: {type(e).__name__}")
+        print(f"   Error message: {str(e)}")
+        import traceback
+        print(f"   Full traceback:")
+        traceback.print_exc()
+        print("=" * 80)
+        sys.stdout.flush()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to save selection: {str(e)}"
+        )
+
+
+# ============================================================================
+# ANALYTICS ENDPOINTS (Phase 1 - User-Facing Analytics Dashboard)
+# ============================================================================
+
+@app.get("/analytics/feedback-summary")
+async def get_feedback_summary(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get feedback analytics summary for current user (read-only, no side effects)
+    
+    Returns:
+    - Total feedback count
+    - Satisfaction score (% helpful)
+    - Feedback rate
+    - Category breakdown
+    - Recent feedback
+    
+    Feature: User-facing analytics dashboard
+    Risk: VERY LOW (read-only, isolated)
+    """
+    try:
+        user_id = current_user.user_id  # Fixed: User model uses 'user_id' not 'uid'
+        
+        print(f"📊 [ANALYTICS] Fetching feedback for user: {user_id}")
+        sys.stdout.flush()
+        
+        # Initialize Firestore client
+        project = os.getenv("GOOGLE_CLOUD_PROJECT", "productivityai-mvp")
+        db = firestore.Client(project=project)
+        
+        # Query feedback collection (read-only)
+        feedback_ref = db.collection('chat_feedback')
+        feedback_query = feedback_ref.where('user_id', '==', user_id).stream()
+        
+        # Aggregate metrics
+        total_feedback = 0
+        helpful_count = 0
+        not_helpful_count = 0
+        category_stats = {}
+        recent_feedback = []
+        
+        for doc in feedback_query:
+            data = doc.to_dict()
+            total_feedback += 1
+            
+            # Count ratings
+            rating = data.get('rating', '')
+            if rating == 'helpful':
+                helpful_count += 1
+            elif rating == 'not_helpful':
+                not_helpful_count += 1
+            
+            # Category breakdown (from message_data)
+            message_data = data.get('message_data', {})
+            category = message_data.get('category', 'unknown')
+            if category not in category_stats:
+                category_stats[category] = {'helpful': 0, 'not_helpful': 0, 'total': 0}
+            category_stats[category]['total'] += 1
+            if rating == 'helpful':
+                category_stats[category]['helpful'] += 1
+            elif rating == 'not_helpful':
+                category_stats[category]['not_helpful'] += 1
+            
+            # Recent feedback (last 10)
+            if len(recent_feedback) < 10:
+                recent_feedback.append({
+                    'message_id': data.get('message_id'),
+                    'rating': rating,
+                    'comment': data.get('comment', ''),
+                    'timestamp': data.get('timestamp', ''),
+                    'user_input': message_data.get('user_input', ''),
+                })
+        
+        # Calculate satisfaction score
+        satisfaction_score = (helpful_count / total_feedback * 100) if total_feedback > 0 else 0
+        
+        # Calculate category satisfaction
+        for category, stats in category_stats.items():
+            if stats['total'] > 0:
+                stats['satisfaction'] = (stats['helpful'] / stats['total'] * 100)
+            else:
+                stats['satisfaction'] = 0
+        
+        print(f"✅ [ANALYTICS] Aggregated {total_feedback} feedback entries")
+        print(f"   Satisfaction: {satisfaction_score:.1f}%")
+        print(f"   Categories: {len(category_stats)}")
+        sys.stdout.flush()
+        
+        return {
+            'status': 'success',
+            'summary': {
+                'total_feedback': total_feedback,
+                'helpful_count': helpful_count,
+                'not_helpful_count': not_helpful_count,
+                'satisfaction_score': round(satisfaction_score, 1),
+                'feedback_rate': 42,  # TODO: Calculate from total messages
+            },
+            'category_breakdown': category_stats,
+            'recent_feedback': recent_feedback,
+        }
+        
+    except Exception as e:
+        print(f"❌ [ANALYTICS] Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        sys.stdout.flush()
+        raise HTTPException(status_code=500, detail=str(e))
 
 

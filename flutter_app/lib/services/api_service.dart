@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import '../models/fitness_log.dart';
 import '../models/task.dart';
 import '../models/user.dart';
+import '../models/timeline_activity.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
 
@@ -42,7 +43,7 @@ class ApiService {
       : _dio = Dio(BaseOptions(
           baseUrl: AppConstants.apiBaseUrl,
           connectTimeout: const Duration(seconds: 12),
-          receiveTimeout: const Duration(seconds: 25),
+          receiveTimeout: const Duration(seconds: 120), // Increased for meal plan generation (takes 15-90s)
           headers: {'Content-Type': 'application/json'},
         )) {
     _dio.interceptors.add(InterceptorsWrapper(
@@ -186,17 +187,78 @@ class ApiService {
   }
 
   // Generic GET method for custom endpoints
-  Future<Map<String, dynamic>> get(String path) async {
+  Future<dynamic> get(String path) async {
     try {
       final resp = await _dio.get(path);
-      return (resp.data as Map).cast<String, dynamic>();
+      if (resp.data == null) return {};
+      // Return data as-is (can be Map, List, or other types)
+      return resp.data;
     } on DioException catch (e) { _handleDioError(e); rethrow; }
   }
 
   // Generic DELETE method for custom endpoints
   Future<Map<String, dynamic>> delete(String path) async {
+    print('🔴 [API SERVICE] DELETE $path');
     try {
+      print('🔴 [API SERVICE] Calling _dio.delete...');
       final resp = await _dio.delete(path);
+      print('✅ [API SERVICE] DELETE Response status: ${resp.statusCode}');
+      print('✅ [API SERVICE] DELETE Response data: ${resp.data}');
+      
+      if (resp.data is Map) {
+        return (resp.data as Map).cast<String, dynamic>();
+      } else {
+        print('❌ [API SERVICE] Invalid response format: ${resp.data}');
+        throw ApiException('Invalid response format');
+      }
+    } on DioException catch (e) {
+      print('❌ [API SERVICE] DELETE DioException: ${e.type}');
+      print('❌ [API SERVICE] DELETE Message: ${e.message}');
+      print('❌ [API SERVICE] DELETE Response: ${e.response?.data}');
+      print('❌ [API SERVICE] DELETE Status: ${e.response?.statusCode}');
+      _handleDioError(e); 
+      rethrow; 
+    } catch (e, stackTrace) {
+      print('❌ [API SERVICE] DELETE Exception: $e');
+      print('❌ [API SERVICE] DELETE Stack trace: $stackTrace');
+      throw ApiException('Failed to parse response: $e');
+    }
+  }
+
+  // Generic POST method for custom endpoints
+  Future<Map<String, dynamic>> post(String path, Map<String, dynamic> data) async {
+    print('🔵 [API SERVICE] POST $path');
+    print('🔵 [API SERVICE] Data: $data');
+    
+    try {
+      print('🔵 [API SERVICE] Calling _dio.post...');
+      final resp = await _dio.post(path, data: data);
+      print('✅ [API SERVICE] Response status: ${resp.statusCode}');
+      print('✅ [API SERVICE] Response data type: ${resp.data.runtimeType}');
+      
+      if (resp.data is Map) {
+        return (resp.data as Map).cast<String, dynamic>();
+      } else {
+        print('❌ [API SERVICE] Invalid response format: ${resp.data}');
+        throw ApiException('Invalid response format');
+      }
+    } on DioException catch (e) {
+      print('❌ [API SERVICE] DioException: ${e.type}');
+      print('❌ [API SERVICE] Message: ${e.message}');
+      print('❌ [API SERVICE] Response: ${e.response?.data}');
+      _handleDioError(e); 
+      rethrow; 
+    } catch (e, stackTrace) {
+      print('❌ [API SERVICE] Exception: $e');
+      print('❌ [API SERVICE] Stack trace: $stackTrace');
+      throw ApiException('Failed to parse response: $e');
+    }
+  }
+
+  // Generic PUT method for custom endpoints
+  Future<Map<String, dynamic>> put(String path, Map<String, dynamic> data) async {
+    try {
+      final resp = await _dio.put(path, data: data);
       if (resp.data is Map) {
         return (resp.data as Map).cast<String, dynamic>();
       } else {
@@ -210,20 +272,61 @@ class ApiService {
     }
   }
 
-  // Generic POST method for custom endpoints
-  Future<Map<String, dynamic>> post(String path, Map<String, dynamic> data) async {
+  // Timeline - Unified activity feed
+  Future<TimelineResponse> getTimeline({
+    String? types,
+    String? startDate,
+    String? endDate,
+    int limit = 50,
+    int offset = 0,
+  }) async {
     try {
-      final resp = await _dio.post(path, data: data);
-      if (resp.data is Map) {
-        return (resp.data as Map).cast<String, dynamic>();
+      final resp = await _dio.get('/timeline', queryParameters: {
+        if (types != null && types.isNotEmpty) 'types': types,
+        if (startDate != null) 'start_date': startDate,
+        if (endDate != null) 'end_date': endDate,
+        'limit': limit,
+        'offset': offset,
+      });
+      return TimelineResponse.fromJson((resp.data as Map).cast<String, dynamic>());
+    } on DioException catch (e) { _handleDioError(e); rethrow; }
+  }
+
+  Future<Map<String, dynamic>> getTimelineStats({
+    String? startDate,
+    String? endDate,
+  }) async {
+    try {
+      final resp = await _dio.get('/timeline/stats', queryParameters: {
+        if (startDate != null) 'start_date': startDate,
+        if (endDate != null) 'end_date': endDate,
+      });
+      return (resp.data as Map).cast<String, dynamic>();
+    } on DioException catch (e) { _handleDioError(e); rethrow; }
+  }
+
+  /// Get feedback analytics summary for current user
+  /// Phase 1: Analytics Dashboard
+  Future<Map<String, dynamic>> getFeedbackSummary() async {
+    debugPrint('🔵 [API SERVICE] GET /analytics/feedback-summary');
+    
+    try {
+      final response = await _dio.get('/analytics/feedback-summary');
+      
+      debugPrint('✅ [API SERVICE] Response status: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else if (response.statusCode == 404) {
+        // Feature not enabled
+        debugPrint('⚠️ [API SERVICE] Analytics feature not enabled');
+        throw Exception('Analytics feature not available');
       } else {
-        throw ApiException('Invalid response format');
+        throw Exception('Failed to fetch feedback summary');
       }
-    } on DioException catch (e) { 
-      _handleDioError(e); 
-      rethrow; 
     } catch (e) {
-      throw ApiException('Failed to parse response: $e');
+      debugPrint('❌ [API SERVICE] Error: $e');
+      rethrow;
     }
   }
 

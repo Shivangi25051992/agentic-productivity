@@ -139,29 +139,49 @@ def list_tasks_by_user(
     priority: Optional[TaskPriority] = None,
     date_range: Optional[Tuple[Optional[Any], Optional[Any]]] = None,
 ) -> List[Task]:
-    query = db.collection(TASKS_COLLECTION).where("user_id", "==", user_id)
+    """List tasks for a user with defensive error handling"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    try:
+        query = db.collection(TASKS_COLLECTION).where("user_id", "==", user_id)
 
-    if status is not None:
-        query = query.where("status", "==", status.value)
-    if priority is not None:
-        query = query.where("priority", "==", priority.value)
-    if date_range is not None:
-        start, end = date_range
-        if start is not None:
-            query = query.where("due_date", ">=", start)
-        if end is not None:
-            query = query.where("due_date", "<=", end)
+        if status is not None:
+            query = query.where("status", "==", status.value)
+        if priority is not None:
+            query = query.where("priority", "==", priority.value)
+        
+        # When filtering by date range, order by due_date to avoid composite index requirement
+        # Otherwise order by created_at for chronological listing
+        order_field = "created_at"
+        
+        if date_range is not None:
+            start, end = date_range
+            if start is not None:
+                query = query.where("due_date", ">=", start)
+                order_field = "due_date"  # Must order by same field we're filtering
+            if end is not None:
+                query = query.where("due_date", "<=", end)
+                order_field = "due_date"  # Must order by same field we're filtering
 
-    query = query.order_by("created_at", direction=firestore.Query.DESCENDING).limit(limit)
-    docs = query.stream()
-    tasks: List[Task] = []
-    for doc in docs:
-        data = doc.to_dict() or {}
-        try:
-            tasks.append(Task.from_dict(data))
-        except ValidationError:
-            continue
-    return tasks
+        query = query.order_by(order_field, direction=firestore.Query.DESCENDING).limit(limit)
+        docs = query.stream()
+        tasks: List[Task] = []
+        for doc in docs:
+            data = doc.to_dict() or {}
+            try:
+                tasks.append(Task.from_dict(data))
+            except ValidationError as e:
+                logger.warning(f"Skipping invalid task: {e}")
+                continue
+        
+        logger.info(f"Found {len(tasks)} tasks for user {user_id}")
+        return tasks
+    
+    except Exception as e:
+        logger.error(f"Error querying tasks for user {user_id}: {str(e)}", exc_info=True)
+        # Return empty list instead of throwing - defensive programming
+        return []
 
 
 # ----------------------
@@ -273,25 +293,34 @@ def list_fitness_logs_by_user(
             query = db.collection('users').document(user_id)\
                       .collection('fitness_logs')
             
-            if log_type is not None:
-                query = query.where("log_type", "==", log_type.value)
+            # Apply filters - timestamp filters first, then log_type
             if start_ts is not None:
                 query = query.where("timestamp", ">=", start_ts)
             if end_ts is not None:
                 query = query.where("timestamp", "<=", end_ts)
             
-            query = query.order_by("timestamp", direction=firestore.Query.DESCENDING).limit(limit)
+            # Always order by timestamp (the field we're filtering on)
+            query = query.order_by("timestamp", direction=firestore.Query.DESCENDING)
+            
+            # Apply log_type filter AFTER ordering to avoid composite index issues
+            # We'll filter in memory instead
+            query = query.limit(limit * 2 if log_type else limit)  # Fetch more if we need to filter
             docs = query.stream()
             
             for doc in docs:
                 data = doc.to_dict() or {}
                 try:
-                    logs.append(FitnessLog.from_dict(data))
+                    log = FitnessLog.from_dict(data)
+                    # Apply log_type filter in memory if specified
+                    if log_type is None or log.log_type == log_type:
+                        logs.append(log)
+                        if len(logs) >= limit:  # Stop once we have enough
+                            break
                 except ValidationError as e:
                     logger.warning(f"Skipping invalid fitness log: {e}")
                     continue
             
-            logger.info(f"Found {len(logs)} logs in NEW structure")
+            logger.info(f"Found {len(logs)} logs in NEW structure (after filtering)")
             
             # If no logs found in new structure, try old structure as fallback
             if len(logs) == 0:

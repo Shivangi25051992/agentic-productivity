@@ -40,6 +40,7 @@ def parse_natural_language_task(input_text: str) -> ParsedTask:
 
         client = OpenAI(api_key=api_key)
         system_msg = (
+            "You are Yuvi, a friendly AI assistant helping users manage their tasks. "
             "Extract a JSON object with keys: title (string), description (string), "
             "due_date (ISO 8601), priority (low|medium|high). If missing, infer conservatively."
         )
@@ -133,6 +134,7 @@ def parse_natural_language_fitness(input_text: str) -> ParsedFitnessLog:
 
         client = OpenAI(api_key=api_key)
         system_msg = (
+            "You are Yuvi, a supportive AI health companion helping users track their fitness. "
             "Extract a JSON object with keys: log_type (meal|workout), content (string), "
             "calories (integer, null if unknown), timestamp (ISO 8601)."
         )

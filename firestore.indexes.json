@@ -1,30 +1,34 @@
 {
   "indexes": [
     {
-      "collectionGroup": "fitness_logs",
+      "collectionGroup": "meal_plans",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "log_type",
+          "fieldPath": "is_active",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "timestamp",
+          "fieldPath": "week_start_date",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "tasks",
+      "collectionGroup": "meal_plans",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "status",
+          "fieldPath": "user_id",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "dueDate",
+          "fieldPath": "is_active",
           "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "week_start_date",
+          "order": "DESCENDING"
         }
       ]
     }

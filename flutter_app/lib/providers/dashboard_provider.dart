@@ -126,11 +126,17 @@ class DashboardProvider extends ChangeNotifier {
       // Create ApiService instance (same pattern as used elsewhere in the app)
       final apiService = ApiService(authProvider);
       
-      // Get start and end of the selected day
-      final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
-      final endOfDay = startOfDay.add(const Duration(days: 1));
+      // Get start and end of the selected day in LOCAL time, then convert to UTC
+      // This ensures we query the correct 24-hour window in the user's timezone
+      final startOfDayLocal = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+      final endOfDayLocal = startOfDayLocal.add(const Duration(days: 1));
+      
+      // Convert to UTC for API query (backend stores all timestamps in UTC)
+      final startOfDay = startOfDayLocal.toUtc();
+      final endOfDay = endOfDayLocal.toUtc();
 
-      print('🔍 Fetching data for ${DateFormat('yyyy-MM-dd').format(_selectedDate)}');
+      print('🔍 Fetching data for ${DateFormat('yyyy-MM-dd').format(_selectedDate)} (local)');
+      print('🔍 UTC range: ${startOfDay.toIso8601String()} to ${endOfDay.toIso8601String()}');
 
       // Fetch fitness logs using ApiService (handles auth, HTTPS, errors automatically)
       List<dynamic> fitnessLogs = [];
@@ -147,14 +153,15 @@ class DashboardProvider extends ChangeNotifier {
       }
 
       // Fetch tasks using ApiService (independent of fitness logs)
+      // Note: Don't filter by date - we want ALL tasks (including those without due dates)
       List<dynamic> tasks = [];
       try {
-        final taskModels = await apiService.getTasks(date: startOfDay);
+        final taskModels = await apiService.getTasks();  // Removed date filter
         tasks = taskModels.map((task) => task.toJson()).toList();
         print('✅ Fetched ${tasks.length} tasks');
       } catch (e) {
         print('⚠️  Tasks fetch error: $e (continuing with meals only)');
-        // Don't set error message - tasks are optional
+        // Don't fail the entire request - tasks are optional
       }
 
       // Process data (even if one source failed)

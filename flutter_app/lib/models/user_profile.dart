@@ -94,6 +94,7 @@ class UserProfileModel {
   final DateTime updatedAt;
   final String timezone;
   final String units;
+  final String subscriptionTier;
 
   UserProfileModel({
     required this.userId,
@@ -116,6 +117,7 @@ class UserProfileModel {
     required this.updatedAt,
     this.timezone = 'UTC',
     this.units = 'metric',
+    this.subscriptionTier = 'free',
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -142,6 +144,7 @@ class UserProfileModel {
       updatedAt: DateTime.parse(json['updated_at'] as String),
       timezone: json['timezone'] as String? ?? 'UTC',
       units: json['units'] as String? ?? 'metric',
+      subscriptionTier: json['subscription_tier'] as String? ?? 'free',
     );
   }
 
@@ -167,6 +170,7 @@ class UserProfileModel {
       'updated_at': updatedAt.toIso8601String(),
       'timezone': timezone,
       'units': units,
+      'subscription_tier': subscriptionTier,
     };
   }
 

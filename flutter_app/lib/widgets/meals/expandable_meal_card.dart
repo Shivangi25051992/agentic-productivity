@@ -79,7 +79,9 @@ class _ExpandableMealCardState extends State<ExpandableMealCard>
   }
 
   String _formatTime(DateTime dateTime) {
-    return DateFormat('h:mm a').format(dateTime);
+    // Convert to local time if it's in UTC
+    final localTime = dateTime.isUtc ? dateTime.toLocal() : dateTime;
+    return DateFormat('h:mm a').format(localTime);
   }
 
   @override

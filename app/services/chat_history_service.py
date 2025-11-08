@@ -5,8 +5,9 @@ NEW: Uses subcollection structure with sessions
 
 from google.cloud import firestore
 from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import os
+import asyncio
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -46,36 +47,74 @@ class ChatHistoryService:
         
         return session_id
     
-    def save_message(self, user_id: str, role: str, content: str, metadata: Optional[Dict] = None):
+    async def save_message(
+        self, 
+        user_id: str, 
+        role: str, 
+        content: str, 
+        metadata: Optional[Dict] = None,
+        # ✨ NEW: Accept expandable fields
+        summary: Optional[str] = None,
+        suggestion: Optional[str] = None,
+        details: Optional[Dict] = None,
+        expandable: bool = False,
+        # 🧠 PHASE 2: Accept explainable AI fields
+        confidence_score: Optional[float] = None,
+        confidence_level: Optional[str] = None,
+        confidence_factors: Optional[Dict[str, float]] = None,
+        explanation: Optional[Dict[str, Any]] = None,
+        alternatives: Optional[List[Dict[str, Any]]] = None,
+        # 🎨 UX FIX: Accept messageId for consistency
+        message_id: Optional[str] = None
+    ):
         """
-        Save a chat message to user's current session
+        Save a chat message to user's current session (ASYNC - non-blocking)
         
         Args:
             user_id: User identifier
             role: 'user' or 'assistant'
             content: Message content
             metadata: Additional data (calories, items, etc.)
+            summary: Brief one-liner summary (expandable chat)
+            suggestion: Actionable tip (expandable chat)
+            details: Structured breakdown (expandable chat)
+            expandable: Whether message supports expandable UI
         """
         if self.use_new_structure:
             # NEW: Save to subcollection with session
             session_id = self._get_or_create_session(user_id)
             
+            # 🎨 UX FIX: Generate consistent messageId (milliseconds since epoch)
+            if not message_id:
+                message_id = str(int(datetime.now(timezone.utc).timestamp() * 1000))
+            
             message = {
-                'messageId': None,  # Auto-generated
+                'messageId': message_id,  # 🎨 UX FIX: Store consistent ID for feedback matching
                 'role': role,
                 'content': content,
                 'metadata': metadata or {},
-                'timestamp': firestore.SERVER_TIMESTAMP
+                'timestamp': firestore.SERVER_TIMESTAMP,
+                # ✨ NEW: Add expandable fields at top level (for easy retrieval)
+                'summary': summary,
+                'suggestion': suggestion,
+                'details': details,
+                'expandable': expandable,
+                # 🧠 PHASE 2: Add explainable AI fields
+                'confidence_score': confidence_score,
+                'confidence_level': confidence_level,
+                'confidence_factors': confidence_factors,
+                'explanation': explanation,
+                'alternatives': alternatives
             }
             
-            # Add message to session
+            # Add message to session (ASYNC - non-blocking)
             session_ref = self.db.collection('users').document(user_id)\
                                  .collection('chat_sessions').document(session_id)
             message_ref = session_ref.collection('messages').document()
-            message_ref.set(message)
+            await asyncio.to_thread(message_ref.set, message)
             
-            # Update session metadata
-            session_ref.update({
+            # Update session metadata (ASYNC - non-blocking)
+            await asyncio.to_thread(session_ref.update, {
                 'lastMessageAt': firestore.SERVER_TIMESTAMP,
                 'messageCount': firestore.Increment(1)
             })
@@ -87,7 +126,18 @@ class ChatHistoryService:
                 'content': content,
                 'metadata': metadata or {},
                 'timestamp': firestore.SERVER_TIMESTAMP,
-                'expires_at': datetime.utcnow() + timedelta(days=self.retention_days)
+                'expires_at': datetime.utcnow() + timedelta(days=self.retention_days),
+                # ✨ NEW: Add expandable fields for backward compatibility
+                'summary': summary,
+                'suggestion': suggestion,
+                'details': details,
+                'expandable': expandable,
+                # 🧠 PHASE 2: Add explainable AI fields
+                'confidence_score': confidence_score,
+                'confidence_level': confidence_level,
+                'confidence_factors': confidence_factors,
+                'explanation': explanation,
+                'alternatives': alternatives
             }
             self.db.collection('chat_history').add(message)
     
@@ -103,52 +153,63 @@ class ChatHistoryService:
             List of messages ordered by timestamp
         """
         messages = []
+        seen_message_ids = set()  # Track unique message IDs to prevent duplicates
         
         if self.use_new_structure:
             # NEW: Load from subcollections
             try:
-                # Get all sessions for user
-                sessions = self.db.collection('users').document(user_id)\
-                                  .collection('chat_sessions')\
-                                  .order_by('lastMessageAt', direction=firestore.Query.DESCENDING)\
-                                  .limit(10)\
-                                  .stream()
+                # Filter for last 24 hours only
+                cutoff_time = datetime.now(timezone.utc) - timedelta(hours=24)
                 
-                for session in sessions:
-                    session_data = session.to_dict()
+                # Get ONLY today's session (session_id is date-based)
+                today = datetime.utcnow().date().isoformat()
+                
+                # Try to get today's session first
+                try:
+                    session_ref = self.db.collection('users').document(user_id)\
+                                         .collection('chat_sessions').document(today)
+                    session = session_ref.get()
                     
-                    # Check if session expired (use timezone-aware datetime)
-                    expires_at = session_data.get('expiresAt')
-                    if expires_at:
-                        now_aware = datetime.now(timezone.utc)
-                        if expires_at < now_aware:
-                            continue
-                    
-                    # Get messages from this session
-                    session_messages = self.db.collection('users').document(user_id)\
-                                              .collection('chat_sessions').document(session.id)\
-                                              .collection('messages')\
-                                              .order_by('timestamp', direction=firestore.Query.ASCENDING)\
-                                              .stream()
-                    
-                    for msg in session_messages:
-                        msg_data = msg.to_dict()
-                        msg_data['id'] = msg.id
+                    if session.exists:
+                        # Get messages from today's session (ASCENDING = oldest first, so newest appear at bottom)
+                        session_messages = session_ref.collection('messages')\
+                                                  .order_by('timestamp', direction=firestore.Query.ASCENDING)\
+                                                  .limit(limit)\
+                                                  .stream()
                         
-                        # Convert timestamp
-                        timestamp_obj = msg_data.get('timestamp')
-                        if timestamp_obj:
-                            try:
-                                msg_data['timestamp'] = timestamp_obj.isoformat()
-                            except:
+                        for msg in session_messages:
+                            msg_data = msg.to_dict()
+                            msg_id = msg.id
+                            
+                            # Skip duplicates
+                            if msg_id in seen_message_ids:
+                                continue
+                            seen_message_ids.add(msg_id)
+                            
+                            msg_data['id'] = msg_id
+                            # 🎨 UX FIX: Ensure messageId is present (fallback to doc ID if not stored)
+                            if 'messageId' not in msg_data or not msg_data['messageId']:
+                                msg_data['messageId'] = msg_id
+                            
+                            # Convert timestamp
+                            timestamp_obj = msg_data.get('timestamp')
+                            if timestamp_obj:
+                                try:
+                                    # Check if message is within last 24 hours
+                                    if timestamp_obj < cutoff_time:
+                                        continue  # Skip old messages
+                                    msg_data['timestamp'] = timestamp_obj.isoformat()
+                                except:
+                                    msg_data['timestamp'] = datetime.utcnow().isoformat()
+                            else:
                                 msg_data['timestamp'] = datetime.utcnow().isoformat()
-                        else:
-                            msg_data['timestamp'] = datetime.utcnow().isoformat()
-                        
-                        messages.append(msg_data)
-                    
-                    if len(messages) >= limit:
-                        break
+                            
+                            messages.append(msg_data)
+                            
+                            if len(messages) >= limit:
+                                break
+                except Exception as e:
+                    print(f"Error loading today's session: {e}")
                 
                 return messages[:limit]
                 

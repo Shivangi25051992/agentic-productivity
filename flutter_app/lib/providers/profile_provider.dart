@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -92,37 +93,66 @@ class ProfileProvider extends ChangeNotifier {
 
   /// Fetch user profile
   Future<void> fetchProfile(AuthProvider authProvider) async {
+    debugPrint('🔍 [PROFILE] Starting fetchProfile...');
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
+    // Use post-frame callback to avoid calling notifyListeners during build
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     try {
+      debugPrint('🔍 [PROFILE] Getting ID token...');
       final token = await authProvider.getIdToken();
       if (token == null) {
+        debugPrint('❌ [PROFILE] Token is null!');
         throw Exception('Not authenticated');
       }
+      debugPrint('✅ [PROFILE] Got token: ${token.substring(0, 20)}...');
 
+      final url = '${AppConstants.apiBaseUrl}/profile/me';
+      debugPrint('🔍 [PROFILE] Fetching from: $url');
+      
       final response = await http.get(
-        Uri.parse('${AppConstants.apiBaseUrl}/profile/me'),
+        Uri.parse(url),
         headers: {
           'Authorization': 'Bearer $token',
         },
+      ).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          debugPrint('❌ [PROFILE] Request timed out after 15 seconds');
+          throw Exception('Request timed out');
+        },
       );
+
+      debugPrint('🔍 [PROFILE] Response status: ${response.statusCode}');
+      debugPrint('🔍 [PROFILE] Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _profile = UserProfileModel.fromJson(data['profile']);
+        debugPrint('✅ [PROFILE] Profile loaded successfully');
+        debugPrint('🔍 [PROFILE] Profile name: ${_profile?.name}');
+        debugPrint('🔍 [PROFILE] Onboarding completed: ${_profile?.onboardingCompleted}');
       } else if (response.statusCode == 404) {
         // Profile not found - user needs to complete onboarding
+        debugPrint('⚠️  [PROFILE] Profile not found (404)');
         _profile = null;
       } else {
         _errorMessage = 'Failed to fetch profile: ${response.body}';
+        debugPrint('❌ [PROFILE] Error: $_errorMessage');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       _errorMessage = e.toString();
+      debugPrint('❌ [PROFILE] Exception: $e');
+      debugPrint('❌ [PROFILE] Stack trace: $stackTrace');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+      debugPrint('🔍 [PROFILE] fetchProfile completed. Has profile: $hasProfile');
     }
   }
 

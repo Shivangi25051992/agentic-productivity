@@ -29,6 +29,11 @@ class ChatProvider extends ChangeNotifier {
         isUser: false,
         timestamp: DateTime.now(),
         metadata: result,
+        // ✨ NEW: Parse expandable fields from API response
+        summary: result['summary'] as String?,
+        suggestion: result['suggestion'] as String?,
+        details: (result['details'] as Map?)?.cast<String, dynamic>(),
+        expandable: (result['expandable'] as bool?) ?? false,
       ));
       return result;
     } catch (e) {

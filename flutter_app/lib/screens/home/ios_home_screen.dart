@@ -41,7 +41,8 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
 
   Future<void> _refreshData() async {
     final dashboard = context.read<DashboardProvider>();
-    await dashboard.fetchDashboardData();
+    final auth = context.read<AuthProvider>();
+    await dashboard.fetchDailyStats(auth);
   }
 
   @override
@@ -326,8 +327,8 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                     _buildMetricCard(
                       icon: '💪',
                       label: 'Protein',
-                      value: '${stats.proteinConsumed}g',
-                      target: '${stats.proteinGoal}g',
+                      value: '${stats.proteinG.toInt()}g',
+                      target: '${stats.proteinGoal.toInt()}g',
                       unit: '',
                       progress: stats.proteinProgress,
                       color: Colors.blue,
@@ -335,8 +336,8 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                     _buildMetricCard(
                       icon: '💧',
                       label: 'Water',
-                      value: '${stats.waterGlasses}',
-                      target: '${stats.waterGoal}',
+                      value: '${(stats.waterMl / 250).toInt()}',
+                      target: '${(stats.waterGoal / 250).toInt()}',
                       unit: 'glasses',
                       progress: stats.waterProgress,
                       color: Colors.cyan,
@@ -344,10 +345,10 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                     _buildMetricCard(
                       icon: '🚶',
                       label: 'Steps',
-                      value: '${stats.stepsCompleted}',
+                      value: '0',
                       target: '10000',
                       unit: 'steps',
-                      progress: stats.stepsCompleted / 10000,
+                      progress: 0.0,
                       color: Colors.green,
                     ),
                   ],
@@ -471,7 +472,10 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
   Widget _buildCollapsibleInsights() {
     return Consumer<DashboardProvider>(
       builder: (context, dashboard, _) {
-        final insights = dashboard.insights;
+        final stats = dashboard.stats;
+        
+        // Generate simple insights from stats
+        final insights = _generateInsights(stats);
         if (insights.isEmpty) {
           return const SliverToBoxAdapter(child: SizedBox.shrink());
         }
@@ -535,7 +539,7 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          primaryInsight.title,
+                          primaryInsight['title'] as String,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -544,7 +548,7 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          primaryInsight.message,
+                          primaryInsight['message'] as String,
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[600],
@@ -572,7 +576,7 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          insight.title,
+                          insight['title'] as String,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -581,7 +585,7 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          insight.message,
+                          insight['message'] as String,
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[600],
@@ -712,6 +716,62 @@ class _IosHomeScreenState extends State<IosHomeScreen> {
     final weekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][now.weekday - 1];
     final month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][now.month - 1];
     return '$weekday, $month ${now.day}';
+  }
+
+  /// Generate simple insights from stats
+  List<Map<String, String>> _generateInsights(DailyStats stats) {
+    final insights = <Map<String, String>>[];
+
+    // Calorie deficit insight
+    if (stats.isInDeficit) {
+      final deficit = stats.caloriesGoal - stats.netCalories;
+      insights.add({
+        'title': '🎯 Perfect Deficit!',
+        'message': 'You\'re $deficit kcal in deficit - ideal for healthy weight loss!',
+      });
+    } else if (stats.netCalories > stats.caloriesGoal) {
+      final surplus = stats.netCalories - stats.caloriesGoal;
+      insights.add({
+        'title': '⚠️ Calorie Surplus',
+        'message': 'You\'re $surplus kcal over your goal. Try logging a workout!',
+      });
+    }
+
+    // Protein insight
+    if (stats.proteinProgress >= 0.8) {
+      insights.add({
+        'title': '💪 Great Protein!',
+        'message': 'You\'ve hit ${(stats.proteinProgress * 100).toInt()}% of your protein goal!',
+      });
+    } else if (stats.proteinRemaining > 50) {
+      insights.add({
+        'title': '🍗 Boost Your Protein',
+        'message': 'You need ${stats.proteinRemaining.toInt()}g more protein. Try adding chicken breast, eggs, or Greek yogurt.',
+      });
+    }
+
+    // Water insight
+    if (stats.waterProgress >= 0.8) {
+      insights.add({
+        'title': '💧 Well Hydrated!',
+        'message': 'Great job staying hydrated today!',
+      });
+    } else if (stats.waterProgress < 0.5) {
+      insights.add({
+        'title': '💧 Drink More Water',
+        'message': 'You\'re only at ${(stats.waterProgress * 100).toInt()}% of your water goal. Stay hydrated!',
+      });
+    }
+
+    // Default insight if none generated
+    if (insights.isEmpty) {
+      insights.add({
+        'title': '🌟 Keep Going!',
+        'message': 'Log your meals and activities to get personalized insights.',
+      });
+    }
+
+    return insights;
   }
 }
 

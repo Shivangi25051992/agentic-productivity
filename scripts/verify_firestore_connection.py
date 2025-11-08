@@ -77,3 +77,4 @@ if __name__ == "__main__":
         print("❌ FIRESTORE CONNECTION: FAILED")
         sys.exit(1)
 
+

@@ -10,6 +10,8 @@ import '../../widgets/meals/expandable_meal_card.dart';
 import '../../widgets/insights/ai_insights_card.dart';
 import '../../widgets/feedback_button.dart';
 import '../../services/api_service.dart';
+import '../../widgets/dashboard/water_widget.dart';
+import '../../widgets/dashboard/supplement_widget.dart';
 
 /// Mobile-First Dashboard - Clean, Card-Based Layout
 /// Optimized for thumb-zone and one-handed use
@@ -60,6 +62,7 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
   }
 
   Future<void> _loadInsights() async {
+    if (!mounted) return;
     setState(() => _isLoadingInsights = true);
     try {
       final auth = context.read<AuthProvider>();
@@ -68,6 +71,7 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
       });
       
       final data = await api.get('/insights'); // Use generic get method
+      if (!mounted) return;
       setState(() {
         _insights = (data['insights'] as List?)?.cast<Map<String, dynamic>>() ?? [];
         _insightsSummary = data['summary'] as String?;
@@ -75,6 +79,7 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
     } catch (e) {
       debugPrint('Error loading insights: $e');
     } finally {
+      if (!mounted) return;
       setState(() => _isLoadingInsights = false);
     }
   }
@@ -166,6 +171,16 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                     padding: const EdgeInsets.all(16),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
+                        // AI Insights Card - EMOTIONAL HOOK FIRST! 🎯
+                        if (_insights.isNotEmpty || _insightsSummary != null)
+                          AIInsightsCard(
+                            insights: _insights,
+                            summary: _insightsSummary,
+                          ),
+                        
+                        if (_insights.isNotEmpty || _insightsSummary != null)
+                          const SizedBox(height: 16),
+                        
                         // Calorie Card
                         _CalorieCard(
                           consumed: caloriesConsumed,
@@ -176,16 +191,6 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                         
                         const SizedBox(height: 16),
                         
-                        // AI Insights Card (THE DIFFERENTIATOR!)
-                        if (_insights.isNotEmpty || _insightsSummary != null)
-                          AIInsightsCard(
-                            insights: _insights,
-                            summary: _insightsSummary,
-                          ),
-                        
-                        if (_insights.isNotEmpty || _insightsSummary != null)
-                          const SizedBox(height: 16),
-                        
                         // Macros Card
                         _MacrosCard(
                           protein: dashboard.stats.proteinG,
@@ -195,6 +200,16 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
                           fat: dashboard.stats.fatG,
                           fatGoal: dashboard.stats.fatGoal,
                         ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Water Widget
+                        const WaterWidget(),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Supplement Widget
+                        const SupplementWidget(),
                         
                         const SizedBox(height: 16),
                         
@@ -321,8 +336,8 @@ class _MobileFirstHomeScreenState extends State<MobileFirstHomeScreen> {
   }
 }
 
-// Calorie Card Widget
-class _CalorieCard extends StatelessWidget {
+// Calorie Card Widget with Micro-Animation
+class _CalorieCard extends StatefulWidget {
   final int consumed;
   final int goal;
   final int remaining;
@@ -336,8 +351,70 @@ class _CalorieCard extends StatelessWidget {
   });
 
   @override
+  State<_CalorieCard> createState() => _CalorieCardState();
+}
+
+class _CalorieCardState extends State<_CalorieCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 0.0, end: widget.progress).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(_CalorieCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.progress != widget.progress) {
+      _animation = Tween<double>(begin: oldWidget.progress, end: widget.progress).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+      );
+      _controller.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Dynamic feedback based on progress
+  String _getDynamicFeedbackText(double progress, bool isOver) {
+    if (isOver) return 'Over Budget 😅';
+    if (progress >= 0.9) return 'Almost There! 🎯';
+    if (progress >= 0.7) return 'Crushing It! 🔥';
+    if (progress >= 0.5) return 'On Track 💪';
+    if (progress >= 0.3) return 'Good Start ⭐️';
+    return 'Just Started 🚀';
+  }
+
+  Color _getDynamicFeedbackColor(double progress, bool isOver) {
+    if (isOver) return Colors.red.shade100;
+    if (progress >= 0.7) return Colors.green.shade100;
+    if (progress >= 0.5) return Colors.blue.shade100;
+    return Colors.orange.shade100;
+  }
+
+  Color _getDynamicFeedbackTextColor(double progress, bool isOver) {
+    if (isOver) return Colors.red.shade700;
+    if (progress >= 0.7) return Colors.green.shade700;
+    if (progress >= 0.5) return Colors.blue.shade700;
+    return Colors.orange.shade700;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isOver = remaining < 0;
+    final isOver = widget.remaining < 0;
     
     return Card(
       elevation: 0,
@@ -371,13 +448,13 @@ class _CalorieCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isOver ? Colors.red.shade100 : Colors.green.shade100,
+                    color: _getDynamicFeedbackColor(widget.progress, isOver),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    isOver ? 'Over' : 'On Track',
+                    _getDynamicFeedbackText(widget.progress, isOver),
                     style: TextStyle(
-                      color: isOver ? Colors.red.shade700 : Colors.green.shade700,
+                      color: _getDynamicFeedbackTextColor(widget.progress, isOver),
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),
@@ -394,7 +471,7 @@ class _CalorieCard extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 Text(
-                  '$consumed',
+                  '${widget.consumed}',
                   style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
@@ -403,7 +480,7 @@ class _CalorieCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '/ $goal',
+                  '/ ${widget.goal}',
                   style: TextStyle(
                     fontSize: 24,
                     color: Colors.grey.shade600,
@@ -416,8 +493,8 @@ class _CalorieCard extends StatelessWidget {
             
             Text(
               isOver 
-                ? '${remaining.abs()} cal over budget'
-                : '$remaining cal remaining',
+                ? '${widget.remaining.abs()} cal over budget'
+                : '${widget.remaining} cal remaining',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey.shade700,
@@ -426,23 +503,28 @@ class _CalorieCard extends StatelessWidget {
             
             const SizedBox(height: 16),
             
-            // Progress Bar
+            // Animated Progress Bar
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: 12,
-                backgroundColor: Colors.white,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  isOver ? Colors.red : Colors.orange,
-                ),
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return LinearProgressIndicator(
+                    value: _animation.value,
+                    minHeight: 12,
+                    backgroundColor: Colors.white,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isOver ? Colors.red : Colors.orange,
+                    ),
+                  );
+                },
               ),
             ),
             
             const SizedBox(height: 8),
             
             Text(
-              '${(progress * 100).toInt()}% of daily goal',
+              '${(widget.progress * 100).toInt()}% of daily goal',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade600,
@@ -605,7 +687,7 @@ class _TodaysMealsCard extends StatelessWidget {
               Row(
                 children: [
                   TextButton.icon(
-                    onPressed: () => Navigator.of(context).pushNamed('/meals/timeline'),
+                    onPressed: () => Navigator.of(context).pushNamed('/timeline'),
                     icon: const Icon(Icons.timeline, size: 18),
                     label: const Text('Timeline'),
                     style: TextButton.styleFrom(

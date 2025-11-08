@@ -18,6 +18,7 @@ import 'providers/profile_provider.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/dashboard_provider.dart';
 import 'providers/timeline_provider.dart';
+import 'providers/home_variant_provider.dart';
 import 'services/notification_service.dart';
 import 'screens/landing/landing_page.dart';
 import 'screens/auth/login_screen.dart';
@@ -118,6 +119,7 @@ class AppRoot extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => FitnessProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => HomeVariantProvider()..loadVariant()),
         // ✅ FIX: Provide ApiService globally so widgets can access it via Provider.of<ApiService>
         ProxyProvider<AuthProvider, ApiService>(
           update: (context, auth, previous) => ApiService(auth),

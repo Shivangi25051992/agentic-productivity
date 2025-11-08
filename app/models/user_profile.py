@@ -82,6 +82,11 @@ class UserProfile(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
+    # Subscription & Limits
+    subscription_tier: str = "free"  # "free" or "premium"
+    meal_plans_generated_this_week: int = 0
+    week_start_for_limit: Optional[datetime] = None  # Track when week started for limit reset
+    
     # Metadata
     timezone: str = "UTC"
     units: str = "metric"  # metric or imperial

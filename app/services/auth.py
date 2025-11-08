@@ -69,7 +69,12 @@ def get_current_user(authorization: Optional[str] = Header(default=None)) -> Use
     """FastAPI dependency to protect routes and return the current user.
 
     Requires header: Authorization: Bearer <id_token>
+    
+    If user doesn't exist in 'users' collection, auto-creates a minimal user record.
+    This handles cases where user authenticated via Firebase but hasn't completed onboarding yet.
     """
+    from datetime import datetime
+    
     token = _extract_bearer_token(authorization)
     claims = verify_firebase_id_token(token)
     uid = claims.get("uid")
@@ -79,7 +84,19 @@ def get_current_user(authorization: Optional[str] = Header(default=None)) -> Use
 
     user = get_user(uid)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not registered. Please sign up.")
+        # Auto-create minimal user record (user authenticated via Firebase but not in our DB)
+        # This can happen if user logged in on mobile after signing up on desktop
+        print(f"⚠️  [AUTH] User {email} authenticated but not in DB - auto-creating user record")
+        new_user = User(
+            user_id=uid,
+            email=email,
+            name=email.split('@')[0],  # Use email prefix as temporary name
+            created_at=datetime.utcnow()
+        )
+        create_user(new_user)
+        user = new_user
+        print(f"✅ [AUTH] Created user record for {email}")
+    
     return user
 
 

@@ -266,7 +266,7 @@ class _TimelineViewScreenState extends State<TimelineViewScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    DateFormat('HH:mm').format(timestamp),
+                    DateFormat('h:mm a').format(timestamp.toLocal()),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,

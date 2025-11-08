@@ -15,6 +15,8 @@ def _now_utc() -> datetime:
 class FitnessLogType(str, Enum):
     meal = "meal"
     workout = "workout"
+    water = "water"
+    supplement = "supplement"
 
 
 class FitnessLog(BaseModel):

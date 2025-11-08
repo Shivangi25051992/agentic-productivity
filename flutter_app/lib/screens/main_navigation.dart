@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
 
 import 'home/mobile_first_home_screen.dart';
 import 'home/ios_home_screen.dart';
 import 'home/ios_home_screen_v2_hybrid.dart';
+import 'home/ios_home_screen_v3_apple.dart';
+import 'home/ios_home_screen_v4_compact.dart';
 import 'chat/chat_screen.dart';
 import 'timeline/timeline_screen.dart';
 import 'plan/plan_screen.dart';
 import 'profile/profile_screen.dart';
 import '../widgets/common/app_sidebar.dart';
-
-// ============================================================================
-// 🎨 iOS HOME SCREEN VARIANT SELECTOR
-// ============================================================================
-// Change this to test different iOS home screen designs:
-// - 'v1': Current design (horizontal swipe metrics, chat bubble)
-// - 'v2': Hybrid recommended (calorie ring, activity feed, bottom sheet chat)
-// ============================================================================
-const String _iosHomeVariant = 'v2'; // 👈 CHANGE THIS TO TEST VARIANTS
-// ============================================================================
+import '../providers/home_variant_provider.dart';
 
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
@@ -65,15 +59,22 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   /// Get the appropriate home screen based on platform
-  Widget _getHomeScreen() {
+  Widget _getHomeScreen(BuildContext context) {
     // Use iOS-optimized screen on iOS, web version elsewhere
     if (!kIsWeb && Platform.isIOS) {
+      // Watch the variant provider for changes
+      final variant = context.watch<HomeVariantProvider>().variant;
+      
       // Return the selected iOS variant
-      switch (_iosHomeVariant) {
+      switch (variant) {
         case 'v1':
           return const IosHomeScreen(); // Original design
         case 'v2':
           return const IosHomeScreenV2Hybrid(); // Hybrid recommended
+        case 'v3':
+          return const IosHomeScreenV3Apple(); // Apple-inspired premium
+        case 'v4':
+          return const IosHomeScreenV4Compact(); // Compact rings + inline chat
         default:
           return const IosHomeScreenV2Hybrid(); // Default to v2
       }
@@ -136,7 +137,7 @@ class _MainNavigationState extends State<MainNavigation> {
         physics: const NeverScrollableScrollPhysics(), // Disable swipe
         children: [
           // Use iOS-optimized home screen on iOS, web version on web
-          _getHomeScreen(),
+          _getHomeScreen(context),
           ChatScreen(),
           TimelineScreen(),
           PlanScreen(),
