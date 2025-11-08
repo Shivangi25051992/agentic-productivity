@@ -5,7 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+
+import 'config/environment_config.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/task_provider.dart';
@@ -15,6 +17,7 @@ import 'providers/chat_provider.dart';
 import 'providers/profile_provider.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/dashboard_provider.dart';
+import 'providers/timeline_provider.dart';
 import 'services/notification_service.dart';
 import 'screens/landing/landing_page.dart';
 import 'screens/auth/login_screen.dart';
@@ -41,21 +44,60 @@ import 'screens/onboarding/setup_loading_screen.dart';
 import 'screens/onboarding/success_screen.dart';
 import 'screens/onboarding/success_screen_enhanced.dart';
 import 'screens/meals/timeline_view_screen.dart';
+import 'screens/timeline/timeline_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
 import 'utils/theme.dart';
+import 'services/api_service.dart';
 import 'firebase_options.dart';
 import 'widgets/common/auth_guard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Validate configuration before starting app
+  try {
+    EnvironmentConfig.validate();
+  } catch (e) {
+    // Configuration validation failed - show error and exit
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 24),
+                const Text(
+                  'Configuration Error',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  e.toString(),
+                  style: const TextStyle(fontSize: 14, color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ));
+    return;
+  }
+  
   try {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    debugPrint('✅ Firebase initialized for ${DefaultFirebaseOptions.currentPlatform.projectId}');
+    
     if (!kIsWeb) {
       await NotificationService.instance.initialize();
     }
   } catch (e) {
-    debugPrint('Firebase initialization error: $e');
+    debugPrint('❌ Firebase initialization error: $e');
+    // Don't rethrow - allow app to continue
   }
   
   runApp(const AppRoot());
@@ -76,6 +118,24 @@ class AppRoot extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => FitnessProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        // ✅ FIX: Provide ApiService globally so widgets can access it via Provider.of<ApiService>
+        ProxyProvider<AuthProvider, ApiService>(
+          update: (context, auth, previous) => ApiService(auth),
+        ),
+        // TimelineProvider needs ApiService, so we use ChangeNotifierProxyProvider
+        ChangeNotifierProxyProvider<AuthProvider, TimelineProvider>(
+          create: (context) {
+            final auth = context.read<AuthProvider>();
+            return TimelineProvider(ApiService(auth));
+          },
+          update: (context, auth, previous) {
+            if (previous == null) {
+              return TimelineProvider(ApiService(auth));
+            }
+            // Reuse existing provider
+            return previous;
+          },
+        ),
       ],
       child: const _App(),
     );
@@ -156,6 +216,7 @@ class _HomeOrOnboarding extends StatefulWidget {
 
 class _HomeOrOnboardingState extends State<_HomeOrOnboarding> {
   bool _isChecking = true;
+  String? _debugError;
 
   @override
   void initState() {
@@ -164,14 +225,70 @@ class _HomeOrOnboardingState extends State<_HomeOrOnboarding> {
   }
 
   Future<void> _checkProfile() async {
+    debugPrint('🔍 [MOBILE DEBUG] Starting profile check...');
+    
     final auth = context.read<AuthProvider>();
     final profile = context.read<ProfileProvider>();
 
+    // Check if user is authenticated
+    if (!auth.isAuthenticated || auth.currentUser == null) {
+      debugPrint('❌ [MOBILE DEBUG] User not authenticated!');
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _debugError = 'Not authenticated';
+        });
+      }
+      return;
+    }
+
+    debugPrint('✅ [MOBILE DEBUG] User authenticated: ${auth.currentUser?.email}');
+
+    // Try to get ID token
+    String? token;
+    try {
+      token = await auth.getIdToken();
+      debugPrint('✅ [MOBILE DEBUG] Got ID token: ${token?.substring(0, 20)}...');
+    } catch (e) {
+      debugPrint('❌ [MOBILE DEBUG] Failed to get ID token: $e');
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _debugError = 'Token error: $e';
+        });
+      }
+      return;
+    }
+
+    if (token == null) {
+      debugPrint('❌ [MOBILE DEBUG] ID token is null!');
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _debugError = 'Token is null';
+        });
+      }
+      return;
+    }
+
+    // Try to fetch profile
+    debugPrint('🔍 [MOBILE DEBUG] Fetching profile...');
     try {
       await profile.fetchProfile(auth);
-    } catch (e) {
-      // Profile fetch failed, but continue
-      debugPrint('Profile fetch error: $e');
+      debugPrint('✅ [MOBILE DEBUG] Profile fetch completed');
+      debugPrint('🔍 [MOBILE DEBUG] Profile data: ${profile.profile?.toJson()}');
+      debugPrint('🔍 [MOBILE DEBUG] Has profile: ${profile.hasProfile}');
+      debugPrint('🔍 [MOBILE DEBUG] Onboarding completed: ${profile.profile?.onboardingCompleted}');
+    } catch (e, stackTrace) {
+      debugPrint('❌ [MOBILE DEBUG] Profile fetch error: $e');
+      debugPrint('❌ [MOBILE DEBUG] Stack trace: $stackTrace');
+      if (mounted) {
+        setState(() {
+          _isChecking = false;
+          _debugError = 'Profile fetch error: $e';
+        });
+      }
+      // Don't return - continue to check profile state
     }
 
     if (mounted) {
@@ -180,8 +297,16 @@ class _HomeOrOnboardingState extends State<_HomeOrOnboarding> {
       });
 
       // If no profile or onboarding not completed, redirect to welcome
-      if (!profile.hasProfile) {
+      // SKIP IN DEBUG MODE for local testing
+      if (!profile.hasProfile && !kDebugMode) {
+        debugPrint('⚠️  [MOBILE DEBUG] No profile found or onboarding not completed - redirecting to onboarding');
+        debugPrint('🔍 [MOBILE DEBUG] Profile object: ${profile.profile}');
+        debugPrint('🔍 [MOBILE DEBUG] Profile error: ${profile.errorMessage}');
         Navigator.of(context).pushReplacementNamed('/onboarding/welcome');
+      } else if (!profile.hasProfile && kDebugMode) {
+        debugPrint('🔧 [DEV MODE] Skipping onboarding check for local development');
+      } else {
+        debugPrint('✅ [MOBILE DEBUG] Profile found - showing home screen');
       }
     }
   }
@@ -189,9 +314,27 @@ class _HomeOrOnboardingState extends State<_HomeOrOnboarding> {
   @override
   Widget build(BuildContext context) {
     if (_isChecking) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              const Text('Loading your profile...'),
+              if (_debugError != null) ...[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Debug: $_debugError',
+                    style: const TextStyle(fontSize: 12, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       );
     }

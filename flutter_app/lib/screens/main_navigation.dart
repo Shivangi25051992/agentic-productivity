@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 
 import 'home/mobile_first_home_screen.dart';
+import 'home/ios_home_screen.dart';
+import 'home/ios_home_screen_v2_hybrid.dart';
 import 'chat/chat_screen.dart';
+import 'timeline/timeline_screen.dart';
 import 'plan/plan_screen.dart';
 import 'profile/profile_screen.dart';
 import '../widgets/common/app_sidebar.dart';
+
+// ============================================================================
+// 🎨 iOS HOME SCREEN VARIANT SELECTOR
+// ============================================================================
+// Change this to test different iOS home screen designs:
+// - 'v1': Current design (horizontal swipe metrics, chat bubble)
+// - 'v2': Hybrid recommended (calorie ring, activity feed, bottom sheet chat)
+// ============================================================================
+const String _iosHomeVariant = 'v2'; // 👈 CHANGE THIS TO TEST VARIANTS
+// ============================================================================
 
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
@@ -47,6 +62,23 @@ class _MainNavigationState extends State<MainNavigation> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+  }
+
+  /// Get the appropriate home screen based on platform
+  Widget _getHomeScreen() {
+    // Use iOS-optimized screen on iOS, web version elsewhere
+    if (!kIsWeb && Platform.isIOS) {
+      // Return the selected iOS variant
+      switch (_iosHomeVariant) {
+        case 'v1':
+          return const IosHomeScreen(); // Original design
+        case 'v2':
+          return const IosHomeScreenV2Hybrid(); // Hybrid recommended
+        default:
+          return const IosHomeScreenV2Hybrid(); // Default to v2
+      }
+    }
+    return MobileFirstHomeScreen();
   }
 
   void _handleSidebarNavigation(String route) {
@@ -102,9 +134,11 @@ class _MainNavigationState extends State<MainNavigation> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         physics: const NeverScrollableScrollPhysics(), // Disable swipe
-        children: const [
-          MobileFirstHomeScreen(),
+        children: [
+          // Use iOS-optimized home screen on iOS, web version on web
+          _getHomeScreen(),
           ChatScreen(),
+          TimelineScreen(),
           PlanScreen(),
           ProfileScreen(),
         ],
@@ -138,6 +172,11 @@ class _MainNavigationState extends State<MainNavigation> {
               icon: Icon(Icons.chat_bubble_outline),
               activeIcon: Icon(Icons.chat_bubble),
               label: 'Assistant',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.timeline_outlined),
+              activeIcon: Icon(Icons.timeline),
+              label: 'Timeline',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today_outlined),

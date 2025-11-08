@@ -55,25 +55,26 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: const [BoxShadow(blurRadius: 30, color: Colors.black12)],
-              ),
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: const [BoxShadow(blurRadius: 30, color: Colors.black12)],
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                     Text('Create your account', style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
                     const SizedBox(height: 16),
                     CustomInput(
@@ -147,7 +148,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextButton(onPressed: () => Navigator.of(context).pushReplacementNamed('/login'), child: const Text('Sign In')),
                       ],
                     ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
