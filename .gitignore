@@ -86,6 +86,7 @@ htmlcov/
 # Google Cloud
 service-account-key.json
 *-service-account.json
+gcloud/
 
 # Documentation (keep only essential docs)
 REFACTOR_SUMMARY.md
