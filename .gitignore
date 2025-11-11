@@ -46,7 +46,7 @@ flutter_app/.flutter-plugins
 flutter_app/.flutter-plugins-dependencies
 flutter_app/.packages
 flutter_app/build/
-flutter_app/ios/
+# flutter_app/ios/ - INCLUDED for iOS branch
 flutter_app/android/
 flutter_app/linux/
 flutter_app/macos/
@@ -56,6 +56,19 @@ flutter_app/.metadata
 # But DO include Flutter source code
 !flutter_app/lib/
 !flutter_app/lib/**/*
+
+# iOS - Exclude sensitive files but keep project structure
+flutter_app/ios/Pods/
+flutter_app/ios/.symlinks/
+flutter_app/ios/Flutter/Flutter.framework
+flutter_app/ios/Flutter/Flutter.podspec
+flutter_app/ios/Flutter/App.framework
+flutter_app/ios/Flutter/engine
+flutter_app/ios/Runner.xcworkspace/xcuserdata/
+flutter_app/ios/Runner.xcodeproj/xcuserdata/
+flutter_app/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+flutter_app/ios/GoogleService-Info.plist
+flutter_app/ios/firebase_app_id_file.json
 
 # Firebase
 .firebase/

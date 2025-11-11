@@ -139,7 +139,9 @@ class TimelineItem extends StatelessWidget {
 
   Widget _buildMealDetails() {
     final details = activity.details;
-    final items = details['items'] as List<dynamic>? ?? [];
+    // ✅ DEFENSIVE: Fallback to food_name if items is missing (handles both fast-path and LLM-path)
+    final items = details['items'] as List<dynamic>? ?? 
+                  (details['food_name'] != null ? [details['food_name']] : []);
     final calories = details['calories'] ?? 0;
     final protein = details['protein_g'] ?? 0;
     final carbs = details['carbs_g'] ?? 0;

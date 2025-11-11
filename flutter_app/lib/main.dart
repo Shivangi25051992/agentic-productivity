@@ -47,6 +47,7 @@ import 'screens/onboarding/success_screen_enhanced.dart';
 import 'screens/meals/timeline_view_screen.dart';
 import 'screens/timeline/timeline_screen.dart';
 import 'screens/profile/edit_profile_screen.dart';
+import 'screens/plan/plan_screen.dart';
 import 'utils/theme.dart';
 import 'services/api_service.dart';
 import 'firebase_options.dart';
@@ -172,6 +173,7 @@ class _App extends StatelessWidget {
         '/settings': (_) => const AuthGuard(child: SettingsScreen()),
         '/meals/timeline': (_) => const AuthGuard(child: TimelineViewScreen()),
         '/profile/edit': (_) => const AuthGuard(child: EditProfileScreen()),
+        '/plan': (_) => AuthGuard(child: PlanScreen()),
         
         // Onboarding routes (require authentication)
         '/onboarding/welcome': (_) => const AuthGuard(child: WelcomeScreenEnhanced()),

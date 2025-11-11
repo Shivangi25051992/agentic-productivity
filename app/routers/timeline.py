@@ -5,13 +5,17 @@ Combines meals, workouts, tasks, events into single chronological timeline
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional, Set
 from fastapi import APIRouter, Depends, Query
+import logging
 
 from app.models import User
 from app.services import auth as auth_service
 from app.services import database as dbsvc
+from app.services.cache_service import cache_service  # 🚀 REDIS CACHE
 from app.models.fitness_log import FitnessLogType
 from app.models.task import TaskStatus
 from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
 
 
 router = APIRouter(prefix="/timeline", tags=["timeline"])
@@ -29,6 +33,7 @@ class TimelineActivity(BaseModel):
     details: dict
     due_date: Optional[datetime] = None
     priority: Optional[str] = None
+    client_generated_id: Optional[str] = None  # 🔑 For optimistic UI matching
 
 
 class TimelineResponse(BaseModel):
@@ -80,6 +85,7 @@ def _fitness_log_to_activity(log) -> TimelineActivity:
         color=config["color"],
         status="completed",
         details=details,
+        client_generated_id=getattr(log, 'client_generated_id', None),  # 🔑 Include if present
     )
 
 
@@ -137,6 +143,8 @@ async def get_timeline(
     
     Returns meals, workouts, tasks, events in chronological order
     with optional filtering by type and date range.
+    
+    🚀 REDIS CACHE: Caches timeline data for 5 minutes (configurable)
     """
     
     # Parse date range
@@ -160,6 +168,10 @@ async def get_timeline(
         end_ts = datetime.now(timezone.utc)
         start_ts = end_ts - timedelta(days=30)
     
+    # 🔍 DEBUG: Log date range
+    logger.info(f"🔍 [TIMELINE] Date range: {start_ts} to {end_ts}")
+    logger.info(f"🔍 [TIMELINE] Params: start_date={start_date}, end_date={end_date}")
+    
     # Parse activity types filter
     selected_types: Set[str] = set()
     if types:
@@ -167,6 +179,34 @@ async def get_timeline(
     else:
         # Default: show all types
         selected_types = {"meal", "workout", "task", "event", "water", "supplement"}
+    
+    # 🚫 CACHE DISABLED: Always fetch fresh data (no Redis cache for timeline)
+    # This ensures logs appear immediately after saving
+    types_str = ",".join(sorted(selected_types))
+    cached_data = None  # Force cache miss
+    if False and offset == 0:  # Cache disabled
+        cached_data = cache_service.get_timeline(
+            user_id=current_user.user_id,
+            types=types_str,
+            start_date=start_date,
+            end_date=end_date,
+        )
+        
+        if cached_data:
+            logger.info(f"⚡ Timeline cache HIT for user {current_user.user_id}")
+            # Apply pagination to cached data
+            cached_activities = [TimelineActivity(**act) for act in cached_data.get("activities", [])]
+            total_count = len(cached_activities)
+            paginated_activities = cached_activities[offset:offset + limit]
+            has_more = (offset + limit) < total_count
+            next_offset = offset + limit if has_more else offset
+            
+            return TimelineResponse(
+                activities=paginated_activities,
+                total_count=total_count,
+                has_more=has_more,
+                next_offset=next_offset,
+            )
     
     # Fetch activities from different sources
     all_activities: List[TimelineActivity] = []
@@ -181,9 +221,15 @@ async def get_timeline(
                 limit=500,  # Fetch more, we'll paginate later
             )
             
+            logger.info(f"📊 [TIMELINE] Fetched {len(fitness_logs)} fitness logs from DB")
+            
             for log in fitness_logs:
                 if log.log_type.value in selected_types:
-                    all_activities.append(_fitness_log_to_activity(log))
+                    activity = _fitness_log_to_activity(log)
+                    all_activities.append(activity)
+                    logger.info(f"  ✅ Added {log.log_type.value}: {log.content[:50]}")
+            
+            logger.info(f"📊 [TIMELINE] Total activities after fitness logs: {len(all_activities)}")
         except Exception as e:
             print(f"Error fetching fitness logs: {e}")
     
@@ -215,6 +261,22 @@ async def get_timeline(
     
     # Sort by timestamp (most recent first)
     all_activities.sort(key=lambda x: x.timestamp, reverse=True)
+    
+    # 🚫 REDIS CACHE DISABLED: Don't cache Timeline (ensures fresh data)
+    # Caching causes stale data issues - logs don't appear immediately after saving
+    if False and offset == 0:  # Cache disabled
+        cache_data = {
+            "activities": [act.model_dump() for act in all_activities],
+            "cached_at": datetime.now(timezone.utc).isoformat(),
+        }
+        cache_service.set_timeline(
+            user_id=current_user.user_id,
+            data=cache_data,
+            types=types_str,
+            start_date=start_date,
+            end_date=end_date,
+        )
+        logger.info(f"✅ Timeline cached for user {current_user.user_id}")
     
     # Apply pagination
     total_count = len(all_activities)

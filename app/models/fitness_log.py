@@ -27,6 +27,7 @@ class FitnessLog(BaseModel):
     calories: Optional[int] = None
     timestamp: datetime = Field(default_factory=_now_utc)
     ai_parsed_data: Dict[str, Any] = Field(default_factory=dict)
+    client_generated_id: Optional[str] = None  # 🔑 For optimistic UI matching
 
     @field_validator("timestamp")
     @classmethod

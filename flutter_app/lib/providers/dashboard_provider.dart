@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../utils/constants.dart';
 import '../services/api_service.dart';
+import '../services/realtime_service.dart'; // 🔴 PHASE 1: Real-time support
+import '../utils/feature_flags.dart'; // 🚩 Feature flag control
 import 'auth_provider.dart';
 
 /// Daily nutrition and fitness statistics
@@ -103,10 +105,18 @@ class ActivityItem {
 }
 
 class DashboardProvider extends ChangeNotifier {
+  final RealtimeService _realtimeService = RealtimeService(); // 🔴 Real-time service
+  
   DailyStats _stats = DailyStats();
   bool _isLoading = false;
   String? _errorMessage;
   DateTime _selectedDate = DateTime.now();
+  
+  // 🚀 HYBRID OPTIMIZATION: Client-side cache
+  DailyStats? _cachedStats;
+  DateTime? _cacheTimestamp;
+  DateTime? _cacheDate; // Date for which stats are cached
+  static const Duration _cacheDuration = Duration(minutes: 5);
 
   DailyStats get stats => _stats;
   bool get isLoading => _isLoading;
@@ -116,10 +126,37 @@ class DashboardProvider extends ChangeNotifier {
   bool get isToday => DateFormat('yyyy-MM-dd').format(_selectedDate) == DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   /// Fetch daily stats from backend using ApiService (consistent with profile/chat)
-  Future<void> fetchDailyStats(AuthProvider authProvider, {DateTime? date}) async {
+  Future<void> fetchDailyStats(AuthProvider authProvider, {DateTime? date, bool forceRefresh = false}) async {
+    if (date != null) _selectedDate = date;
+    
+    // 🔴 PHASE 1: If real-time is enabled, skip polling (listener handles updates)
+    if (FeatureFlags.realtimeUpdatesEnabled && !forceRefresh) {
+      print('🔴 Real-time enabled for dashboard, skipping API fetch (listener active)');
+      return;
+    }
+    
+    // 🚀 HYBRID OPTIMIZATION: Check cache first
+    if (!forceRefresh) {
+      final dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
+      final cachedDateKey = _cacheDate != null ? DateFormat('yyyy-MM-dd').format(_cacheDate!) : null;
+      
+      if (_cachedStats != null &&
+          _cacheTimestamp != null &&
+          cachedDateKey == dateKey &&
+          DateTime.now().difference(_cacheTimestamp!) < _cacheDuration) {
+        // ⚡ Cache hit! Use cached data (instant!)
+        _stats = _cachedStats!;
+        print('⚡ Cache hit! Loaded stats for $dateKey instantly');
+        notifyListeners();
+        
+        // 🔄 Refresh in background (silent)
+        _refreshInBackground(authProvider);
+        return;
+      }
+    }
+    
     _isLoading = true;
     _errorMessage = null;
-    if (date != null) _selectedDate = date;
     notifyListeners();
 
     try {
@@ -168,6 +205,11 @@ class DashboardProvider extends ChangeNotifier {
       print('🔄 Processing ${fitnessLogs.length} logs and ${tasks.length} tasks');
       _processStats(fitnessLogs, tasks);
       
+      // 🚀 HYBRID OPTIMIZATION: Update cache
+      _cachedStats = _stats;
+      _cacheTimestamp = DateTime.now();
+      _cacheDate = _selectedDate;
+      
     } catch (e) {
       _errorMessage = 'Failed to load data: $e';
       print('❌ Exception in fetchDailyStats: $e');
@@ -175,6 +217,73 @@ class DashboardProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+  
+  /// 🚀 HYBRID OPTIMIZATION: Refresh cache in background (silent)
+  Future<void> _refreshInBackground(AuthProvider authProvider) async {
+    try {
+      final apiService = ApiService(authProvider);
+      
+      final startOfDayLocal = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+      final endOfDayLocal = startOfDayLocal.add(const Duration(days: 1));
+      final startOfDay = startOfDayLocal.toUtc();
+      final endOfDay = endOfDayLocal.toUtc();
+
+      // Fetch fitness logs
+      List<dynamic> fitnessLogs = [];
+      try {
+        final logs = await apiService.getFitnessLogs(
+          startDate: startOfDay,
+          endDate: endOfDay,
+        );
+        fitnessLogs = logs.map((log) => log.toJson()).toList();
+      } catch (e) {
+        print('⚠️  Background refresh - fitness logs error: $e');
+      }
+
+      // Fetch tasks
+      List<dynamic> tasks = [];
+      try {
+        final taskModels = await apiService.getTasks();
+        tasks = taskModels.map((task) => task.toJson()).toList();
+      } catch (e) {
+        print('⚠️  Background refresh - tasks error: $e');
+      }
+
+      // Process and update cache silently
+      _processStats(fitnessLogs, tasks);
+      _cachedStats = _stats;
+      _cacheTimestamp = DateTime.now();
+      _cacheDate = _selectedDate;
+      
+      print('🔄 Background refresh complete for ${DateFormat('yyyy-MM-dd').format(_selectedDate)}');
+      notifyListeners();
+    } catch (e) {
+      print('⚠️  Background refresh failed: $e');
+      // Don't update error state - this is a silent refresh
+    }
+  }
+  
+  /// 🚀 HYBRID OPTIMIZATION: Invalidate cache (force refresh on next load)
+  void invalidateCache() {
+    _cachedStats = null;
+    _cacheTimestamp = null;
+    _cacheDate = null;
+    print('🗑️  Dashboard cache invalidated');
+  }
+  
+  /// 🚀 HYBRID OPTIMIZATION: Update stats optimistically (instant UI update)
+  void updateStatsOptimistically(DailyStats newStats) {
+    _stats = newStats;
+    
+    // Also update cache if it exists
+    if (_cachedStats != null) {
+      _cachedStats = newStats;
+      _cacheTimestamp = DateTime.now();
+    }
+    
+    print('⚡ Stats updated optimistically');
+    notifyListeners();
   }
 
   /// Process raw data into stats
@@ -235,6 +344,29 @@ class DashboardProvider extends ChangeNotifier {
           type: 'workout',
           title: content.isNotEmpty ? content : 'Workout',
           subtitle: '$duration min • $caloriesBurned cal burned',
+          timestamp: timestamp,
+          data: aiParsedData,
+        ));
+      } else if (logType == 'water') {
+        // ✅ FIX: Process water logs
+        final quantityMl = aiParsedData['quantity_ml'] as int? ?? 0;
+        totalWater += quantityMl;
+        
+        activities.add(ActivityItem(
+          id: log['log_id'] as String? ?? '',
+          type: 'water',
+          title: content.isNotEmpty ? content : 'Water',
+          subtitle: '$quantityMl ml',
+          timestamp: timestamp,
+          data: aiParsedData,
+        ));
+      } else if (logType == 'supplement') {
+        // ✅ FIX: Process supplement logs
+        activities.add(ActivityItem(
+          id: log['log_id'] as String? ?? '',
+          type: 'supplement',
+          title: content.isNotEmpty ? content : 'Supplement',
+          subtitle: aiParsedData['dosage'] as String? ?? 'taken',
           timestamp: timestamp,
           data: aiParsedData,
         ));
@@ -332,6 +464,76 @@ class DashboardProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+  
+  // 🔴 PHASE 1: Real-Time Listener Methods
+  
+  /// Start real-time listener for dashboard updates
+  /// 
+  /// This replaces polling with push-based updates when feature flag is enabled.
+  /// Falls back to polling if real-time is disabled.
+  void startRealtimeListener(String userId, AuthProvider authProvider) {
+    if (!FeatureFlags.realtimeUpdatesEnabled) {
+      print('⚪ Real-time disabled for dashboard, using polling');
+      return;
+    }
+    
+    print('🔴 Starting real-time dashboard listener');
+    
+    _realtimeService.listenToDashboard(
+      userId: userId,
+      onUpdate: (stats) {
+        // Update stats from real-time stream
+        print('🔴 Real-time dashboard update: ${stats['calories']} cal, ${stats['protein_g']}g protein');
+        
+        // Update current stats with real-time data
+        _stats = DailyStats(
+          caloriesConsumed: stats['calories'] as int? ?? 0,
+          caloriesBurned: 0, // TODO: Add burned calories to real-time
+          caloriesGoal: _stats.caloriesGoal, // Keep existing goal
+          proteinG: (stats['protein_g'] as num?)?.toDouble() ?? 0,
+          proteinGoal: _stats.proteinGoal,
+          carbsG: (stats['carbs_g'] as num?)?.toDouble() ?? 0,
+          carbsGoal: _stats.carbsGoal,
+          fatG: (stats['fat_g'] as num?)?.toDouble() ?? 0,
+          fatGoal: _stats.fatGoal,
+          fiberG: 0, // TODO: Add fiber to real-time
+          fiberGoal: _stats.fiberGoal,
+          waterMl: stats['water_ml'] as int? ?? 0,
+          waterGoal: _stats.waterGoal,
+          workoutsCompleted: stats['workouts'] as int? ?? 0,
+          workoutsGoal: _stats.workoutsGoal,
+          activities: _stats.activities, // Keep existing activities (tasks)
+        );
+        
+        // Update cache
+        _cachedStats = _stats;
+        _cacheTimestamp = DateTime.now();
+        _cacheDate = _selectedDate;
+        
+        notifyListeners();
+      },
+      onError: (error) {
+        print('❌ Real-time dashboard listener error: $error');
+        _errorMessage = error;
+        notifyListeners();
+        
+        // Fall back to polling on error
+        fetchDailyStats(authProvider);
+      },
+    );
+  }
+  
+  /// Stop real-time listener
+  void stopRealtimeListener() {
+    print('🔴 Stopping real-time dashboard listener');
+    // The service will handle cleanup
+  }
+  
+  @override
+  void dispose() {
+    stopRealtimeListener();
+    super.dispose();
   }
 }
 

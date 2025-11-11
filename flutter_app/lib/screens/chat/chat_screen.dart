@@ -6,8 +6,11 @@ import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/fitness_provider.dart';
 import '../../providers/task_provider.dart';
+import '../../providers/timeline_provider.dart'; // 🚀 HYBRID: For optimistic updates
+import '../../providers/dashboard_provider.dart'; // 🚀 HYBRID: For optimistic updates
 import '../../models/fitness_log.dart';
 import '../../models/task.dart';
+import '../../models/timeline_activity.dart'; // 🚀 HYBRID: For optimistic activities
 import '../../services/api_service.dart';
 import '../../widgets/chat/chat_input.dart';
 import '../../widgets/chat/message_bubble.dart';
@@ -33,14 +36,44 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Load chat history on init to persist messages
-    _loadChatHistory();
     
-    // If there's an initial message, send it after a brief delay
-    if (widget.initialMessage != null && widget.initialMessage!.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+    print('💬 [CHAT SCREEN] initState called, initialMessage: "${widget.initialMessage}"');
+    
+    // ✅ SIMPLIFIED: Just send message and wait for response
+    final hasInitialMessage = widget.initialMessage != null && widget.initialMessage!.isNotEmpty;
+    
+    print('💬 [CHAT SCREEN] hasInitialMessage: $hasInitialMessage');
+    
+    if (hasInitialMessage) {
+      print('💬 [CHAT SCREEN] Scheduling _handleSend for: "${widget.initialMessage}"');
+      // Show "Yuvi is typing..." and send immediately
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
+          print('💬 [CHAT SCREEN] Calling _handleSend with: "${widget.initialMessage}"');
           _handleSend(widget.initialMessage!);
+        } else {
+          print('⚠️  [CHAT SCREEN] Widget not mounted, skipping _handleSend');
+        }
+      });
+    } else {
+      print('💬 [CHAT SCREEN] No initial message, loading history');
+      // Load history only if no initial message
+      Future.microtask(() => _loadChatHistory(silent: false));
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // 🔄 AUTO-REFRESH: Reload chat history when screen becomes visible
+    // This ensures user always sees latest messages when navigating back
+    final route = ModalRoute.of(context);
+    if (route != null && route.isCurrent && widget.initialMessage == null) {
+      // Only reload if no initial message (avoid double-loading)
+      Future.microtask(() {
+        if (mounted) {
+          _loadChatHistory(silent: true); // Silent = no loading spinner
         }
       });
     }
@@ -52,11 +85,15 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  Future<void> _loadChatHistory() async {
+  Future<void> _loadChatHistory({bool silent = false}) async {
     if (!mounted) return;
-    setState(() {
-      _isLoadingHistory = true;
-    });
+    
+    // Only show loading indicator if NOT silent
+    if (!silent) {
+      setState(() {
+        _isLoadingHistory = true;
+      });
+    }
 
     try {
       final api = ApiService(
@@ -64,8 +101,8 @@ class _ChatScreenState extends State<ChatScreen> {
         onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'),
       );
       
-      // Load chat history from backend
-      final response = await api.get('/chat/history?limit=50');
+      // 🚀 OPTIMIZATION: Reduced limit from 50 to 20 (last 24h only)
+      final response = await api.get('/chat/history?limit=20');
       
       print('🔍 [CHAT HISTORY] Response: ${response != null ? "Got response" : "NULL"}');
       print('🔍 [CHAT HISTORY] Messages count: ${response?['messages']?.length ?? 0}');
@@ -179,14 +216,48 @@ class _ChatScreenState extends State<ChatScreen> {
     });
     _autoScroll();
     
+    // 🔑 GOLD STANDARD: Generate unique client ID for deterministic matching
+    final auth = context.read<AuthProvider>();
+    final userId = auth.currentUser?.uid ?? 'unknown';
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final contentHash = text.hashCode;
+    final clientGeneratedId = 'client_${userId}_${timestamp}_$contentHash';
+    
+    final timeline = context.read<TimelineProvider>();
+    
+    // 🚀 HYBRID OPTIMIZATION: Add optimistic activity to timeline (instant!)
+    // This will show in timeline immediately while we wait for backend
+    final optimisticActivity = TimelineActivity(
+      id: clientGeneratedId, // Use clientGeneratedId as temp ID
+      type: 'meal', // Assume meal for now (most common)
+      title: text,
+      timestamp: DateTime.now(),
+      icon: '🍽️',
+      color: '#34C759',
+      status: 'Syncing...',
+      details: {'optimistic': true, 'original_text': text},
+      clientGeneratedId: clientGeneratedId, // 🔑 Store for matching
+    );
+    timeline.addOptimisticActivity(optimisticActivity);
+    print('⚡ [OPTIMISTIC] Added activity to timeline: $clientGeneratedId');
+    
     final chat = context.read<ChatProvider>();
-    final api = ApiService(context.read<AuthProvider>(), onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'));
-    final result = await chat.sendMessage(text: text, type: 'auto', api: api);
+    final api = ApiService(auth, onUnauthorized: () => Navigator.of(context).pushReplacementNamed('/login'));
+    final result = await chat.sendMessage(
+      text: text, 
+      type: 'auto', 
+      api: api,
+      clientGeneratedId: clientGeneratedId, // 🔑 Pass to backend
+    );
     
     if (!mounted) return;
     setState(() { _isTyping = false; });
     
     if (result == null) {
+      // 🚀 HYBRID OPTIMIZATION: Remove optimistic activity on failure
+      timeline.removeOptimisticActivity(clientGeneratedId);
+      print('❌ [OPTIMISTIC] Removed failed activity: $clientGeneratedId');
+      
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to send. Retry?')));
       return;
@@ -233,10 +304,14 @@ class _ChatScreenState extends State<ChatScreen> {
       _autoScroll();
     }
     
+    // 🚀 HYBRID OPTIMIZATION: Process results and update optimistic activity
+    bool activityUpdated = false;
+    
     // Still update providers for dashboard, but don't show cards in chat
     for (final it in items) {
       final category = (it['category'] ?? '').toString();
       final data = (it['data'] ?? const {}).cast<String, dynamic>();
+      
       if (category == 'meal') {
         final mealTitle = data['meal']?.toString() ?? (data['items']?.toString() ?? 'Meal');
         final kcal = int.tryParse('${data['calories'] ?? ''}') ?? 0;
@@ -249,6 +324,24 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
+        
+        // 🚀 HYBRID OPTIMIZATION: Update optimistic activity with real data
+        if (!activityUpdated) {
+          final realActivity = TimelineActivity(
+            id: UniqueKey().toString(), // Real ID from backend
+            type: 'meal',
+            title: mealTitle,
+            timestamp: DateTime.now(),
+            icon: '🍽️',
+            color: '#34C759',
+            status: '$kcal kcal',
+            details: data,
+          );
+          timeline.updateOptimisticActivity(clientGeneratedId, realActivity);
+          print('✅ [OPTIMISTIC] Updated activity: $clientGeneratedId → ${realActivity.id}');
+          activityUpdated = true;
+        }
+        
       } else if (category == 'workout') {
         final title = it['summary']?.toString() ?? 'Workout';
         context.read<FitnessProvider>().add(FitnessLogModel(
@@ -260,6 +353,24 @@ class _ChatScreenState extends State<ChatScreen> {
           parsedData: data,
           timestamp: DateTime.now(),
         ));
+        
+        // 🚀 HYBRID OPTIMIZATION: Update optimistic activity with real data
+        if (!activityUpdated) {
+          final realActivity = TimelineActivity(
+            id: UniqueKey().toString(),
+            type: 'workout',
+            title: title,
+            timestamp: DateTime.now(),
+            icon: '💪',
+            color: '#FF6B6B',
+            status: '${data['duration'] ?? ''} min',
+            details: data,
+          );
+          timeline.updateOptimisticActivity(clientGeneratedId, realActivity);
+          print('✅ [OPTIMISTIC] Updated activity: $clientGeneratedId → ${realActivity.id}');
+          activityUpdated = true;
+        }
+        
       } else if (category == 'task' || category == 'reminder') {
         final title = data['title']?.toString() ?? it['summary']?.toString() ?? 'Task';
         context.read<TaskProvider>().add(TaskModel(
@@ -273,8 +384,38 @@ class _ChatScreenState extends State<ChatScreen> {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ));
+        
+        // 🚀 HYBRID OPTIMIZATION: Update optimistic activity with real data
+        if (!activityUpdated) {
+          final realActivity = TimelineActivity(
+            id: UniqueKey().toString(),
+            type: 'task',
+            title: title,
+            timestamp: DateTime.now(),
+            icon: '✅',
+            color: '#6366F1',
+            status: 'Pending',
+            details: data,
+          );
+          timeline.updateOptimisticActivity(clientGeneratedId, realActivity);
+          print('✅ [OPTIMISTIC] Updated activity: $clientGeneratedId → ${realActivity.id}');
+          activityUpdated = true;
+        }
       }
     }
+    
+    // 🚀 HYBRID OPTIMIZATION: If no items were processed, remove optimistic activity
+    if (!activityUpdated && items.isEmpty) {
+      timeline.removeOptimisticActivity(clientGeneratedId);
+      print('🗑️  [OPTIMISTIC] Removed activity (no items): $clientGeneratedId');
+    }
+    
+    // 🚀 HYBRID OPTIMIZATION: Invalidate caches to force refresh
+    context.read<DashboardProvider>().invalidateCache();
+    context.read<TimelineProvider>().invalidateCache();
+    
+    // 🔄 Fetch fresh timeline data (will use optimistic activities)
+    context.read<TimelineProvider>().fetchTimeline();
     
     _autoScroll();
   }

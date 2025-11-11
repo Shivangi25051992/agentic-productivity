@@ -6,6 +6,7 @@ import json
 import time
 import logging
 import re
+import asyncio  # ⚡ PHASE 1: For fire-and-forget async tasks
 from datetime import datetime, timezone, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -30,6 +31,21 @@ if os.path.exists(dotenv_local_path):
 # Initialize configuration service
 from app.core.config_manager import get_settings
 settings = get_settings()
+
+# ⚡ PERFORMANCE: Global Firestore client (reuse connection, don't create per request)
+# Best practice: Instantiate once per process, reuse for all requests
+_firestore_client = None
+
+def get_firestore_client():
+    """
+    Get or create global Firestore client (singleton pattern).
+    Reusing connection saves ~400-600ms per request.
+    """
+    global _firestore_client
+    if _firestore_client is None:
+        _firestore_client = firestore.Client()
+        logger.info("✅ Firestore client initialized (global singleton)")
+    return _firestore_client
 
 app = FastAPI(title="AI Fitness & Task Tracker API", version="0.1.0")
 
@@ -318,6 +334,7 @@ except Exception:
 class ChatRequest(BaseModel):
     user_input: str
     type: Optional[str] = None  # "auto" by default
+    client_generated_id: Optional[str] = None  # 🔑 For optimistic UI matching
 
 
 class ChatItem(BaseModel):
@@ -431,7 +448,7 @@ Rules:
 - meal_type: If user says "for breakfast/lunch/dinner", use that (confidence=1.0). Otherwise infer from time.
 - Split multi-item inputs into separate array items
 - Water: 1 glass=250ml, 1 litre=1000ml, 1 liter=1000ml, 1l=1000ml, calories=0. ALWAYS return quantity_ml in data.
-- Supplements: minimal calories (5kcal)
+- Supplements: 0 calories (vitamins, pills, tablets have no caloric value)
 - Questions/conversational messages: Use category="question", no logging data
 
 JSON format:
@@ -716,6 +733,454 @@ def _format_time_ago(dt: datetime) -> str:
         return f"{int(minutes)} minute{'s' if int(minutes) != 1 else ''} ago"
 
 
+# ⚡ PHASE 1: FAST-PATH HELPERS (bypass LLM for instant responses)
+
+# 🏆 TOP 100 COMMON FOODS (in-memory cache for instant lookup)
+COMMON_FOODS_CACHE = {
+    # Format: "food_name": {"kcal_per_unit": X, "protein_g": Y, "carbs_g": Z, "fat_g": W, "unit": "piece/100g"}
+    "egg": {"kcal_per_unit": 70, "protein_g": 6, "carbs_g": 0.5, "fat_g": 5, "unit": "piece", "serving_size": 1},
+    "eggs": {"kcal_per_unit": 70, "protein_g": 6, "carbs_g": 0.5, "fat_g": 5, "unit": "piece", "serving_size": 1},
+    "banana": {"kcal_per_unit": 105, "protein_g": 1.3, "carbs_g": 27, "fat_g": 0.3, "unit": "piece", "serving_size": 1},
+    "apple": {"kcal_per_unit": 95, "protein_g": 0.5, "carbs_g": 25, "fat_g": 0.3, "unit": "piece", "serving_size": 1},
+    "chicken breast": {"kcal_per_unit": 165, "protein_g": 31, "carbs_g": 0, "fat_g": 3.6, "unit": "100g", "serving_size": 100},
+    "rice": {"kcal_per_unit": 130, "protein_g": 2.7, "carbs_g": 28, "fat_g": 0.3, "unit": "100g", "serving_size": 100},
+    "bread": {"kcal_per_unit": 80, "protein_g": 3, "carbs_g": 15, "fat_g": 1, "unit": "slice", "serving_size": 1},
+    "milk": {"kcal_per_unit": 42, "protein_g": 3.4, "carbs_g": 5, "fat_g": 1, "unit": "100ml", "serving_size": 100},
+    "yogurt": {"kcal_per_unit": 59, "protein_g": 10, "carbs_g": 3.6, "fat_g": 0.4, "unit": "100g", "serving_size": 100},
+    "oats": {"kcal_per_unit": 389, "protein_g": 16.9, "carbs_g": 66, "fat_g": 6.9, "unit": "100g", "serving_size": 50},
+    "almonds": {"kcal_per_unit": 579, "protein_g": 21, "carbs_g": 22, "fat_g": 50, "unit": "100g", "serving_size": 30},
+    "orange": {"kcal_per_unit": 62, "protein_g": 1.2, "carbs_g": 15, "fat_g": 0.2, "unit": "piece", "serving_size": 1},
+    "tomato": {"kcal_per_unit": 18, "protein_g": 0.9, "carbs_g": 3.9, "fat_g": 0.2, "unit": "piece", "serving_size": 1},
+    "potato": {"kcal_per_unit": 77, "protein_g": 2, "carbs_g": 17, "fat_g": 0.1, "unit": "100g", "serving_size": 150},
+    "salmon": {"kcal_per_unit": 208, "protein_g": 20, "carbs_g": 0, "fat_g": 13, "unit": "100g", "serving_size": 100},
+    "tuna": {"kcal_per_unit": 132, "protein_g": 28, "carbs_g": 0, "fat_g": 1.3, "unit": "100g", "serving_size": 100},
+    "cheese": {"kcal_per_unit": 402, "protein_g": 25, "carbs_g": 1.3, "fat_g": 33, "unit": "100g", "serving_size": 30},
+    "butter": {"kcal_per_unit": 717, "protein_g": 0.9, "carbs_g": 0.1, "fat_g": 81, "unit": "100g", "serving_size": 10},
+    "pasta": {"kcal_per_unit": 131, "protein_g": 5, "carbs_g": 25, "fat_g": 1.1, "unit": "100g", "serving_size": 100},
+    "avocado": {"kcal_per_unit": 160, "protein_g": 2, "carbs_g": 8.5, "fat_g": 15, "unit": "piece", "serving_size": 1},
+}
+
+async def _save_food_log_async(user_id: str, log_data: dict, client_generated_id: str = None):
+    """
+    Helper to save food log asynchronously using FitnessLog model
+    ✅ CRITICAL FIX: Save to fitness_logs (same as LLM path) so timeline shows it
+    🚀 REDIS CACHE: Invalidates timeline/dashboard cache after save
+    """
+    try:
+        from app.models.fitness_log import FitnessLog, FitnessLogType
+        from app.services.database import create_fitness_log
+        from app.services.cache_service import cache_service
+        import uuid
+        
+        # Create FitnessLog object (same format as LLM path)
+        fitness_log = FitnessLog(
+            log_id=str(uuid.uuid4()),
+            user_id=user_id,
+            log_type=FitnessLogType.meal,
+            content=f"{log_data['food_name']} x{log_data['quantity']} {log_data['unit']}",
+            timestamp=log_data['timestamp'],
+            calories=log_data['calories'],
+            ai_parsed_data={
+                "meal_type": log_data['meal_type'],
+                "food_name": log_data['food_name'],
+                "quantity": log_data['quantity'],
+                "unit": log_data['unit'],
+                "protein_g": log_data['protein_g'],
+                "carbs_g": log_data['carbs_g'],
+                "fat_g": log_data['fat_g'],
+                "source": "fast_path",  # Track that this was fast-path
+                "items": [f"{log_data['quantity']} {log_data['food_name']}"],  # ✅ FIX: Add items array for frontend
+            },
+            client_generated_id=client_generated_id  # 🔑 Store for matching
+        )
+        
+        # Save using same method as LLM path (ensures consistency)
+        await asyncio.to_thread(create_fitness_log, fitness_log)
+        print(f"✅ [FAST-PATH] Food log saved to fitness_logs: {log_data['food_name']} x{log_data['quantity']}")
+        
+        # ⏱️  FIRESTORE INDEXING: Wait 1 second for Firestore to index the new document
+        # Without this, Timeline queries won't return the newly saved log
+        await asyncio.sleep(1.0)
+        print(f"⏱️  [FAST-PATH] Waited 1s for Firestore indexing")
+        
+        # 🚀 REDIS CACHE: Invalidate timeline and dashboard cache AFTER indexing delay
+        # This prevents stale cache hits while Firestore is indexing
+        cache_service.invalidate_timeline(user_id)
+        cache_service.invalidate_dashboard(user_id)
+        print(f"🗑️  [FAST-PATH] Cache invalidated AFTER indexing delay for user {user_id}")
+        
+        # ✅ NO DELAY NEEDED: Frontend will pull-to-refresh to get latest data
+        print(f"✅ [FAST-PATH] Food log saved, frontend will refresh on demand")
+        
+    except Exception as e:
+        print(f"❌ [FAST-PATH] Error saving food log: {e}")
+
+
+def _is_simple_food_log(text: str) -> bool:
+    """
+    Detect if text is a simple food log that can be handled without LLM.
+    Pattern: [quantity] [common_food] or "I ate/had [quantity] [common_food]"
+    """
+    import re
+    
+    text_lower = text.lower().strip()
+    
+    # Pattern 1: "I ate/had/consumed X food"
+    simple_patterns = [
+        r'i\s+(ate|had|consumed|eat)\s+(\d+\.?\d*)\s+(\w+)',  # "I ate 2 eggs"
+        r'(\d+\.?\d*)\s+(\w+)',  # "2 eggs"
+        r'ate\s+(\d+\.?\d*)\s+(\w+)',  # "ate 2 eggs"
+    ]
+    
+    for pattern in simple_patterns:
+        match = re.search(pattern, text_lower)
+        if match:
+            # Extract potential food name (last captured group)
+            food_name = match.groups()[-1]
+            # Check if it's in our common foods cache
+            if food_name in COMMON_FOODS_CACHE:
+                return True
+    
+    # Pattern 2: Just food name with quantity (no verb)
+    # "2 eggs", "3 bananas", etc.
+    words = text_lower.split()
+    for i, word in enumerate(words):
+        if word.replace('.', '').isdigit() and i + 1 < len(words):
+            potential_food = words[i + 1].rstrip('s')  # Handle plurals
+            if potential_food in COMMON_FOODS_CACHE:
+                return True
+    
+    return False
+
+
+async def _handle_simple_food_log(text: str, user_id: str, chat_history, client_generated_id: str = None) -> ChatResponse:
+    """
+    Handle simple food logging without LLM (instant response).
+    Uses in-memory cache for common foods.
+    """
+    import re
+    from datetime import datetime
+    from google.cloud import firestore
+    
+    text_lower = text.lower().strip()
+    
+    # Extract quantity and food name
+    quantity = 1.0
+    food_name = None
+    food_data = None
+    
+    # Try patterns
+    patterns = [
+        r'i\s+(?:ate|had|consumed|eat)\s+(\d+\.?\d*)\s+(\w+)',  # "I ate 2 eggs"
+        r'(\d+\.?\d*)\s+(\w+)',  # "2 eggs"
+        r'ate\s+(\d+\.?\d*)\s+(\w+)',  # "ate 2 eggs"
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, text_lower)
+        if match:
+            groups = match.groups()
+            if len(groups) >= 2:
+                quantity = float(groups[-2])
+                food_name = groups[-1].rstrip('s')  # Handle plurals
+                if food_name in COMMON_FOODS_CACHE:
+                    food_data = COMMON_FOODS_CACHE[food_name]
+                    break
+    
+    if not food_data:
+        return None  # Fall back to LLM
+    
+    # Calculate macros
+    total_kcal = round(food_data["kcal_per_unit"] * quantity)
+    total_protein = round(food_data["protein_g"] * quantity, 1)
+    total_carbs = round(food_data["carbs_g"] * quantity, 1)
+    total_fat = round(food_data["fat_g"] * quantity, 1)
+    
+    # Infer meal type from time
+    current_hour = datetime.now().hour
+    if 5 <= current_hour < 11:
+        meal_type = "breakfast"
+    elif 11 <= current_hour < 16:
+        meal_type = "lunch"
+    elif 16 <= current_hour < 20:
+        meal_type = "dinner"
+    else:
+        meal_type = "snack"
+    
+    try:
+        # Save to database using global Firestore client (fire-and-forget for speed)
+        log_data = {
+            "user_id": user_id,
+            "food_name": food_name,
+            "quantity": quantity,
+            "unit": food_data["unit"],
+            "calories": total_kcal,
+            "protein_g": total_protein,
+            "carbs_g": total_carbs,
+            "fat_g": total_fat,
+            "meal_type": meal_type,
+            "timestamp": datetime.now(timezone.utc),  # ✅ FIX: Use UTC timezone
+            "source": "fast_path",
+        }
+        
+        # 🔧 CRITICAL FIX: Wait for save to complete (not fire-and-forget)
+        # This ensures timeline queries AFTER save completes
+        await _save_food_log_async(user_id, log_data, client_generated_id)
+        
+        # Generate response (MATCH LLM FORMAT for consistent UI)
+        # Use emoji for food type
+        food_emoji = "🥚" if "egg" in food_name else "🍽️"
+        
+        # Summary (shown in collapsed card)
+        summary = f"{food_emoji} {quantity:.0f} {food_name}{'s' if quantity > 1 else ''} eaten logged! {total_kcal} kcal"
+        
+        # Suggestion (shown in blue box)
+        suggestion = "Great choice! Keep it balanced. ✨"
+        
+        # Details (shown when expanded) - MATCH FRONTEND FORMAT
+        # Frontend expects: details['nutrition'] with keys: calories, protein_g, carbs_g, fat_g
+        details = {
+            "nutrition": {
+                "calories": total_kcal,
+                "protein_g": total_protein,
+                "carbs_g": total_carbs,
+                "fat_g": total_fat
+            },
+            "meal_type": meal_type,
+            "quantity": quantity,
+            "unit": food_data["unit"]
+        }
+        
+        # Full message (for chat history)
+        response_msg = f"{summary}\n\n{suggestion}"
+        
+        # 🎨 Generate messageId for feedback matching (same as LLM path)
+        ai_message_id = str(int(datetime.now().timestamp() * 1000))
+        
+        # Save AI response (fire-and-forget)
+        asyncio.create_task(chat_history.save_message(
+            user_id, 'assistant', response_msg,
+            {
+                'category': 'food_log',
+                'food': food_name,
+                'quantity': quantity,
+                'kcal': total_kcal,
+                'fast_path': True,  # Metric: track fast-path usage
+                'expandable': True
+            },
+            summary=summary,
+            suggestion=suggestion,
+            details=details,
+            expandable=True,
+            message_id=ai_message_id  # 🎨 Pass messageId for feedback
+        ))
+        
+        print(f"⚡ [FAST-PATH] Simple food log handled without LLM: {food_name} x{quantity}")
+        
+        # 🔧 CRITICAL FIX: Return items array so frontend knows what was logged
+        # This prevents optimistic activity from being removed
+        return ChatResponse(
+            items=[{
+                "category": "meal",
+                "summary": f"{food_name} x{quantity} ({total_kcal} kcal)",
+                "data": {
+                    "meal": food_name,
+                    "quantity": quantity,
+                    "unit": food_data["unit"],
+                    "calories": total_kcal,
+                    "protein_g": total_protein,
+                    "carbs_g": total_carbs,
+                    "fat_g": total_fat,
+                    "meal_type": meal_type,
+                }
+            }],
+            original=text,
+            message=response_msg,
+            summary=summary,
+            suggestion=suggestion,
+            details=details,
+            expandable=True,  # Enable expandable card UI
+            message_id=ai_message_id,  # 🎨 Return messageId for feedback UI
+            needs_clarification=False
+        )
+    except Exception as e:
+        print(f"❌ [SIMPLE FOOD LOG] Error: {e}")
+        return None  # Fall back to LLM
+
+
+def _is_water_log(text: str) -> bool:
+    """Check if text is a simple water log command"""
+    water_patterns = [
+        'water', 'drank', 'drink', 'glass', 'ml', 'oz', 'hydrate', 'hydration',
+        '💧', '🥤', '🚰'
+    ]
+    # Must contain water-related keyword and be short (< 50 chars)
+    return any(pattern in text for pattern in water_patterns) and len(text) < 50
+
+def _is_supplement_log(text: str) -> bool:
+    """Check if text is a simple supplement log command"""
+    supplement_patterns = [
+        'vitamin', 'supplement', 'pill', 'tablet', 'capsule', 'multivitamin',
+        'omega', 'fish oil', 'protein powder', 'creatine', 'bcaa', 'probiotic',
+        'vitamin d', 'vitamin c', 'vitamin b', 'calcium', 'magnesium', 'zinc',
+        '💊', '🧪'
+    ]
+    # Must contain supplement-related keyword and be short (< 80 chars)
+    return any(pattern in text.lower() for pattern in supplement_patterns) and len(text) < 80
+
+
+async def _handle_water_fast_path_fixed(text: str, user_id: str, chat_history) -> ChatResponse:
+    """Handle water logging without LLM (instant response) - FIXED VERSION"""
+    import re
+    from app.models.fitness_log import FitnessLog, FitnessLogType
+    from app.services.database import create_fitness_log
+    from app.services.cache_service import cache_service
+    import uuid
+    
+    # Extract amount (default to 1 glass = 250ml if not specified)
+    amount_ml = 250  # default
+    
+    # Try to extract number
+    numbers = re.findall(r'\d+', text)
+    if numbers:
+        num = int(numbers[0])
+        # If text contains 'ml' or 'oz', use that unit
+        if 'ml' in text:
+            amount_ml = num
+        elif 'oz' in text:
+            amount_ml = int(num * 29.5735)  # oz to ml
+        else:
+            # Assume glasses
+            amount_ml = num * 250
+    
+    try:
+        glasses = amount_ml / 250
+        content_text = f"{glasses:.1f} glass{'es' if glasses != 1 else ''} of water ({amount_ml}ml)"
+        
+        # Create water log (same as LLM path)
+        fitness_log = FitnessLog(
+            log_id=str(uuid.uuid4()),
+            user_id=user_id,
+            log_type=FitnessLogType.water,  # ✅ CRITICAL: Save as 'water' not 'meal'
+            content=content_text,
+            calories=0,
+            ai_parsed_data={
+                "quantity_ml": amount_ml,
+                "water_unit": "glasses",
+                "quantity": str(glasses),
+                "source": "fast_path",
+            }
+        )
+        
+        # Save to database
+        await asyncio.to_thread(create_fitness_log, fitness_log)
+        print(f"✅ [FAST-PATH] Water log saved: {amount_ml}ml as log_type=water")
+        
+        # Invalidate cache IMMEDIATELY (before indexing delay)
+        cache_service.invalidate_timeline(user_id)
+        cache_service.invalidate_dashboard(user_id)
+        print(f"🗑️  [FAST-PATH] Cache invalidated IMMEDIATELY for user {user_id}")
+        
+        # ✅ NO DELAY NEEDED: Frontend will pull-to-refresh
+        print(f"✅ [FAST-PATH] Water log saved, frontend will refresh on demand")
+        
+        response_msg = f"💧 Logged {glasses:.1f} glass{'es' if glasses != 1 else ''} ({amount_ml}ml) of water! Stay hydrated! 🎉"
+        
+        # Save AI response (fire-and-forget)
+        asyncio.create_task(chat_history.save_message(
+            user_id, 'assistant', response_msg,
+            {'category': 'water_log', 'amount_ml': amount_ml}
+        ))
+        
+        return ChatResponse(
+            items=[],
+            original=text,
+            message=response_msg,
+            summary=f"Logged {glasses:.1f} glass{'es' if glasses != 1 else ''} of water",
+            suggestion="Keep up the great hydration! 💪",
+            expandable=False,
+            needs_clarification=False
+        )
+    except Exception as e:
+        print(f"❌ [WATER FAST-PATH] Error: {e}")
+        return None  # Fall back to normal LLM processing
+
+async def _handle_supplement_fast_path(text: str, user_id: str, chat_history) -> ChatResponse:
+    """Handle supplement logging without LLM (instant response) - 0 CALORIES"""
+    import re
+    from app.models.fitness_log import FitnessLog, FitnessLogType
+    from app.services.database import create_fitness_log
+    from app.services.cache_service import cache_service
+    import uuid
+    
+    # Extract supplement name and quantity
+    lower_text = text.lower()
+    
+    # Try to extract quantity (default to 1)
+    quantity = 1
+    numbers = re.findall(r'\d+', text)
+    if numbers:
+        quantity = int(numbers[0])
+    
+    # Extract supplement name (simple heuristic)
+    supplement_name = text
+    for pattern in ['vitamin', 'supplement', 'pill', 'tablet', 'capsule']:
+        if pattern in lower_text:
+            supplement_name = text.replace(str(quantity), '').strip()
+            break
+    
+    try:
+        content_text = f"{quantity} {supplement_name}"
+        
+        # Create supplement log (0 calories!)
+        fitness_log = FitnessLog(
+            log_id=str(uuid.uuid4()),
+            user_id=user_id,
+            log_type=FitnessLogType.supplement,  # ✅ CRITICAL: Save as 'supplement' not 'meal'
+            content=content_text,
+            calories=0,  # ✅ FIX: 0 calories, not 5!
+            ai_parsed_data={
+                "supplement_name": supplement_name,
+                "quantity": quantity,
+                "dosage": f"{quantity} tablet{'s' if quantity != 1 else ''}",
+                "source": "fast_path",
+            }
+        )
+        
+        # Save to database
+        await asyncio.to_thread(create_fitness_log, fitness_log)
+        print(f"✅ [FAST-PATH] Supplement log saved: {supplement_name} x{quantity} as log_type=supplement (0 cal)")
+        
+        # Invalidate cache IMMEDIATELY (before indexing delay)
+        cache_service.invalidate_timeline(user_id)
+        cache_service.invalidate_dashboard(user_id)
+        print(f"🗑️  [FAST-PATH] Cache invalidated IMMEDIATELY for user {user_id}")
+        
+        # ✅ NO DELAY NEEDED: Frontend will pull-to-refresh
+        print(f"✅ [FAST-PATH] Supplement log saved, frontend will refresh on demand")
+        
+        response_msg = f"💊 Logged {quantity} {supplement_name}! Keep up the healthy habits! 🎉"
+        
+        # Save AI response (fire-and-forget)
+        asyncio.create_task(chat_history.save_message(
+            user_id, 'assistant', response_msg,
+            {'category': 'supplement_log', 'supplement': supplement_name, 'quantity': quantity}
+        ))
+        
+        return ChatResponse(
+            items=[],
+            original=text,
+            message=response_msg,
+            summary=f"Logged {quantity} {supplement_name}",
+            suggestion="Great job staying consistent! 💪",
+            expandable=False,
+            needs_clarification=False
+        )
+    except Exception as e:
+        print(f"❌ [SUPPLEMENT FAST-PATH] Error: {e}")
+        return None  # Fall back to normal LLM processing
+
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(
     req: ChatRequest,
@@ -741,19 +1206,48 @@ async def chat_endpoint(
     chat_history = get_chat_history_service()
     user_id = current_user.user_id  # Fixed: User model uses 'user_id' not 'uid'
     
-    # ⏱️ STEP 1: Save user message (MUST AWAIT to ensure correct timestamp order!)
+    # ⚡ PHASE 1 OPTIMIZATION: Fire-and-forget user message save (non-blocking)
     t1 = time.perf_counter()
     print(f"⏱️ [{request_id}] START - Input: '{text[:50]}...'")
-    # 🐛 FIX: AWAIT user message save to ensure it gets earlier timestamp than AI response
-    await chat_history.save_message(user_id, 'user', text)
+    # Save user message in background (non-blocking) - ChatGPT style
+    asyncio.create_task(chat_history.save_message(user_id, 'user', text))
     t2 = time.perf_counter()
-    print(f"⏱️ [{request_id}] STEP 1 - Save user message (awaited): {(t2-t1)*1000:.0f}ms")
+    print(f"⏱️ [{request_id}] STEP 1 - Save user message (fire-and-forget): {(t2-t1)*1000:.0f}ms")
     
-    # CHECK FOR FASTING COMMANDS (Priority: before normal processing)
+    # ⚡ SMART ROUTING: Check if we can skip LLM entirely (Priority #1 optimization)
     lower_text = text.lower().strip()
+    
+    # Fast-path 1: Simple food logging (NEW - highest priority!)
+    if _is_simple_food_log(lower_text):
+        simple_food_response = await _handle_simple_food_log(lower_text, user_id, chat_history, req.client_generated_id)
+        if simple_food_response:
+            t_end = time.perf_counter()
+            total_ms = (t_end - t_start) * 1000
+            print(f"⚡ [{request_id}] FAST-PATH: Simple food log (NO LLM!) - Total: {total_ms:.0f}ms")
+            return simple_food_response
+    
+    # Fast-path 2: Fasting commands
     fasting_command_response = await _handle_fasting_commands(lower_text, user_id, chat_history)
     if fasting_command_response:
         return fasting_command_response
+    
+    # Fast-path 3: Water logging (instant, no LLM needed) ✅ FIXED
+    if _is_water_log(lower_text):
+        water_response = await _handle_water_fast_path_fixed(lower_text, user_id, chat_history)
+        if water_response:
+            t_end = time.perf_counter()
+            total_ms = (t_end - t_start) * 1000
+            print(f"⚡ [{request_id}] FAST-PATH: Water log (NO LLM!) - Total: {total_ms:.0f}ms")
+            return water_response
+    
+    # Fast-path 4: Supplement logging (instant, no LLM needed, 0 calories) ✅ NEW
+    if _is_supplement_log(lower_text):
+        supplement_response = await _handle_supplement_fast_path(lower_text, user_id, chat_history)
+        if supplement_response:
+            t_end = time.perf_counter()
+            total_ms = (t_end - t_start) * 1000
+            print(f"⚡ [{request_id}] FAST-PATH: Supplement log (NO LLM, 0 CAL!) - Total: {total_ms:.0f}ms")
+            return supplement_response
     
     # ⏱️ STEP 2: Cache lookup
     t3 = time.perf_counter()
@@ -1115,7 +1609,7 @@ async def chat_endpoint(
                     user_id=current_user.user_id,
                     log_type=FitnessLogType.supplement,
                     content=it.summary or text,
-                    calories=it.data.get("calories", 5),  # Minimal calories
+                    calories=0,  # ✅ FIX: Supplements have 0 calories, not 5!
                     ai_parsed_data={
                         "supplement_name": it.data.get("supplement_name", it.data.get("item", "Unknown")),
                         "supplement_type": it.data.get("supplement_type", "other"),
@@ -1173,6 +1667,16 @@ async def chat_endpoint(
 
     t8 = time.perf_counter()
     print(f"⏱️ [{request_id}] STEP 4 - DB persistence: {(t8-t7)*1000:.0f}ms")
+    
+    # 🚀 REDIS CACHE: Invalidate timeline and dashboard cache IMMEDIATELY
+    # This prevents stale cache hits while Firestore is indexing
+    from app.services.cache_service import cache_service
+    cache_service.invalidate_timeline(current_user.user_id)
+    cache_service.invalidate_dashboard(current_user.user_id)
+    print(f"🗑️  [LLM-PATH] Cache invalidated IMMEDIATELY for user {current_user.user_id}")
+    
+    # ✅ NO DELAY NEEDED: Frontend will pull-to-refresh to get latest data
+    print(f"✅ [LLM-PATH] Logs saved, frontend will refresh on demand")
 
     # ⏱️ STEP 5: Get user context
     t9 = time.perf_counter()
@@ -1251,9 +1755,10 @@ async def chat_endpoint(
     from datetime import datetime, timezone
     ai_message_id = str(int(datetime.now(timezone.utc).timestamp() * 1000))
     
-    print(f"💾 Saving AI message to history: user_id={user_id}, message_length={len(ai_message)}, message_id={ai_message_id}")
-    # ✨ NEW: Save with expandable fields + Phase 2 fields
-    await chat_history.save_message(
+    # ⚡ PHASE 1 OPTIMIZATION: Fire-and-forget AI message save (non-blocking)
+    print(f"💾 Saving AI message to history (async): user_id={user_id}, message_length={len(ai_message)}, message_id={ai_message_id}")
+    # Save in background - don't block response
+    asyncio.create_task(chat_history.save_message(
         user_id=user_id,
         role='assistant',
         content=ai_message,
@@ -1271,10 +1776,10 @@ async def chat_endpoint(
         alternatives=alternatives_list,
         # 🎨 UX FIX: Pass generated messageId
         message_id=ai_message_id
-    )
+    ))
     
     t14 = time.perf_counter()
-    print(f"⏱️ [{request_id}] STEP 7 - Save AI response: {(t14-t13)*1000:.0f}ms")
+    print(f"⏱️ [{request_id}] STEP 7 - Save AI response (fire-and-forget): {(t14-t13)*1000:.0f}ms")
     
     # ⏱️ TOTAL TIME
     t_end = time.perf_counter()

@@ -14,6 +14,7 @@ class ChatProvider extends ChangeNotifier {
     required String text,
     required String type,
     required ApiService api,
+    String? clientGeneratedId, // 🔑 Pass to backend
   }) async {
     if (isLoading) return null;
     isLoading = true;
@@ -21,7 +22,7 @@ class ChatProvider extends ChangeNotifier {
     _messages.add(ChatMessage(id: UniqueKey().toString(), text: text, isUser: true, timestamp: DateTime.now()));
     notifyListeners();
     try {
-      final result = await api.sendChatMessage(text, type);
+      final result = await api.sendChatMessage(text, type, clientGeneratedId: clientGeneratedId);
       final replyText = (result['message'] as String?) ?? 'Okay.';
       _messages.add(ChatMessage(
         id: UniqueKey().toString(),

@@ -5,10 +5,10 @@ class AppPreferences {
   static const String _keyHomeScreenVariant = 'home_screen_variant';
 
   /// Get the selected home screen variant
-  /// Returns 'v1', 'v2', or 'v3' (defaults to 'v2')
+  /// Returns 'v1', 'v2', 'v3', 'v4', 'v5', or 'v6' (defaults to 'v6' - Enhanced)
   static Future<String> getHomeScreenVariant() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyHomeScreenVariant) ?? 'v2';
+    return prefs.getString(_keyHomeScreenVariant) ?? 'v6';
   }
 
   /// Set the selected home screen variant

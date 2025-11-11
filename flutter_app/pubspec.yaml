@@ -18,10 +18,13 @@ dependencies:
   firebase_auth: ^6.1.1
   cloud_firestore: ^6.0.3
   firebase_messaging: ^16.0.3
+  # firebase_performance: ^0.10.0+7  # 🚀 TODO: Re-enable after fixing version conflicts
+  # firebase_crashlytics: ^4.1.3  # 🚀 TODO: Re-enable after fixing version conflicts
   google_sign_in: ^7.2.0
   flutter_local_notifications: ^19.5.0
   timezone: ^0.10.1
   flutter_timezone: ^1.0.8
+  # sentry_flutter: ^8.0.0  # 🚀 TODO: Re-enable after fixing version conflicts
 
   # HTTP & API
   http: ^1.1.2

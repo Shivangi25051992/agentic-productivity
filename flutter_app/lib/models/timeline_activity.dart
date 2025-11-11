@@ -9,6 +9,7 @@ class TimelineActivity {
   final Map<String, dynamic> details;
   final DateTime? dueDate;
   final String? priority;
+  final String? clientGeneratedId; // 🔑 For optimistic UI matching
 
   TimelineActivity({
     required this.id,
@@ -21,6 +22,7 @@ class TimelineActivity {
     required this.details,
     this.dueDate,
     this.priority,
+    this.clientGeneratedId, // 🔑 Optional for backend activities
   });
 
   factory TimelineActivity.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class TimelineActivity {
       details: Map<String, dynamic>.from(json['details'] as Map),
       dueDate: json['due_date'] != null ? DateTime.parse(json['due_date'] as String) : null,
       priority: json['priority'] as String?,
+      clientGeneratedId: json['client_generated_id'] as String?, // 🔑 Parse from backend
     );
   }
 
@@ -50,6 +53,7 @@ class TimelineActivity {
       'details': details,
       if (dueDate != null) 'due_date': dueDate!.toIso8601String(),
       if (priority != null) 'priority': priority,
+      if (clientGeneratedId != null) 'client_generated_id': clientGeneratedId, // 🔑
     };
   }
 

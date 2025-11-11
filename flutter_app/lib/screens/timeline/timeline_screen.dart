@@ -29,6 +29,22 @@ class _TimelineScreenState extends State<TimelineScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // 🔄 Auto-reload timeline when screen becomes visible
+    final route = ModalRoute.of(context);
+    if (route != null && route.isCurrent) {
+      // Screen is now visible - refresh timeline
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _loadTimeline();
+        }
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -46,6 +62,14 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
   Future<void> _loadTimeline() async {
     final provider = context.read<TimelineProvider>();
+    final auth = context.read<AuthProvider>();
+    
+    // 🔴 PHASE 1: Start real-time listener (if enabled)
+    if (auth.currentUser != null) {
+      provider.startRealtimeListener(auth.currentUser!.uid);
+    }
+    
+    // Fetch initial data (polling fallback if real-time disabled)
     await provider.fetchTimeline();
   }
 

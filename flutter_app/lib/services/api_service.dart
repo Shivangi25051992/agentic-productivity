@@ -86,13 +86,14 @@ class ApiService {
   }
 
   // Chat & AI
-  Future<Map<String, dynamic>> sendChatMessage(String message, String type) async {
+  Future<Map<String, dynamic>> sendChatMessage(String message, String type, {String? clientGeneratedId}) async {
     try {
       final resp = await _dio.post(
         '/chat',
         data: {
           'user_input': message,
           'type': type,
+          if (clientGeneratedId != null) 'client_generated_id': clientGeneratedId, // 🔑
         },
       );
       return (resp.data as Map).cast<String, dynamic>();
@@ -279,6 +280,7 @@ class ApiService {
     String? endDate,
     int limit = 50,
     int offset = 0,
+    bool bustCache = false, // Cache-busting parameter
   }) async {
     try {
       final resp = await _dio.get('/timeline', queryParameters: {
@@ -287,6 +289,7 @@ class ApiService {
         if (endDate != null) 'end_date': endDate,
         'limit': limit,
         'offset': offset,
+        if (bustCache) '_t': DateTime.now().millisecondsSinceEpoch, // Cache buster
       });
       return TimelineResponse.fromJson((resp.data as Map).cast<String, dynamic>());
     } on DioException catch (e) { _handleDioError(e); rethrow; }

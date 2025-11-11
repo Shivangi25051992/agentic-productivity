@@ -124,7 +124,44 @@ class _HomeScreenStyleSelectorState extends State<HomeScreenStyleSelector> {
                     '✓ Maximum space efficiency',
                   ],
                   icon: '🚀',
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Variant 5
+                _buildVariantCard(
+                  variant: 'v5',
+                  title: 'Yuvi AI-First',
+                  subtitle: 'Chat-centric + Apple rings + AI nudges',
+                  features: [
+                    '✓ Chat at TOP (primary action)',
+                    '✓ Apple-style activity rings',
+                    '✓ Yuvi\'s personalized nudges',
+                    '✓ Horizontal "Your Day" feed',
+                    '✓ Voice/Quick/Chat sticky bar',
+                  ],
+                  icon: '🤖',
+                  premium: true,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Variant 6 - ENHANCED (Production Ready)
+                _buildVariantCard(
+                  variant: 'v6',
+                  title: 'Enhanced (Production)',
+                  subtitle: 'V5 + Personal wins + Behavioral AI + Polish',
+                  features: [
+                    '✓ Personal wins/streaks section',
+                    '✓ Voice integrated in chat bar',
+                    '✓ Behavioral AI nudges',
+                    '✓ Tappable "Your Day" items',
+                    '✓ WCAG AA/AAA compliant',
+                    '✓ Microinteractions & polish',
+                  ],
+                  icon: '🏆',
                   recommended: true,
+                  premium: true,
                 ),
               ],
             ),

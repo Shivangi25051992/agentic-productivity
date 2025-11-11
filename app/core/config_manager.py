@@ -129,6 +129,29 @@ class Settings(BaseSettings):
         description="Maximum concurrent LLM API calls (for parallel generation)"
     )
     
+    # ============================================================================
+    # REDIS CACHE (Optional - Phase 1 Performance)
+    # ============================================================================
+    redis_enabled: bool = Field(
+        default=False,
+        description="Enable Redis caching for timeline/dashboard"
+    )
+    
+    redis_host: str = Field(
+        default="localhost",
+        description="Redis server host"
+    )
+    
+    redis_port: int = Field(
+        default=6379,
+        description="Redis server port"
+    )
+    
+    redis_db: int = Field(
+        default=0,
+        description="Redis database number"
+    )
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
