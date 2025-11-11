@@ -18,16 +18,24 @@ class TimelineSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.only(
+        margin: EdgeInsets.only(
           top: isFirst ? 8 : 24,
           bottom: 8,
           left: 16,
           right: 16,
         ),
-        color: Colors.grey[50],
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -36,15 +44,15 @@ class TimelineSectionHeader extends StatelessWidget {
                 Icon(
                   _getIconForSection(title),
                   size: 20,
-                  color: Colors.grey[700],
+                  color: Colors.white70,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -52,24 +60,29 @@ class TimelineSectionHeader extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: Colors.blue.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.blue.withOpacity(0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Text(
                     '$count',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey[700],
+                      color: Colors.blue,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Icon(
                   isExpanded ? Icons.expand_less : Icons.expand_more,
-                  color: Colors.grey[600],
+                  color: Colors.white60,
+                  size: 20,
                 ),
               ],
             ),

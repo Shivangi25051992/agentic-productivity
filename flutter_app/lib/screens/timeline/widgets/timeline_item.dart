@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../models/timeline_activity.dart';
@@ -20,63 +21,93 @@ class TimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timeline connector + icon
-            _buildTimelineConnector(),
-            const SizedBox(width: 12),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          activity.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Timeline connector + icon
+          _buildTimelineConnector(),
+          const SizedBox(width: 12),
+          // Glassmorphism Card
+          Expanded(
+            child: GestureDetector(
+              onTap: onTap,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _getColor().withOpacity(0.3),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _getColor().withOpacity(0.1),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
-                      ),
-                      Text(
-                        DateFormat('h:mm a').format(activity.timestamp.toLocal()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  // Summary
-                  if (!isExpanded && activity.summary.isNotEmpty)
-                    Text(
-                      activity.summary,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                      ),
+                      ],
                     ),
-                  // Expanded details
-                  if (isExpanded) _buildExpandedDetails(),
-                ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                activity.title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  DateFormat('h:mm a').format(activity.timestamp.toLocal()),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white.withOpacity(0.6),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Icon(
+                                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                                  color: Colors.white.withOpacity(0.6),
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Summary
+                        if (!isExpanded && activity.summary.isNotEmpty)
+                          Text(
+                            activity.summary,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                          ),
+                        // Expanded details
+                        if (isExpanded) _buildExpandedDetails(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-            // Expand/collapse icon
-            Icon(
-              isExpanded ? Icons.expand_less : Icons.expand_more,
-              color: Colors.grey[600],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -90,9 +121,24 @@ class TimelineItem extends StatelessWidget {
           // Top line
           if (!isFirst)
             Container(
-              width: 2,
-              height: 20,
-              color: Colors.grey[300],
+              width: 3,
+              height: 24,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.blue.withOpacity(0.3),
+                    Colors.blue.withOpacity(0.6),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
             ),
           // Icon
           Container(
@@ -101,6 +147,13 @@ class TimelineItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: _getColor(),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: _getColor().withOpacity(0.5),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
             child: Icon(
               _getIcon(),
@@ -111,9 +164,24 @@ class TimelineItem extends StatelessWidget {
           // Bottom line
           if (!isLast)
             Container(
-              width: 2,
-              height: 20,
-              color: Colors.grey[300],
+              width: 3,
+              height: 24,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.blue.withOpacity(0.6),
+                    Colors.blue.withOpacity(0.3),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
             ),
         ],
       ),
@@ -153,12 +221,22 @@ class TimelineItem extends StatelessWidget {
         if (items.isNotEmpty) ...[
           const Text(
             'Items:',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 4),
           ...items.map((item) => Padding(
                 padding: const EdgeInsets.only(left: 8, bottom: 2),
-                child: Text('• $item', style: const TextStyle(fontSize: 13)),
+                child: Text(
+                  '• $item',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
               )),
           const SizedBox(height: 8),
         ],
@@ -205,7 +283,13 @@ class TimelineItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (description.isNotEmpty) ...[
-          Text(description, style: const TextStyle(fontSize: 13)),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
           const SizedBox(height: 8),
         ],
         Wrap(
@@ -262,23 +346,23 @@ class TimelineItem extends StatelessWidget {
   Widget _buildDetailChip(String label, IconData icon, Color color) {
     return RepaintBoundary(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withOpacity(0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withOpacity(0.4)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: color),
-            const SizedBox(width: 4),
+            const SizedBox(width: 6),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: color,
-                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

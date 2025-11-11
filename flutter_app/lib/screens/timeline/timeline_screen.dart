@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/timeline_provider.dart';
@@ -76,12 +77,22 @@ class _TimelineScreenState extends State<TimelineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A), // Dark background
       appBar: AppBar(
-        title: const Text('Timeline'),
+        title: const Text(
+          'Timeline',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF0A0A0A),
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings, color: Colors.white70),
             onPressed: () {
               // TODO: Show filter settings (date range picker)
               _showFilterSettings();
@@ -89,61 +100,86 @@ class _TimelineScreenState extends State<TimelineScreen> {
           ),
         ],
       ),
-      body: Consumer<TimelineProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && provider.activities.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFF0A0A0A),
+              const Color(0xFF1A1A2A),
+            ],
+          ),
+        ),
+        child: Consumer<TimelineProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading && provider.activities.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.blue,
+                ),
+              );
+            }
 
-          if (provider.error != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text('Error: ${provider.error}'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _loadTimeline,
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
+            if (provider.error != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error: ${provider.error}',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _loadTimeline,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-          if (provider.activities.isEmpty) {
-            return _buildEmptyState();
-          }
+            if (provider.activities.isEmpty) {
+              return _buildEmptyState();
+            }
 
-          final groupedActivities = provider.groupedActivities;
+            final groupedActivities = provider.groupedActivities;
 
-          return Column(
-            children: [
-              // Filter Bar
-              TimelineFilterBar(
-                selectedTypes: provider.selectedTypes,
-                onToggle: (type) => provider.toggleFilter(type),
-                activityCounts: provider.activityCounts,
-              ),
-              const Divider(height: 1),
-              // Timeline List
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: provider.refresh,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _calculateItemCount(groupedActivities, provider),
-                    itemBuilder: (context, index) {
-                      return _buildItem(context, index, groupedActivities, provider);
-                    },
+            return Column(
+              children: [
+                // Filter Bar
+                TimelineFilterBar(
+                  selectedTypes: provider.selectedTypes,
+                  onToggle: (type) => provider.toggleFilter(type),
+                  activityCounts: provider.activityCounts,
+                ),
+                // Timeline List
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: provider.refresh,
+                    color: Colors.blue,
+                    backgroundColor: const Color(0xFF1A1A1A),
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      itemCount: _calculateItemCount(groupedActivities, provider),
+                      itemBuilder: (context, index) {
+                        return _buildItem(context, index, groupedActivities, provider);
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -222,6 +258,12 @@ class _TimelineScreenState extends State<TimelineScreen> {
         child: Center(
           child: ElevatedButton(
             onPressed: provider.isLoading ? null : () => provider.loadMore(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.withOpacity(0.2),
+              foregroundColor: Colors.blue,
+              side: BorderSide(color: Colors.blue.withOpacity(0.3)),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+            ),
             child: const Text('View More'),
           ),
         ),
@@ -232,7 +274,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
     if (provider.isLoading && provider.activities.isNotEmpty && currentIndex == index) {
       return const Padding(
         padding: EdgeInsets.all(16),
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(
+          child: CircularProgressIndicator(color: Colors.blue),
+        ),
       );
     }
 
@@ -244,14 +288,30 @@ class _TimelineScreenState extends State<TimelineScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.timeline, size: 64, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue.withOpacity(0.2),
+                  Colors.purple.withOpacity(0.2),
+                ],
+              ),
+            ),
+            child: const Icon(
+              Icons.timeline,
+              size: 64,
+              color: Colors.blue,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
             'No activities yet',
             style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
@@ -259,14 +319,22 @@ class _TimelineScreenState extends State<TimelineScreen> {
             'Start logging meals, workouts, and tasks!',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[500],
+              color: Colors.white.withOpacity(0.6),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: () {
               Navigator.of(context).pushNamed('/chat');
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
             icon: const Icon(Icons.add),
             label: const Text('Log Activity'),
           ),

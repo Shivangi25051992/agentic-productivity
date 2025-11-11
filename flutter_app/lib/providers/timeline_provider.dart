@@ -8,9 +8,16 @@ import '../utils/feature_flags.dart'; // 🚩 Feature flag control
 
 class TimelineProvider extends ChangeNotifier {
   final ApiService _apiService;
-  final RealtimeService _realtimeService = RealtimeService(); // 🔴 Real-time service
+  // 🎯 ENTERPRISE PATTERN: Dependency Injection for testability
+  final RealtimeService _realtimeService;
 
-  TimelineProvider(this._apiService);
+  // 🎯 ENTERPRISE PATTERN: Constructor with optional dependency injection
+  // Production code: TimelineProvider(apiService) - uses real RealtimeService
+  // Test code: TimelineProvider(apiService, realtimeService: mockService) - uses mock
+  TimelineProvider(
+    this._apiService, {
+    RealtimeService? realtimeService,
+  }) : _realtimeService = realtimeService ?? RealtimeService();
 
   // State
   List<TimelineActivity> _activities = [];

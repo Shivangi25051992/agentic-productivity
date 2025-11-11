@@ -163,6 +163,26 @@ class _HomeScreenStyleSelectorState extends State<HomeScreenStyleSelector> {
                   recommended: true,
                   premium: true,
                 ),
+                
+                const SizedBox(height: 16),
+                
+                // Variant 7
+                _buildVariantCard(
+                  variant: 'v7',
+                  title: 'Mobile-First Feed',
+                  subtitle: 'Vertical feed with integrated chat & stats',
+                  features: [
+                    '✓ Chat input with quick log chips',
+                    '✓ Motivational suggestion banner',
+                    '✓ Highlight card (streaks/wins)',
+                    '✓ Vertical activity feed',
+                    '✓ Activity rings at bottom',
+                    '✓ Optimized for thumb navigation',
+                  ],
+                  icon: '📱',
+                  premium: true,
+                  recommended: true,
+                ),
               ],
             ),
     );

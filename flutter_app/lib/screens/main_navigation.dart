@@ -11,6 +11,7 @@ import 'home/ios_home_screen_v3_apple.dart';
 import 'home/ios_home_screen_v4_compact.dart';
 import 'home/ios_home_screen_v5_yuvi_ai_first.dart';
 import 'home/ios_home_screen_v6_enhanced.dart';
+import 'home/ios_home_screen_v7_mobile_first.dart';
 import 'chat/chat_screen.dart';
 import 'timeline/timeline_screen.dart';
 import 'plan/plan_screen.dart';
@@ -19,6 +20,8 @@ import '../widgets/common/app_sidebar.dart';
 import '../widgets/radial_quick_actions.dart';
 import '../providers/home_variant_provider.dart';
 import '../providers/timeline_provider.dart'; // 🔄 For auto-refresh
+import '../providers/dashboard_provider.dart'; // For V7
+import '../providers/auth_provider.dart'; // For V7
 
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
@@ -106,6 +109,8 @@ class _MainNavigationState extends State<MainNavigation> {
           return const IosHomeScreenV5YuviAiFirst(); // Yuvi AI-First (Chat-centric)
         case 'v6':
           return const IosHomeScreenV6Enhanced(); // Enhanced (Production Ready)
+        case 'v7':
+          return const IosHomeScreenV7MobileFirst(); // Mobile-First Feed
         default:
           return const IosHomeScreenV6Enhanced(); // Default to v6 (production)
       }

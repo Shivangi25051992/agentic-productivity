@@ -105,7 +105,9 @@ class ActivityItem {
 }
 
 class DashboardProvider extends ChangeNotifier {
-  final RealtimeService _realtimeService = RealtimeService(); // 🔴 Real-time service
+  // 🎯 ENTERPRISE PATTERN: Dependency Injection for testability
+  // Allows mocking RealtimeService in tests while maintaining backward compatibility
+  final RealtimeService _realtimeService;
   
   DailyStats _stats = DailyStats();
   bool _isLoading = false;
@@ -117,6 +119,12 @@ class DashboardProvider extends ChangeNotifier {
   DateTime? _cacheTimestamp;
   DateTime? _cacheDate; // Date for which stats are cached
   static const Duration _cacheDuration = Duration(minutes: 5);
+  
+  // 🎯 ENTERPRISE PATTERN: Constructor with optional dependency injection
+  // Production code: DashboardProvider() - uses real RealtimeService
+  // Test code: DashboardProvider(realtimeService: mockService) - uses mock
+  DashboardProvider({RealtimeService? realtimeService})
+      : _realtimeService = realtimeService ?? RealtimeService();
 
   DailyStats get stats => _stats;
   bool get isLoading => _isLoading;
